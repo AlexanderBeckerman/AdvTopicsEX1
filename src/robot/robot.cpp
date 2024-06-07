@@ -1,5 +1,5 @@
 #include "robot.h"
 
-void robot::move(int x, int y) {
+void robot::move(Direction direction) {
     // Implementation of move function
 }

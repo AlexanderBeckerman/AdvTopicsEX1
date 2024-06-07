@@ -1,7 +1,17 @@
 #pragma once
+#include "map.h"
+#include "utils.h"
 
 class robot {
+    Map map;
+    Position position;
+
 public:
-    robot();
-    void move(int x, int y);
+    robot(Map map) : map(map) {}
+
+    void move(Direction direction);
+    Position getPosition(){
+        return position;
+    }
 };
+
