@@ -1,0 +1,9 @@
+# Add source files in this directory
+file(GLOB ROBOT_SOURCES "*.cpp")
+file(GLOB ROBOT_HEADERS "*.h")
+
+# Create a library from the source files
+add_library(robot_lib ${ROBOT_SOURCES} ${ROBOT_HEADERS})
+
+# Include this directory's headers
+target_include_directories(robot_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
