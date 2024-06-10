@@ -18,3 +18,6 @@ void Robot::print(){
 void Robot::clean(Position p){
     map.clean(p);
 }
+Map& Robot::getMap(){
+    return map;
+}

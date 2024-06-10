@@ -20,6 +20,7 @@ public:
     void setMaxBatterySteps(size_t max_battery_steps);
     void move(Direction direction);
     void clean(Position p);
+    Map& getMap();
     Position getPosition(){
         return position;
     }

@@ -14,6 +14,7 @@ public:
     void setValueAt(Position position, int value);
     void clean(Position position);
     void print() const;
+    std::vector<std::vector<int>>& getData();
     
 private:
     bool checkInRange(Position p) const;

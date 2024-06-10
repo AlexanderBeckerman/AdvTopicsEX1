@@ -19,6 +19,10 @@ void Map::clean(Position p){
     setValueAt(p, value - 1);
 }
 
+ std::vector<std::vector<int>>& Map::getData() {
+    return data;
+}
+
 void Map::print() const {
     std::cout << "Charging station location: " << charging_station.y << "," << charging_station.x << std::endl;
     for (const auto& row : data) {
