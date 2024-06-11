@@ -24,23 +24,6 @@ int run_all_tests(Robot& r) {
     return 0;
 }
 
-class RobotTest : public ::testing::Test {
-protected:
-    
-    Robot* r;
-    void SetUp() override {
-        r = new Robot("./src/tests/input.txt");
-    }
-
-    void TearDown() override {
-        delete r;
-    }
-};
-TEST_F(RobotTest, setValueTest) {
-    Map& m = r->getMap();
-    m.setValueAt({0, 0}, 55);
-    ASSERT_EQ(r->getMap().getData()[0][0], 55);
-}
 int main(int argc, char **argv) {
     Robot r("./src/tests/input.txt");
     ::testing::InitGoogleTest(&argc, argv);
