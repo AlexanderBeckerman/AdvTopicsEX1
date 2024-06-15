@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib.animation as animation
 
 
 def read_input_file(file_path):
@@ -26,7 +27,19 @@ def read_input_file(file_path):
     
     return bordered_matrix
 
-def draw_map(matrix, robot_position=None):
+def read_moves_file(moves_file_path):
+    moves = []
+    with open(moves_file_path, 'r') as file:
+        for line in file:
+            row, col = map(int, line.strip().split())
+            moves.append((row+1, col+1))
+    return moves
+
+
+def draw_map(ax, matrix):
+    
+    patches = []
+    texts = []
     # Create a color map for the different values
     cmap = plt.cm.Blues
     norm = plt.Normalize(vmin=-1, vmax=9)
@@ -35,8 +48,9 @@ def draw_map(matrix, robot_position=None):
     color_map = {-2: 'black', -1: 'green'}
 
     # Create the plot
-    fig, ax = plt.subplots()
     for row in range(len(matrix)):
+        row_patches = []
+        row_texts = []
         for col in range(len(matrix[row])):
             value = matrix[row][col]
             if value in color_map:
@@ -45,12 +59,49 @@ def draw_map(matrix, robot_position=None):
                 color = cmap(norm(value))
             rect = plt.Rectangle([col, len(matrix) - row - 1], 0.8, 0.8, color=color)
             ax.add_patch(rect)
-    if robot_position:
-        robot_row, robot_col = robot_position[0], robot_position[1]
-        robot_y = len(matrix) - robot_row - 1 + 0.4
-        robot_x = robot_col + 0.4
-        circle = plt.Circle((robot_x, robot_y), 0.3, color='red')
-        ax.add_patch(circle)
+            row_patches.append(rect)
+            
+            if value >= 0:
+                text = ax.text(col + 0.4, len(matrix) - row - 1 + 0.4, str(value), ha='center', va='center', fontsize=10, color='black')
+                row_texts.append(text)
+            else:
+                row_texts.append(None)
+            
+
+        patches.append(row_patches)
+        texts.append(row_texts)
+
+    return patches, texts
+
+def animate_robot(moves, matrix):
+    fig, ax = plt.subplots()
+    patches, texts = draw_map(ax, matrix)
+    # Create the robot as a red circle
+    circle = plt.Circle((0, 0), 0.3, color='red')
+    ax.add_patch(circle)
+
+    def init():
+        circle.set_visible(False)
+        return circle,
+
+    def update(frame):
+        row, col = moves[frame]
+        robot_y = len(matrix) - row - 1 + 0.4
+        robot_x = col + 0.4
+        circle.set_center((robot_x, robot_y))
+        circle.set_visible(True)
+
+         # Update the color of the grid cell the robot is on
+        if matrix[row][col] >= 0:  # Only update cells that are not walls or charging stations
+            matrix[row][col] = max(matrix[row][col] - 1, 0)  # Increase cleanliness level
+            cmap = plt.cm.Blues
+            norm = plt.Normalize(vmin=0, vmax=9)
+            patches[row][col].set_color(cmap(norm(matrix[row][col])))
+            texts[row][col].set_text(str(matrix[row][col]))
+
+        return circle,
+
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=True, interval=500)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))
@@ -61,13 +112,15 @@ def draw_map(matrix, robot_position=None):
     ax.set_xticks([])
     ax.set_yticks([])
 
-    plt.title('Map Representation')
+    plt.title('Robot Movement Animation')
     plt.show()
 
 def main():
-    file_path = '../tests/input.txt' # Adjust this path to your input file location
-    matrix = read_input_file(file_path)
-    draw_map(matrix, [1,2])
-
+    map_file_path = '../tests/input.txt' # Adjust this path to your input file location
+    moves_file_path = '../tests/moves.txt' # Adjust this path to your moves file location
+    matrix = read_input_file(map_file_path)
+    moves = read_moves_file(moves_file_path)
+    animate_robot(moves, matrix)
+    
 if __name__ == "__main__":
     main()
