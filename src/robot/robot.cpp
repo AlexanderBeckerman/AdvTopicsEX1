@@ -1,23 +1,30 @@
 #include "robot.h"
-#include "map.h"
+#include "config.h"
 
 
 void Robot::move(Direction direction) {
-    // Implementation of move function
+    // This function will move the robot in the given direction
+    this->location = this->location + direction;
+    // TODO(Ohad): log + output. printing for now
+    std::cout << "Moved to: " << this->location << std::endl;
 }
-void Robot::setMaxBatterySteps(size_t max_battery_steps) {
-    this->max_battery_steps = max_battery_steps;
+
+void Robot::move(){
+    Direction d = algorithm.nextMove();
+    this->move(d);
 }
-void Robot::setMaxSteps(size_t max_steps) {
-    this->max_steps = max_steps;
+
+void Robot::clean() {
+    // This function will clean the current location
+    this->config.clean(this->location);
+    // TODO(Ohad): log + output. printing for now
+    std::cout << "Cleaned: " << this->location << std::endl;
 }
-void Robot::print(){
-    std::cout << "Max steps and max battery steps: " << max_steps << "," << max_battery_steps << std::endl;
-    map.print();
-}
-void Robot::clean(Position p){
-    map.clean(p);
-}
-Map& Robot::getMap(){
-    return map;
+
+void Robot::start() {
+    // This function will start the robot and make it clean the map
+    while (true) {
+        this->move();
+        this->clean();
+    }
 }

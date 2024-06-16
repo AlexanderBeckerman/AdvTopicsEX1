@@ -4,17 +4,50 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-
-
-struct Position {
-    int y; // Will represent the row idx in the map.
-    int x; // Will represent the col idx in the map.
-};
+#include <ostream>
 
 enum class Direction {
     UP,
     DOWN,
     LEFT,
     RIGHT
+};
+
+struct Location {
+    int y; // Will represent the row idx in the map.
+    int x; // Will represent the col idx in the map.
+
+    friend std::ostream& operator<<(std::ostream& os, const Location& loc) {
+        os << "(" << loc.x << "," << loc.y << ")";
+        return os;
+    }
+
+    friend Location operator +(const Location& lhs, Direction rhs) {
+        switch (rhs) {
+            case Direction::UP:
+                return Location{lhs.x, lhs.y + 1};
+            case Direction::DOWN:
+                return Location{lhs.x, lhs.y - 1};
+            case Direction::LEFT:
+                return Location{lhs.x - 1, lhs.y};
+            case Direction::RIGHT:
+                return Location{lhs.x + 1, lhs.y};
+        }
+        return lhs;
+    }
+};
+
+// Hash function for Location struct.
+struct LocationKeyHash {
+    std::size_t operator()(const Location& k) const {
+        return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 1);
+    }
+};
+
+// Compare function for Location struct.
+struct LocationKeyEqual {
+    bool operator()(const Location& lhs, const Location& rhs) const {
+        return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
 };
 

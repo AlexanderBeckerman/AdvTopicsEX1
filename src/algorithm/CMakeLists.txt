@@ -7,3 +7,5 @@ add_library(algorithm_lib ${ALGORITHM_SOURCES} ${ALGORITHM_HEADERS})
 
 # Include this directory's headers
 target_include_directories(algorithm_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_link_libraries(algorithm_lib PUBLIC config_lib robot_lib utils_lib)

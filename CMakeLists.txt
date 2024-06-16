@@ -14,11 +14,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_subdirectory(src/algorithm)
 add_subdirectory(src/robot)
 add_subdirectory(src/tests)
-add_subdirectory(src/map)
+add_subdirectory(src/config)
 add_subdirectory(src/utils)
 
-# Add test executable
-# add_executable(test2 test.cpp)
-
-# Link the test executable against gtest and the libraries
-target_link_libraries(algorithm_lib robot_lib map_lib utils_lib)
