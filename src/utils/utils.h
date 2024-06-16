@@ -25,13 +25,13 @@ struct Location {
     friend Location operator +(const Location& lhs, Direction rhs) {
         switch (rhs) {
             case Direction::UP:
-                return Location{lhs.x, lhs.y + 1};
+                return Location{lhs.y + 1, lhs.x};
             case Direction::DOWN:
-                return Location{lhs.x, lhs.y - 1};
+                return Location{lhs.y - 1, lhs.x};
             case Direction::LEFT:
-                return Location{lhs.x - 1, lhs.y};
+                return Location{lhs.y, lhs.x - 1};
             case Direction::RIGHT:
-                return Location{lhs.x + 1, lhs.y};
+                return Location{lhs.y, lhs.x + 1};
         }
         return lhs;
     }

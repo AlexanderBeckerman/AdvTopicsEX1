@@ -4,44 +4,44 @@
 #include "utils.h"
 #include "tile.h"
 
-class DirtSensor {
-    std::shared_ptr<TileLayout> layout;
-public:
-    DirtSensor(std::shared_ptr<TileLayout> layout) : layout(layout){
-        // Initialize the sensor
-    }
+class Robot;
 
-    bool isDirty() {
-        // Check if the sensor is dirty
-        return false;
-    }
-
-    int DirtLevel() {
-        // Return the dirt level
-        return 0;
-    }
+class Sensor {
+    protected:
+        std::shared_ptr<TileLayout> layout;
+        Robot& robot;
+    public:
+        Sensor(std::shared_ptr<TileLayout> layout, Robot& r) : layout(layout), robot(r) {}
+        Sensor(Robot& r) : robot(r) {}
 };
 
-class WallSensor {
+
+class DirtSensor : public Sensor {
 public:
-    WallSensor() {
+    DirtSensor(std::shared_ptr<TileLayout> layout, Robot& r) : Sensor(layout, r){
         // Initialize the sensor
     }
 
-    bool isWall(Direction direction) {
-        // Check if the sensor is detecting a wall
-        return false;
-    }
+    bool isDirty(); // Check if the current tile is dirty.
+
+    int DirtLevel(); // Return the dirt level.
 };
 
-class BatterySensor {
+class WallSensor : public Sensor {
+    
 public:
-    BatterySensor() {
+    WallSensor(std::shared_ptr<TileLayout> layout, Robot& r) : Sensor(layout, r) {
         // Initialize the sensor
     }
 
-    int BatteryLevel() {
-        // Return the battery level
-        return 0;
+    bool isWall(Direction direction);// Check if the sensor is detecting a wall/
+};
+
+class BatterySensor: public Sensor{
+public:
+    BatterySensor(Robot& r) : Sensor(r){
+        // Initialize the sensor
     }
+
+    int BatteryLevel(); // Return the battery level.
 };

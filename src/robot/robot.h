@@ -12,6 +12,7 @@ class Robot {
     WallSensor wall_sensor;
     DirtSensor dirt_sensor;
     BatterySensor battery_sensor;
+    size_t battery_level;
 
     Algorithm algorithm;
     Location location;
@@ -19,7 +20,9 @@ class Robot {
     void move(Direction direction);
     void clean();
 public:
-    Robot(ConfigInfo& cfg) : config(cfg), wall_sensor(),dirt_sensor(std::make_shared<TileLayout>(cfg.getData())), battery_sensor()  {}
+    Robot(ConfigInfo& cfg) : config(cfg), wall_sensor(std::make_shared<TileLayout>(cfg.getData()), *this)
+        ,dirt_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), battery_sensor(*this), battery_level(cfg.getMaxBatterySteps())  {}
+
     void move();
     void start();
     void debug() {
@@ -28,6 +31,9 @@ public:
         std::cout << "Cleaned: " << charging_station << std::endl;
         std::cout << "Max steps: " << config.max_steps << std::endl;
     }
+    size_t getBatteryLevel() const { return battery_level; }
+    Location getLocation() const { return location; }
+    
 };
 
 

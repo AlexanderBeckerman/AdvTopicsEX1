@@ -22,6 +22,8 @@ public:
     void clean(Location position);
     void print() const;
     TileLayout& getData();
+    size_t getMaxBatterySteps() const { return max_battery_steps; }
+    size_t getMaxSteps() const { return max_steps; }
     
 private:
     bool checkInRange(Location p) const;
