@@ -1,28 +1,34 @@
 #pragma once
 #include "utils.h"
-#include "map.h"
+#include "config.h"
+#include "algorithm.h"
+#include "sensors.h"
 
-class Map;
+class Algorithm;
 
 class Robot {
-    Map map;
-    Position position;
-    size_t max_steps; 
-    size_t max_battery_steps; 
-    Position charging_station; 
+    ConfigInfo config;
+    Location charging_station; 
+    WallSensor wall_sensor;
+    DirtSensor dirt_sensor;
+    BatterySensor battery_sensor;
 
-public:
-    Robot(Map map) : map(map) {}
-    Robot(std::string path) : map(path, *this) {}
+    Algorithm algorithm;
+    Location location;
 
-    void print();
-    void setMaxSteps(size_t max_steps);
-    void setMaxBatterySteps(size_t max_battery_steps);
     void move(Direction direction);
-    void clean(Position p);
-    Map& getMap();
-    Position getPosition(){
-        return position;
+    void clean();
+public:
+    Robot(ConfigInfo& cfg) : config(cfg), wall_sensor(),dirt_sensor(std::make_shared<TileLayout>(cfg.getData())), battery_sensor()  {}
+    void move();
+    void start();
+    void debug() {
+        std::cout << "Robot at: " << location << std::endl;
+        std::cout << "Battery level: " << battery_sensor.BatteryLevel() << std::endl;
+        std::cout << "Cleaned: " << charging_station << std::endl;
+        std::cout << "Max steps: " << config.max_steps << std::endl;
     }
 };
+
+
 

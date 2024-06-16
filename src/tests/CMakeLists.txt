@@ -12,6 +12,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(unit_tests unit_tests.cpp)
 add_executable(robot_tests robot_tests.cpp)
+add_executable(algorithm_tests algorithm_tests.cpp)
 
 target_link_libraries(unit_tests
     algorithm_lib
@@ -20,6 +21,12 @@ target_link_libraries(unit_tests
 )
 
 target_link_libraries(robot_tests
+    algorithm_lib
+    robot_lib
+    GTest::gtest_main
+)
+
+target_link_libraries(algorithm_tests
     algorithm_lib
     robot_lib
     GTest::gtest_main
