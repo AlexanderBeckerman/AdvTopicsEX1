@@ -24,6 +24,7 @@ public:
     TileLayout& getData();
     size_t getMaxBatterySteps() const { return max_battery_steps; }
     size_t getMaxSteps() const { return max_steps; }
+    Location getChargingStation() const { return charging_station; }
     
 private:
     bool checkInRange(Location p) const;

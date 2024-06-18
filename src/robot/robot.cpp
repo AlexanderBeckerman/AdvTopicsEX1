@@ -1,16 +1,19 @@
 #include "robot.h"
 #include "config.h"
 
-
-void Robot::move(Direction direction) {
+void Robot::move(Direction direction)
+{
+    std::cout << "Before move: " << this->location << std::endl;
     // This function will move the robot in the given direction
     this->location = this->location + direction;
     // TODO(Ohad): log + output. printing for now
     std::cout << "Moved to: " << this->location << std::endl;
 }
 
-void Robot::move(){
-    if (this->battery_level == 0) {
+void Robot::move()
+{
+    if (this->battery_level == 0)
+    {
         // If the battery is empty, do nothing
         return;
     }
@@ -19,8 +22,10 @@ void Robot::move(){
     this->battery_level--;
 }
 
-void Robot::clean() {
-    if (this->battery_level == 0) {
+void Robot::clean()
+{
+    if (this->battery_level == 0)
+    {
         // If the battery is empty, do nothing
         return;
     }
@@ -31,10 +36,24 @@ void Robot::clean() {
     std::cout << "Cleaned: " << this->location << std::endl;
 }
 
-void Robot::start() {
+void Robot::start()
+{
     // This function will start the robot and make it clean the map
-    while (true) {
+    while (true)
+    {
         this->move();
         this->clean();
+    }
+}
+
+void Robot::printLayout()
+{
+    for (int i = 0; i < this->config.getData().size(); i++)
+    {
+        for (int j = 0; j < this->config.getData().at(i).size(); j++)
+        {
+            std::cout << this->config.getData()[i][j].getDirtLevel() << " ";
+        }
+        std::cout << std::endl;
     }
 }

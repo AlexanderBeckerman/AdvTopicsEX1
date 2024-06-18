@@ -18,7 +18,7 @@ struct Location {
     int x; // Will represent the col idx in the map.
 
     friend std::ostream& operator<<(std::ostream& os, const Location& loc) {
-        os << "(" << loc.x << "," << loc.y << ")";
+        os << "(" << loc.y << "," << loc.x << ")";
         return os;
     }
 
