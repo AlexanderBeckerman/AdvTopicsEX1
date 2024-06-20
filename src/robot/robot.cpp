@@ -42,7 +42,7 @@ void Robot::clean()
 }
 
 void Robot::start()
-{
+{   //TODO: Implement robot charging logic - if we are at the charging station, charge the battery
     // This function will start the robot and make it clean the map
     while (canContinue())
     {
