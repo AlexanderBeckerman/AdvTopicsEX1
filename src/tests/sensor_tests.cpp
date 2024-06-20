@@ -21,14 +21,14 @@ protected:
     }
 };
 
-// TEST_F(SensorTest, isDirtyTest)
-// {
-//     cfg->setValueAt({0, 0}, 4);
-//     DirtSensor &dirt_sensor = r->getDirtSensor();
-//     ASSERT_TRUE(dirt_sensor.isDirty());
-//     cfg->setValueAt({0, 0}, 0);
-//     ASSERT_FALSE(dirt_sensor.isDirty());
-// }
+TEST_F(SensorTest, isDirtyTest)
+{
+    cfg->setValueAt({0, 0}, 4);
+    DirtSensor &dirt_sensor = r->getDirtSensor();
+    ASSERT_TRUE(dirt_sensor.isDirty());
+    cfg->setValueAt({0, 0}, 0);
+    ASSERT_FALSE(dirt_sensor.isDirty());
+}
 
 TEST_F(SensorTest, DirtLevelTest)
 {
@@ -40,15 +40,15 @@ TEST_F(SensorTest, DirtLevelTest)
     ASSERT_EQ(dirt_sensor.DirtLevel(), 0);
 }
 
-// TEST_F(SensorTest, isWallTest) {
-//     WallSensor& wall_sensor = r->getWallSensor();
-//     ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
-//     ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
-//     ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
-//     ASSERT_FALSE(wall_sensor.isWall(Direction::RIGHT));
-// }
+TEST_F(SensorTest, isWallTest) {
+    WallSensor& wall_sensor = r->getWallSensor();
+    ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
+    ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
+    ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
+    ASSERT_FALSE(wall_sensor.isWall(Direction::RIGHT));
+}
 
-// TEST_F(SensorTest, BatteryLevelTest) {
-//     BatterySensor& battery_sensor = r->getBatterySensor();
-//     ASSERT_EQ(battery_sensor.BatteryLevel(), 5);
-// }
+TEST_F(SensorTest, BatteryLevelTest) {
+    BatterySensor& battery_sensor = r->getBatterySensor();
+    ASSERT_EQ(battery_sensor.BatteryLevel(), 5);
+}

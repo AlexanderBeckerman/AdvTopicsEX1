@@ -21,7 +21,11 @@ class Robot
     void clean();
 
 public:
-    Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), dirt_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), battery_sensor(*this), battery_level(cfg.getMaxBatterySteps()), location(cfg.getChargingStation()),
+    Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(cfg.getLayout(), *this), 
+        dirt_sensor(cfg.getLayout(), *this), 
+        battery_sensor(*this), 
+        battery_level(cfg.getMaxBatterySteps()), 
+        location(cfg.getChargingStation()),
                              charging_station(cfg.getChargingStation()) {}
 
     void move(Direction direction);

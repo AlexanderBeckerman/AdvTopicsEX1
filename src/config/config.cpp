@@ -8,7 +8,7 @@ The map constructor will initialize the robot data members (max steps, max batte
 ConfigInfo::ConfigInfo(const std::string path)
 {
     std::string line;
-    TileLayout data;
+    std::shared_ptr<TileLayout> layout(new TileLayout());
 
     std::ifstream file(path);
     if (!file)
@@ -42,30 +42,30 @@ ConfigInfo::ConfigInfo(const std::string path)
             col++;
             row.push_back(TileFromCode(loc, tile_code));
         }
-        data.push_back(row);
+        layout->push_back(row);
         curr_row++;
     }
 
     file.close();
-    this->topograhpy_data = data;
+    this->topograhpy_data = layout;
 }
 
 int ConfigInfo::getValueAt(Location loc) const
 {
     if (!checkInRange(loc))
         return -1;
-    return topograhpy_data[loc.y][loc.x].getDirtLevel();
+    return (*topograhpy_data)[loc.y][loc.x].getDirtLevel();
 }
 void ConfigInfo::setValueAt(Location loc, int value)
 {
     if (!checkInRange(loc))
         return;
-    topograhpy_data[loc.y][loc.x] = TileFromCode(loc, value);
+    (*topograhpy_data)[loc.y][loc.x] = TileFromCode(loc, value);
 }
 
 void ConfigInfo::clean(Location p)
 {
-    int value = topograhpy_data[p.y][p.x].getDirtLevel();
+    int value = (*topograhpy_data)[p.y][p.x].getDirtLevel();
     if (value <= 0)
     {
         std::cerr << "Tile is already clean" << std::endl;
@@ -74,7 +74,7 @@ void ConfigInfo::clean(Location p)
     setValueAt(p, value - 1);
 }
 
-TileLayout &ConfigInfo::getData()
+ std::shared_ptr<TileLayout> ConfigInfo::getLayout() const
 {
     return topograhpy_data;
 }
@@ -82,7 +82,7 @@ TileLayout &ConfigInfo::getData()
 void ConfigInfo::print() const
 {
     std::cout << "Charging station location: " << charging_station.y << "," << charging_station.x << std::endl;
-    for (const auto &row : topograhpy_data)
+    for (const auto &row : *topograhpy_data)
     {
         for (Tile tile : row)
         {
@@ -94,7 +94,7 @@ void ConfigInfo::print() const
 
 bool ConfigInfo::checkInRange(Location p) const
 {
-    if (p.y < 0 || p.y >= topograhpy_data.size() || p.x < 0 || p.x >= topograhpy_data[p.y].size())
+    if (p.y < 0 || p.y >= topograhpy_data->size() || p.x < 0 || p.x >= (*topograhpy_data)[p.y].size())
     {
         std::cerr << "Index out of range" << std::endl;
         return false;
