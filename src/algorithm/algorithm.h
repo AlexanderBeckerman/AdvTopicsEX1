@@ -16,11 +16,11 @@ class Algorithm
     int steps_since_charge = 0;
 
     // Helper functions.
-    bool shouldClean(Direction d);
+    bool shouldMove(Direction d);
     Direction returnToChargingStation();
     bool notEnoughBattery();
     void setLocation(Direction d);
-    void updateMap(Direction d, Tile t);
+    void updateMap(Direction d);
 
 public:
     Algorithm(DirtSensor &ds, WallSensor &ws, BatterySensor &bs) : dirt_sensor(ds), wall_sensor(ws), battery_sensor(bs)

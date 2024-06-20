@@ -6,14 +6,16 @@ class Robot;
 
 typedef std::vector<std::vector<Tile>> TileLayout;
 
-class ConfigInfo { 
+class ConfigInfo
+{
     std::shared_ptr<TileLayout> topograhpy_data;
     Location charging_station;
     size_t max_battery_steps;
     size_t max_steps;
+    size_t amount_to_clean;
 
     friend Robot;
-    
+
 public:
     ConfigInfo(std::string path);
     void draw();
@@ -21,28 +23,30 @@ public:
     int getValueAt(Location position) const;
     void clean(Location position);
     void print() const;
-     std::shared_ptr<TileLayout> getLayout() const;
+    std::shared_ptr<TileLayout> getLayout() const;
     size_t getMaxBatterySteps() const { return max_battery_steps; }
     size_t getMaxSteps() const { return max_steps; }
     Location getChargingStation() const { return charging_station; }
-    
+    size_t getAmountToClean() const { return amount_to_clean; }
+
 private:
     bool checkInRange(Location p) const;
 };
 
-
-inline Tile TileFromCode(Location loc, int code){
-    switch (code){
-        case -2:
-            return Tile(loc, TileType::WALL);
-        case -1:
-            return Tile(loc, TileType::CHARGING_STATION);
-        default:
-            return Tile(loc, code);
+inline Tile TileFromCode(Location loc, int code)
+{
+    switch (code)
+    {
+    case -2:
+        return Tile(loc, TileType::WALL);
+    case -1:
+        return Tile(loc, TileType::CHARGING_STATION);
+    default:
+        return Tile(loc, code);
     }
 }
 
-/* 
+/*
 The input file will be in the following format:
 The first line will hold the max_battery_steps and max_steps respectively separated by a space.
 After that the map will be represented by a matrix of integers.

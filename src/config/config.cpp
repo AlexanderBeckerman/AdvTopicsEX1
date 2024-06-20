@@ -41,6 +41,10 @@ ConfigInfo::ConfigInfo(const std::string path)
             }
             col++;
             row.push_back(TileFromCode(loc, tile_code));
+            if (tile_code >= 0)
+            {
+                amount_to_clean += tile_code;
+            }
         }
         layout->push_back(row);
         curr_row++;
@@ -72,9 +76,10 @@ void ConfigInfo::clean(Location p)
         return;
     }
     setValueAt(p, value - 1);
+    this->amount_to_clean--;
 }
 
- std::shared_ptr<TileLayout> ConfigInfo::getLayout() const
+std::shared_ptr<TileLayout> ConfigInfo::getLayout() const
 {
     return topograhpy_data;
 }

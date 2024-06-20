@@ -14,19 +14,22 @@ class Robot
     DirtSensor dirt_sensor;
     BatterySensor battery_sensor;
     size_t battery_level;
+    int curr_steps = 0;
 
     Algorithm algorithm;
     Location location;
 
     void clean();
+    bool canContinue();
 
-    Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(cfg.getLayout(), *this), 
-        dirt_sensor(cfg.getLayout(), *this), 
-        battery_sensor(*this), 
-        battery_level(cfg.getMaxBatterySteps()), 
-        location(cfg.getChargingStation()),
-                             charging_station(cfg.getChargingStation()) {}
-
+public:
+    Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(cfg.getLayout(), *this),
+                             dirt_sensor(cfg.getLayout(), *this),
+                             battery_sensor(*this),
+                             battery_level(cfg.getMaxBatterySteps()),
+                             location(cfg.getChargingStation()),
+                             charging_station(cfg.getChargingStation()),
+                             algorithm(dirt_sensor, wall_sensor, battery_sensor) {}
 
     void move(Direction direction);
     void move();

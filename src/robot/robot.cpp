@@ -1,11 +1,6 @@
 #include "robot.h"
 #include "config.h"
 
-Robot::Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), dirt_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), battery_sensor(*this), battery_level(cfg.getMaxBatterySteps()), location(cfg.getChargingStation()),
-                                charging_station(cfg.getChargingStation()), algorithm(dirt_sensor, wall_sensor, battery_sensor)
-{
-}
-
 void Robot::move(Direction direction)
 {
     std::cout << "Before move: " << this->location << std::endl;
@@ -23,6 +18,10 @@ void Robot::move()
         return;
     }
     Direction d = algorithm.nextMove();
+    if (d == Direction::STAY)
+    {
+        this->clean();
+    }
     this->move(d);
     this->battery_level--;
 }
@@ -32,11 +31,12 @@ void Robot::clean()
     if (this->battery_level == 0)
     {
         // If the battery is empty, do nothing
+        std::cerr << "Battery is empty, can't clean\n"
+                  << std::endl;
         return;
     }
     // This function will clean the current location
     this->config.clean(this->location);
-    this->battery_level--;
     // TODO(Ohad): log + output. printing for now
     std::cout << "Cleaned: " << this->location << std::endl;
 }
@@ -44,7 +44,7 @@ void Robot::clean()
 void Robot::start()
 {
     // This function will start the robot and make it clean the map
-    while (true)
+    while (canContinue())
     {
         this->move();
         this->clean();
@@ -61,4 +61,11 @@ void Robot::printLayout()
         }
         std::cout << std::endl;
     }
+}
+
+bool Robot::canContinue()
+{
+    // This function will check if the robot can continue cleaning
+    bool cleanedAll = this->location == this->charging_station && this->config.getAmountToClean() == 0;
+    return this->curr_steps < this->config.getMaxSteps() && cleanedAll;
 }

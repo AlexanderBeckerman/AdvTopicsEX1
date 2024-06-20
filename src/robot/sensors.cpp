@@ -38,8 +38,20 @@ bool WallSensor::isWall(Direction direction)
     return (*layout)[loc.y][loc.x].getType() == TileType::WALL;
 }
 
-int BatterySensor::BatteryLevel()
-{
+int BatterySensor::BatteryLevel(){
     // This function will return the battery level
     return robot.getBatteryLevel();
+}
+
+Tile &DirtSensor::getCurrentTile()
+{
+    // This function will return the current tile
+    return (*layout)[robot.getLocation().y][robot.getLocation().x];
+}
+
+Tile &WallSensor::getWallTile(Direction d)
+{
+    // This function will return the tile in the given direction
+    Location loc = robot.getLocation() + d;
+    return (*layout)[loc.y][loc.x];
 }

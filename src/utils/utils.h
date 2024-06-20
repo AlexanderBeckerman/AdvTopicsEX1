@@ -27,6 +27,11 @@ struct Location
         return os;
     }
 
+    friend bool operator==(const Location &lhs, const Location &rhs)
+    {
+        return lhs.x == rhs.x && lhs.y == rhs.y;
+    }
+
     friend Location operator+(const Location &lhs, Direction rhs)
     {
         switch (rhs)
