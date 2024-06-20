@@ -1,6 +1,11 @@
 #include "robot.h"
 #include "config.h"
 
+Robot::Robot(ConfigInfo &cfg) : config(cfg), wall_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), dirt_sensor(std::make_shared<TileLayout>(cfg.getData()), *this), battery_sensor(*this), battery_level(cfg.getMaxBatterySteps()), location(cfg.getChargingStation()),
+                                charging_station(cfg.getChargingStation()), algorithm(dirt_sensor, wall_sensor, battery_sensor)
+{
+}
+
 void Robot::move(Direction direction)
 {
     std::cout << "Before move: " << this->location << std::endl;

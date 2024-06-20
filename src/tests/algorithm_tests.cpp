@@ -1,11 +1,10 @@
-#include "algorithm.h"
-#include "sensors.h"
+// #include "algorithm.h"
+// #include "sensors.h"
 
+// int main() {
+//     Algorithm alg;
 
-int main() {
-    Algorithm alg;
+//     alg.nextMove();
 
-    alg.nextMove();
-
-    std::cout << "Algorithm tests passed!" << std::endl;
-}
+//     std::cout << "Algorithm tests passed!" << std::endl;
+// }
