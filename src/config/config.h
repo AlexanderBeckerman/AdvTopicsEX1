@@ -7,7 +7,7 @@ class Robot;
 typedef std::vector<std::vector<Tile>> TileLayout;
 
 class ConfigInfo { 
-    TileLayout topograhpy_data;
+    std::shared_ptr<TileLayout> topograhpy_data;
     Location charging_station;
     size_t max_battery_steps;
     size_t max_steps;
@@ -21,7 +21,7 @@ public:
     int getValueAt(Location position) const;
     void clean(Location position);
     void print() const;
-    TileLayout& getData();
+     std::shared_ptr<TileLayout> getLayout() const;
     size_t getMaxBatterySteps() const { return max_battery_steps; }
     size_t getMaxSteps() const { return max_steps; }
     Location getChargingStation() const { return charging_station; }
