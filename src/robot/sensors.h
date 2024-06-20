@@ -1,5 +1,4 @@
 #pragma once
-#include <memory>
 
 #include "utils.h"
 #include "tile.h"
@@ -11,7 +10,7 @@ class Sensor {
         std::shared_ptr<TileLayout> layout;
         Robot& robot;
     public:
-        Sensor(std::shared_ptr<TileLayout> layout, Robot& r) : layout(layout), robot(r) {}
+        Sensor(std::shared_ptr<TileLayout>& layout, Robot& r) : layout(layout), robot(r) {}
         Sensor(Robot& r) : robot(r) {}
 };
 

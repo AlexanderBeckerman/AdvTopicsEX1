@@ -53,11 +53,11 @@ void Robot::start()
 
 void Robot::printLayout()
 {
-    for (int i = 0; i < this->config.getData().size(); i++)
+    for (int i = 0; i < this->config.getLayout()->size(); i++)
     {
-        for (int j = 0; j < this->config.getData().at(i).size(); j++)
+        for (int j = 0; j < this->config.getLayout()->at(i).size(); j++)
         {
-            std::cout << this->config.getData()[i][j].getDirtLevel() << " ";
+            std::cout << (*this->config.getLayout())[i][j].getDirtLevel() << " ";
         }
         std::cout << std::endl;
     }

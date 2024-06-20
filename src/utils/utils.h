@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <ostream>
+#include <memory>
 
 enum class Direction
 {
