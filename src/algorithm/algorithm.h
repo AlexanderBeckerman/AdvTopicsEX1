@@ -27,6 +27,7 @@ public:
     {
         this->map = ExpandingMap();
         this->curr_pos = Location(0, 0);
+        this->map.addTile(this->curr_pos, dirt_sensor.getCurrentTile()); // Add the charging station tile.
     }
 
     Direction nextMove();

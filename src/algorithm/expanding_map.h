@@ -9,7 +9,7 @@ class ExpandingMap
     Location charging_station;
 
 public:
-    ExpandingMap() : charging_station({0, 0}){}; // TODO: Add charging station location to data.
+    ExpandingMap() : charging_station({0, 0}){}; 
     void addTile(const Location loc, Tile &tile);
     Tile &getTile(const Location &loc);
 };

@@ -15,6 +15,7 @@ class Robot
     BatterySensor battery_sensor;
     size_t battery_level;
     int curr_steps = 0;
+    int steps_charging = 0;
 
     Algorithm algorithm;
     Location location;

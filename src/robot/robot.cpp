@@ -1,5 +1,6 @@
 #include "robot.h"
 #include "config.h"
+#include <cmath>
 
 void Robot::move(Direction direction)
 {
@@ -15,39 +16,49 @@ void Robot::move()
     if (this->battery_level == 0)
     {
         // If the battery is empty, do nothing
-        return;
-    }
-    Direction d = algorithm.nextMove();
-    if (d == Direction::STAY)
-    {
-        this->clean();
-    }
-    this->move(d);
-    this->battery_level--;
-}
-
-void Robot::clean()
-{
-    if (this->battery_level == 0)
-    {
-        // If the battery is empty, do nothing
         std::cerr << "Battery is empty, can't clean\n"
                   << std::endl;
         return;
     }
+
+    this->battery_level--;
+    Direction d = algorithm.nextMove();
+    if (d == Direction::STAY)
+    {
+        if (this->location == this->charging_station)
+        {
+            this->steps_charging++; // How many steps in a row we are charging
+            this->battery_level++; // Keep battery level the same, so when we move we calclate new battery level using their formula.
+        }
+        else{
+            this->clean();
+        }
+    }
+    if (this->location == this->charging_station && d != Direction::STAY)
+    {
+        this->battery_level = this->battery_level + (this->steps_charging)*std::round((this->config.getMaxBatterySteps()/20));
+    }
+    else{
+        this->steps_charging = 0;
+    }
+    this->move(d);
+    this->curr_steps++;
+}
+
+void Robot::clean()
+{
+    
     // This function will clean the current location
     this->config.clean(this->location);
     // TODO(Ohad): log + output. printing for now
     std::cout << "Cleaned: " << this->location << std::endl;
 }
 
-void Robot::start()
-{   //TODO: Implement robot charging logic - if we are at the charging station, charge the battery
+void Robot::start(){
     // This function will start the robot and make it clean the map
     while (canContinue())
     {
         this->move();
-        this->clean();
     }
 }
 
@@ -66,6 +77,18 @@ void Robot::printLayout()
 bool Robot::canContinue()
 {
     // This function will check if the robot can continue cleaning
-    bool cleanedAll = this->location == this->charging_station && this->config.getAmountToClean() == 0;
-    return this->curr_steps < this->config.getMaxSteps() && cleanedAll;
+    bool cleaned_all = this->location == this->charging_station && this->config.getAmountToClean() == 0;
+    bool stuck = this->location != this->charging_station && this->battery_level == 0;
+    bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
+    if (cleaned_all){
+        std::cout << "Cleaned all and at charging station, exiting..." << std::endl;
+    }
+    else if(stuck){
+        std::cout << "Stuck and battery is empty, exiting..." << std::endl;
+    }
+    else if (!still_have_steps){
+        std::cout << "Reached max steps allowed, exiting..." << std::endl;
+    }
+    return still_have_steps && !cleaned_all && !stuck;
 }
+
