@@ -6,11 +6,13 @@ Direction Algorithm::nextMove()
     {
         return returnToChargingStation();
     }
-    Direction rand_direction = static_cast<Direction>(rand() % 5); // Either stay or move in one of the 4 directions.
-    while (!shouldMove(rand_direction))
+    std::vector<Direction> possible_directions = getPossibleDirections();
+    if (possible_directions.size() == 0)
     {
-        rand_direction = static_cast<Direction>(rand() % 5);
+        std::cout << "No possible direction." << std::endl;
+        return Direction::STAY;
     }
+    Direction rand_direction = possible_directions[rand() % possible_directions.size()];
     if ((this->curr_pos + rand_direction) != Location(0, 0))
     {   // If we are charging we don't want it to count as a move. Need to think about this more not sure this works as intended.
         path.push(rand_direction); // Remember the path we took so we can return to the charging station.         
@@ -75,4 +77,30 @@ void Algorithm::updateMap(Direction d)
         Tile &t = this->dirt_sensor.getCurrentTile();
         this->map.addTile(this->curr_pos + d, t);
     }
+}
+
+std::vector<Direction> Algorithm::getPossibleDirections()
+{
+    std::vector<Direction> possible_directions;
+    if (this->curr_pos == Location(0, 0) && this->battery_sensor.BatteryLevel() < this->battery_sensor.getMaxBatteryLevel())
+    {
+        possible_directions.push_back(Direction::STAY);
+        return;
+    } 
+    for (int i = 0; i < 3; i++)
+    {
+        Direction d = static_cast<Direction>(i);
+        if (!this->wall_sensor.isWall(d))
+        {
+            possible_directions.push_back(d);
+        }
+    }
+    // Check if we are on a clean tile and if not then we add STAY to the possible directions.
+    if (this->dirt_sensor.isDirty())
+    {
+        possible_directions.push_back(Direction::STAY);
+    }
+    
+
+    return possible_directions;
 }

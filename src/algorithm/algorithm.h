@@ -3,6 +3,7 @@
 #include "expanding_map.h"
 #include "sensors.h"
 #include <stack>
+#include <vector>
 
 class Algorithm
 {
@@ -21,6 +22,8 @@ class Algorithm
     bool notEnoughBattery();
     void setLocation(Direction d);
     void updateMap(Direction d);
+    std::vector<Direction> getPossibleDirections();
+
 
 public:
     Algorithm(DirtSensor &ds, WallSensor &ws, BatterySensor &bs) : dirt_sensor(ds), wall_sensor(ws), battery_sensor(bs)

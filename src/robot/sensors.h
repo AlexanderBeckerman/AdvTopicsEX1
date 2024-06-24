@@ -51,5 +51,6 @@ public:
         // Initialize the sensor
     }
 
-    int BatteryLevel(); // Return the battery level.
+    size_t BatteryLevel(); // Return the current battery level.
+    size_t getMaxBatteryLevel();
 };
