@@ -21,7 +21,7 @@ class Algorithm
     Direction returnToChargingStation();
     bool notEnoughBattery();
     void setLocation(Direction d);
-    void updateMap(Direction d);
+    void updateMap(Direction d = Direction::STAY); // When we won't pass argument then it means we are updating with current tile, else updating a wall.
     std::vector<Direction> getPossibleDirections();
 
 

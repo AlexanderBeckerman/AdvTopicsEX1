@@ -2,7 +2,7 @@
 
 Direction Algorithm::nextMove()
 {
-    if (notEnoughBattery()) // TODO: Maybe add a check so that if we are in the charging station we want to stay a bit and not move randomly.
+    if (notEnoughBattery()) // For now the robot will stay at the charging station until full battery.
     {
         return returnToChargingStation();
     }
@@ -17,7 +17,7 @@ Direction Algorithm::nextMove()
     {   // If we are charging we don't want it to count as a move. Need to think about this more not sure this works as intended.
         path.push(rand_direction); // Remember the path we took so we can return to the charging station.         
     }
-    updateMap(rand_direction); // Update the map with the new tile we discovered.
+    updateMap(); // Update the map with the current tile we discovered.
     setLocation(rand_direction); // Update the current location of the robot (independent of the location of the robot in Robot class).
     return rand_direction;
 }
@@ -66,7 +66,7 @@ void Algorithm::setLocation(Direction d)
 
 void Algorithm::updateMap(Direction d)
 {
-    if (this->wall_sensor.isWall(d))
+    if (d != Direction::STAY)
     {
         Location l = this->curr_pos + d;
         Tile &t = this->wall_sensor.getWallTile(d);
@@ -75,7 +75,7 @@ void Algorithm::updateMap(Direction d)
     else
     {
         Tile &t = this->dirt_sensor.getCurrentTile();
-        this->map.addTile(this->curr_pos + d, t);
+        this->map.addTile(this->curr_pos, t);
     }
 }
 
@@ -85,13 +85,16 @@ std::vector<Direction> Algorithm::getPossibleDirections()
     if (this->curr_pos == Location(0, 0) && this->battery_sensor.BatteryLevel() < this->battery_sensor.getMaxBatteryLevel())
     {
         possible_directions.push_back(Direction::STAY);
-        return;
+        return possible_directions;
     } 
     for (int i = 0; i < 3; i++)
     {
         Direction d = static_cast<Direction>(i);
-        if (!this->wall_sensor.isWall(d))
+        if (this->wall_sensor.isWall(d))
         {
+            updateMap(d);
+        }
+        else{
             possible_directions.push_back(d);
         }
     }
