@@ -1,6 +1,8 @@
 #include "robot.h"
 #include "config.h"
 #include <cmath>
+#include <algorithm>
+#include <iostream>
 
 void Robot::move(Direction direction)
 {
@@ -18,14 +20,12 @@ void Robot::move()
         // If the battery is empty, do nothing
         std::cerr << "Battery is empty, can't clean\n"
                   << std::endl;
-        return;
     }
 
-    this->battery_level--;
     Direction d = algorithm.nextMove();
     if (d == Direction::STAY)
     {
-        if (this->location == this->charging_station)
+        if (this->location.isChargingStation())
         {
             this->steps_charging++; // How many steps in a row we are charging
             this->battery_level++; // Keep battery level the same, so when we move we calclate new battery level using their formula.
@@ -34,22 +34,25 @@ void Robot::move()
             this->clean();
         }
     }
-    if (this->location == this->charging_station && d != Direction::STAY)
+    else if (this->location.isChargingStation() && d != Direction::STAY)
     {
-        this->battery_level = this->battery_level + (this->steps_charging)*std::round((this->config.getMaxBatterySteps()/20));
+        size_t new_battery = this->battery_level + (this->steps_charging)*std::round((this->config.getMaxBatterySteps()/20));
+        this->battery_level = std::min(new_battery, this->config.getMaxBatterySteps());
     }
     else{
         this->steps_charging = 0;
     }
     this->move(d);
     this->curr_steps++;
+    this->battery_level--;
 }
 
 void Robot::clean()
 {
-    
     // This function will clean the current location
-    this->config.clean(this->location);
+    Tile &t = this->dirt_sensor.getCurrentTile();
+    t.setDirtLevel(t.getDirtLevel() - 1);
+
     // TODO(Ohad): log + output. printing for now
     std::cout << "Cleaned: " << this->location << std::endl;
 }
@@ -59,11 +62,13 @@ void Robot::start(){
     while (canContinue())
     {
         this->move();
+        printLayout();
     }
 }
 
 void Robot::printLayout()
 {
+    std::cout << "--- LAYOUT INFORMATION ---" << std::endl;
     for (int i = 0; i < this->config.getLayout()->size(); i++)
     {
         for (int j = 0; j < this->config.getLayout()->at(i).size(); j++)
@@ -72,13 +77,15 @@ void Robot::printLayout()
         }
         std::cout << std::endl;
     }
+        std::cout << "-----------" << std::endl;
+
 }
 
 bool Robot::canContinue()
 {
     // This function will check if the robot can continue cleaning
-    bool cleaned_all = this->location == this->charging_station && this->config.getAmountToClean() == 0;
-    bool stuck = this->location != this->charging_station && this->battery_level == 0;
+    bool cleaned_all = this->location.isChargingStation() && this->config.getAmountToClean() == 0;
+    bool stuck = !this->location.isChargingStation() && this->battery_level <= 0;
     bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
     if (cleaned_all){
         std::cout << "Cleaned all and at charging station, exiting..." << std::endl;

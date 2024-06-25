@@ -9,6 +9,7 @@ class Sensor
 {
 protected:
     std::shared_ptr<TileLayout> layout;
+    
     Robot &robot;
 
 public:
@@ -40,7 +41,7 @@ public:
     }
 
     bool isWall(Direction direction); // Check if the sensor is detecting a wall/
-    Tile &getWallTile(Direction d);
+    Tile getWallTile(Direction d) const;
 };
 
 class BatterySensor : public Sensor

@@ -34,7 +34,7 @@ ConfigInfo::ConfigInfo(const std::string path)
         int col = 0;
         while (file_reader >> tile_code)
         {
-            Location loc{curr_row - 1, col};
+            LayoutPoint loc{col, curr_row - 1};
             if (tile_code == -1)
             {
                 charging_station = loc;
@@ -54,25 +54,25 @@ ConfigInfo::ConfigInfo(const std::string path)
     this->topograhpy_data = layout;
 }
 
-int ConfigInfo::getValueAt(Location loc) const
+int ConfigInfo::getValueAt(LayoutPoint loc) const
 {
     if (!checkInRange(loc))
         return -1;
     return (*topograhpy_data)[loc.y][loc.x].getDirtLevel();
 }
-void ConfigInfo::setValueAt(Location loc, int value)
+void ConfigInfo::setValueAt(LayoutPoint loc, int value)
 {
     if (!checkInRange(loc))
         return;
     (*topograhpy_data)[loc.y][loc.x] = TileFromCode(loc, value);
 }
 
-void ConfigInfo::clean(Location p)
+void ConfigInfo::clean(LayoutPoint p)
 {
     int value = (*topograhpy_data)[p.y][p.x].getDirtLevel();
     if (value <= 0)
     {
-        std::cerr << "Tile is already clean" << std::endl;
+        std::cout << "Tile is already clean" << std::endl;
         return;
     }
     setValueAt(p, value - 1);
@@ -97,11 +97,11 @@ void ConfigInfo::print() const
     }
 }
 
-bool ConfigInfo::checkInRange(Location p) const
+bool ConfigInfo::checkInRange(LayoutPoint p) const
 {
     if (p.y < 0 || p.y >= topograhpy_data->size() || p.x < 0 || p.x >= (*topograhpy_data)[p.y].size())
     {
-        std::cerr << "Index out of range" << std::endl;
+        std::cout << "Index out of range" << std::endl;
         return false;
     }
     return true;
