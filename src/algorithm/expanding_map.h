@@ -5,11 +5,11 @@
 
 class ExpandingMap
 {
-    std::unordered_map<Location, Tile, LocationKeyHash, LocationKeyEqual> data;
-    Location charging_station;
+    std::unordered_map<Coordinate, Tile, LocationKeyHash, LocationKeyEqual> data;
+    Coordinate charging_station;
 
 public:
     ExpandingMap() : charging_station({0, 0}){}; 
-    void addTile(const Location loc, Tile &tile);
-    Tile &getTile(const Location &loc);
+    void addTile(const Coordinate loc, Tile &tile);
+    Tile &getTile(const Coordinate &loc);
 };

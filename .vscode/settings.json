@@ -75,6 +75,10 @@
         "xhash": "cpp",
         "xlocbuf": "cpp",
         "xlocmes": "cpp",
-        "xloctime": "cpp"
+        "xloctime": "cpp",
+        "ranges": "cpp",
+        "span": "cpp",
+        "stack": "cpp",
+        "filesystem": "cpp"
     }
 }

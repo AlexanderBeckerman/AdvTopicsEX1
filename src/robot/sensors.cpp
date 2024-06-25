@@ -30,12 +30,14 @@ int DirtSensor::DirtLevel()
 bool WallSensor::isWall(Direction direction)
 {
     // This function will check if there is a wall in the given direction
-    Location loc = robot.getLocation() + direction;
-    if (loc.x < 0 || loc.y < 0 || loc.x >= layout->at(0).size() || loc.y >= layout->size())
+    Location new_loc = robot.getLocation() + direction; // make this location
+
+    Coordinate point = (Coordinate)robot.config.getChargingStation() + new_loc;
+    if (point.x < 0 || -point.y < 0 || point.x >= layout->at(0).size() || -point.y >= layout->size())
     {
         return true;
     }
-    return (*layout)[loc.y][loc.x].getType() == TileType::WALL;
+    return (*layout)[-point.y][point.x].getType() == TileType::WALL;
 }
 
 size_t BatterySensor::BatteryLevel(){
@@ -53,9 +55,14 @@ Tile &DirtSensor::getCurrentTile()
     return (*layout)[robot.getLocation().y][robot.getLocation().x];
 }
 
-Tile &WallSensor::getWallTile(Direction d)
+Tile WallSensor::getWallTile(Direction d) const
 {
     // This function will return the tile in the given direction
-    Location loc = robot.getLocation() + d;
-    return (*layout)[loc.y][loc.x];
+    Location new_loc = robot.getLocation() + d;
+    Coordinate point = (Coordinate)robot.config.getChargingStation() + new_loc;
+    if (point.x < 0 || -point.y < 0 || point.x >= layout->at(0).size() || -point.y >= layout->size())
+    {
+        return Tile(point, TileType::WALL);
+    }
+    return (*layout)[-point.y][point.x];
 }

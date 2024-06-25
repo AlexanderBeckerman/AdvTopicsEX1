@@ -1,19 +1,15 @@
 #include "expanding_map.h"
 
-void ExpandingMap::addTile(const Location loc, Tile &tile)
+void ExpandingMap::addTile(const Coordinate loc, Tile &tile)
 {
     auto search = data.find(loc);
     if (search == data.end())
     {
         data.insert({loc, tile});
     }
-    else
-    {
-        std::cerr << "Tile already exists at location: " << loc << std::endl;
-    }
 }
 
-Tile &ExpandingMap::getTile(const Location &loc)
+Tile &ExpandingMap::getTile(const Coordinate &loc)
 {
     auto search = data.find(loc);
     if (search == data.end())

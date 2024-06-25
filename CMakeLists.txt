@@ -1,7 +1,8 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.25)
 if(POLICY CMP0079 )
   cmake_policy(SET CMP0079 NEW)
 endif()
+cmake_policy(SET CMP0135 NEW)
 
 # Project name
 project(MyProject)
@@ -16,4 +17,4 @@ add_subdirectory(src/robot)
 add_subdirectory(src/tests)
 add_subdirectory(src/config)
 add_subdirectory(src/utils)
-
+add_subdirectory(src/main)
