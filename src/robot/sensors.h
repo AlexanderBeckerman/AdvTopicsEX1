@@ -2,6 +2,7 @@
 
 #include "utils.h"
 #include "tile.h"
+#include "config.h"
 
 class Robot;
 
@@ -44,14 +45,40 @@ public:
     Tile getWallTile(Direction d) const;
 };
 
-class BatterySensor : public Sensor
+class BatterySensor
 {
+    size_t capacity;
+    size_t charge;
+    size_t steps_at_charging = 0;
+
 public:
-    BatterySensor(Robot &r) : Sensor(r)
-    {
-        // Initialize the sensor
+    BatterySensor(size_t capacity, size_t charge = 0) : capacity(capacity), charge(charge) {}
+
+    size_t batteryLevel(){
+        // Update battery level.
+        if (steps_at_charging != 0)
+            return  std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        
+        return charge;
     }
 
-    size_t BatteryLevel(); // Return the current battery level.
-    size_t getMaxBatteryLevel();
+    void chargeBattery(){
+        // Charge the battery.
+        steps_at_charging++;
+    }
+
+    void stopCharging(){
+        // Stop charging the battery.
+        charge = std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        steps_at_charging = 0;
+    }
+
+    size_t getCapacity() const {
+        return capacity;
+    }
+
+    void decreaseCharge(){
+        // Decrease the battery level.
+        charge--;
+    }
 };

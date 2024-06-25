@@ -1,26 +1,43 @@
 #include "algorithm.h"
 
-Direction Algorithm::nextMove()
+Direction selectDirection(const std::vector<Direction> &possible_directions)
 {
-    if (notEnoughBattery()) // For now the robot will stay at the charging station until full battery.
+    if (possible_directions.empty())
     {
-        return returnToChargingStation();
-    }
-    std::vector<Direction> possible_directions = getPossibleDirections();
-    if (possible_directions.size() == 0)
-    {
-        std::cout << "No possible direction." << std::endl;
+        std::cerr << "No possible direction." << std::endl;
         return Direction::STAY;
     }
-    Direction rand_direction = possible_directions[rand() % possible_directions.size()];
-    if ((this->curr_pos + rand_direction).isChargingStation())
-    {   // If we are charging we don't want it to count as a move. Need to think about this more not sure this works as intended.
-        path.push(rand_direction); // Remember the path we took so we can return to the charging station.         
+
+    // Randomly select a direction from the possible directions.
+    // TODO: Implement a better selection algorithm.
+    return possible_directions[rand() % possible_directions.size()];
+} 
+
+Direction Algorithm::nextMove()
+{
+    if (notEnoughBattery()) 
+        return returnToChargingStation();
+
+    // Decide the next move.
+    Direction next_direction = selectDirection(getPossibleDirections());
+    Location next_location = this->robot_location + next_direction;
+    if (next_location.isChargingStation())
+    { 
+        // Reset the path if we are at the charging station.
+        path = std::stack<Direction>(); 
+    } else {
+        // Cache the path. TODO(Sasha): Implement a pathing algorithm and deperacte this.
+        path.push(next_direction);         
     }
-    updateMap(); // Update the map with the current tile we discovered.
-    setLocation(rand_direction); // Update the current location of the robot (independent of the location of the robot in Robot class).
-    return rand_direction;
+
+    // Update the map with the current tile we discovered.
+    updateMap(Direction::STAY); 
+
+    // Update the current location of the robot 
+    this->robot_location = next_location; 
+    return next_direction;
 }
+
 
 bool Algorithm::shouldMove(Direction d) // This checks if the robot should move in the given direction
 {
@@ -35,7 +52,7 @@ bool Algorithm::shouldMove(Direction d) // This checks if the robot should move 
 
 bool Algorithm::notEnoughBattery()
 {
-    return this->path.size() == this->battery_sensor.BatteryLevel();
+    return this->path.size() == this->battery_sensor.batteryLevel()-1;
 }
 
 Direction Algorithm::returnToChargingStation()
@@ -61,52 +78,47 @@ Direction Algorithm::returnToChargingStation()
 
 void Algorithm::setLocation(Direction d)
 {
-    this->curr_pos = this->curr_pos + d;
+    this->robot_location = this->robot_location + d;
 }
 
 void Algorithm::updateMap(Direction d)
 {
     if (d != Direction::STAY)
     {
-        Location l = this->curr_pos + d;
+        Location l = this->robot_location + d;
         Tile t = this->wall_sensor.getWallTile(d);
         this->map.addTile(l, t);
     }
     else
     {
         Tile &t = this->dirt_sensor.getCurrentTile();
-        this->map.addTile(this->curr_pos, t);
+        this->map.addTile(this->robot_location, t);
     }
 }
 
 std::vector<Direction> Algorithm::getPossibleDirections()
 {
     std::vector<Direction> possible_directions;
-    if (this->curr_pos.isChargingStation() && this->battery_sensor.BatteryLevel() < this->battery_sensor.getMaxBatteryLevel())
-    {
-        possible_directions.push_back(Direction::STAY);
-        return possible_directions;
-    } 
+    // if (this->curr_pos.isChargingStation() && this->battery_sensor.BatteryLevel() < this->battery_sensor.getMaxBatteryLevel())
+    // {
+    //     possible_directions.push_back(Direction::STAY);
+    //     return possible_directions;
+    // } 
     Direction directions[] = {Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
     for (auto d : directions)
     {
         if (this->wall_sensor.isWall(d))
-        {
             updateMap(d);
-        }
-        else{
+        else
             possible_directions.push_back(d);
-        }
     }
+
     // Check if we are on a clean tile and if not then we add STAY to the possible directions.
-    if (this->dirt_sensor.isDirty())
+    if (this->dirt_sensor.isDirty() || this->robot_location.isChargingStation() && 
+            this->battery_sensor.batteryLevel() < this->battery_sensor.getCapacity())
     {
         possible_directions.push_back(Direction::STAY);
     }
-    
-    for (auto d : possible_directions)
-    {
-        std::cout << "Possible direction: " << d << std::endl;
-    }
+
     return possible_directions;
 }

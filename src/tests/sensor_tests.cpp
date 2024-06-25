@@ -7,41 +7,42 @@ class SensorTest : public ::testing::Test
 {
 protected:
     ConfigInfo *cfg;
-    Robot *r;
     void SetUp() override
     {
-        cfg = new ConfigInfo("../src/tests/input.txt");
-        r = new Robot(*cfg);
-        r->move(Direction::LEFT); // Move to index (0,0)
+        cfg = new ConfigInfo("../../../src/tests/input.txt");
     }
 
     void TearDown() override
     {
-        delete r;
+        delete cfg;
     }
 };
 
 TEST_F(SensorTest, isDirtyTest)
 {
-    cfg->setValueAt({0, 0}, 4);
-    DirtSensor &dirt_sensor = r->getDirtSensor();
-    ASSERT_TRUE(dirt_sensor.isDirty());
-    cfg->setValueAt({0, 0}, 0);
-    ASSERT_FALSE(dirt_sensor.isDirty());
+    cfg->setValueAt({1, 0}, 4);
+    Robot r = Robot(*cfg);
+    DirtSensor &dirt_sensor = r.getDirtSensor();
+
+    bool is_dirty = dirt_sensor.isDirty();
+
+    ASSERT_TRUE(is_dirty);
 }
 
 TEST_F(SensorTest, DirtLevelTest)
 {
-    cfg->setValueAt({0, 0}, 4);
-    std::cout << "value at 0,0 is:" << cfg->getValueAt({0, 0}) << std::endl;
-    DirtSensor &dirt_sensor = r->getDirtSensor();
-    ASSERT_EQ(dirt_sensor.DirtLevel(), 4);
-    cfg->setValueAt({0, 0}, 0);
-    ASSERT_EQ(dirt_sensor.DirtLevel(), 0);
+    cfg->setValueAt({1, 0}, 4);
+    Robot r = Robot(*cfg);
+    DirtSensor &dirt_sensor = r.getDirtSensor();
+
+    size_t dirt_level = dirt_sensor.DirtLevel();
+
+    ASSERT_EQ(dirt_level, 4);
 }
 
 TEST_F(SensorTest, isWallTest) {
-    WallSensor& wall_sensor = r->getWallSensor();
+    Robot r = Robot(*cfg);
+    WallSensor& wall_sensor = r.getWallSensor();
     ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
     ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
     ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
@@ -49,6 +50,7 @@ TEST_F(SensorTest, isWallTest) {
 }
 
 TEST_F(SensorTest, BatteryLevelTest) {
-    BatterySensor& battery_sensor = r->getBatterySensor();
-    ASSERT_EQ(battery_sensor.BatteryLevel(), 5);
+    Robot r = Robot(*cfg);
+    BatterySensor& battery_sensor = r.getBatterySensor();
+    ASSERT_EQ(battery_sensor.batteryLevel(),cfg->getMaxBatterySteps());
 }

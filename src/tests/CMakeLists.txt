@@ -10,7 +10,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-add_executable(unit_tests unit_tests.cpp)
+add_executable(unit_tests unit_tests.cpp robot_tests.cpp algorithm_tests.cpp sensor_tests.cpp)
 add_executable(robot_tests robot_tests.cpp)
 add_executable(algorithm_tests algorithm_tests.cpp)
 add_executable(sensor_tests sensor_tests.cpp)

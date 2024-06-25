@@ -18,7 +18,7 @@ class ConfigInfo
     LayoutPoint charging_station;
     size_t max_battery_steps;
     size_t max_steps;
-    size_t amount_to_clean;
+    size_t amount_to_clean = 0;
 
     friend Robot;
 
