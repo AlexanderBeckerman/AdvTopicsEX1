@@ -34,4 +34,7 @@ public:
     }
 
     Direction nextMove();
+
+    friend class AlgorithmTest;
+    friend class ExpandingMapTest;
 };

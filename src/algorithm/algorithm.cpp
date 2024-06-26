@@ -45,7 +45,7 @@ bool Algorithm::shouldMove(Direction d) // This checks if the robot should move 
 
 bool Algorithm::notEnoughBattery()
 {
-    return (static_cast<int>(this->path.size()) >= this->battery_sensor.batteryLevel()-2) && !this->robot_location.isChargingStation();
+    return (static_cast<int>(this->path.size()) >= this->battery_sensor.batteryLevel()-1) && !this->robot_location.isChargingStation();
 }
 
 Direction Algorithm::returnToChargingStation()

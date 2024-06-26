@@ -52,4 +52,7 @@ public:
     friend WallSensor;
     friend DirtSensor;
     friend BatterySensor;
+    friend class AlgorithmTest;
+    friend class RobotTest;
+    friend class ExpandingMapTest;
 };

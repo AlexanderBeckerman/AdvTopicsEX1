@@ -9,13 +9,13 @@ void ExpandingMap::addTile(const Coordinate loc, Tile &tile)
     }
 }
 
-Tile &ExpandingMap::getTile(const Coordinate &loc)
+std::optional<std::reference_wrapper<Tile>> ExpandingMap::getTile(const Coordinate &loc)
 {
     auto search = data.find(loc);
     if (search == data.end())
     {
         std::cerr << "No tile at location: " << loc << std::endl;
-        return search->second; // Temoorary return.
+        return std::nullopt; // Temoorary return.
     }
     return search->second;
 }

@@ -29,7 +29,7 @@ TEST_F(SensorTest, isDirtyTest)
     ASSERT_TRUE(is_dirty);
 }
 
-TEST_F(SensorTest, DirtLevelTest)
+TEST_F(SensorTest, dirtLevelTest)
 {
     cfg->setValueAt({1, 0}, 4);
     Robot r = Robot(*cfg);
@@ -49,7 +49,7 @@ TEST_F(SensorTest, isWallTest) {
     ASSERT_FALSE(wall_sensor.isWall(Direction::RIGHT));
 }
 
-TEST_F(SensorTest, BatteryLevelTest) {
+TEST_F(SensorTest, batteryLevelTest) {
     Robot r = Robot(*cfg);
     BatterySensor& battery_sensor = r.getBatterySensor();
     ASSERT_EQ(battery_sensor.batteryLevel(),cfg->getMaxBatterySteps());
