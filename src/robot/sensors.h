@@ -57,7 +57,7 @@ public:
     size_t batteryLevel(){
         // Update battery level.
         if (steps_at_charging != 0)
-            return  std::min(capacity, charge + steps_at_charging * (capacity / 20));
+            return std::min(capacity, (static_cast<size_t>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
         
         return charge;
     }
@@ -69,7 +69,7 @@ public:
 
     void stopCharging(){
         // Stop charging the battery.
-        charge = std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        charge = std::min(capacity, (static_cast<size_t>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
         steps_at_charging = 0;
     }
 

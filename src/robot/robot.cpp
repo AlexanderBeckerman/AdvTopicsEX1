@@ -11,12 +11,12 @@ void Robot::move(Direction direction)
     if (curr_location.isChargingStation())
         this->battery_sensor.stopCharging();
 
-    std::cout << "Moving: " << direction;
-    std::cout << "Current location: " << curr_location;
-    std::cout << "Direction: " << direction ;
+    std::cout << "Moving: " << direction << std::endl; 
+    std::cout << "Current location in grid: " << curr_location << std::endl;
     this->location = curr_location + direction;
-    std::cout << "Battery level: " << this->battery_sensor.batteryLevel();
+    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
     std::cout << "New location: " << this->location << std::endl;
+    this->printLayout();
     this->battery_sensor.decreaseCharge();
 }
 
@@ -44,6 +44,8 @@ void Robot::clean()
 
     // TODO(Ohad): log + output. printing for now
     std::cout << "Cleaned: " << this->location << std::endl;
+    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
+
 }
 
 void Robot::start(){
@@ -56,16 +58,18 @@ void Robot::start(){
 
 void Robot::printLayout()
 {
-    std::cout << "--- LAYOUT INFORMATION ---" << std::endl;
-    for (int i = 0; i < this->config.getLayout()->size(); i++)
+    std::cout << "--- LAYOUT INFORMATION (INSIDE ROBOT) ---" << std::endl;
+    for (int i = 0; i < static_cast<int>(this->config.getLayout()->size()); i++)
     {
-        for (int j = 0; j < this->config.getLayout()->at(i).size(); j++)
+        for (int j = 0; j < static_cast<int>(this->config.getLayout()->at(i).size()); j++)
         {
             std::cout << (*this->config.getLayout())[i][j].getDirtLevel() << " ";
         }
         std::cout << std::endl;
     }
-        std::cout << "-----------" << std::endl;
+    std::cout << "-----------" << std::endl;
+    // std::cout << "--- LAYOUT INFORMATION (INSIDE CONFIG) ---" << std::endl;
+    // config.print();
 
 }
 

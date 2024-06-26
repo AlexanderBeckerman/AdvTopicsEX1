@@ -8,10 +8,10 @@
 class Algorithm
 {
     // State.
-    ExpandingMap map;
     DirtSensor &dirt_sensor;
     WallSensor &wall_sensor;
     BatterySensor &battery_sensor;
+    ExpandingMap map;
     Location robot_location;
     std::stack<Direction> path;
     int steps_since_charge = 0;
@@ -23,6 +23,7 @@ class Algorithm
     void setLocation(Direction d);
     void updateMap(Direction d); // When we won't pass argument then it means we are updating with current tile, else updating a wall.
     std::vector<Direction> getPossibleDirections();
+    Direction selectDirection(const std::vector<Direction> &possible_directions);
 
 
 public:

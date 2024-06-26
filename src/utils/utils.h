@@ -16,6 +16,22 @@ enum Direction
     STAY,
 };
 
+inline Direction getOppositeDirection(Direction d){
+    switch(d){
+        case Direction::UP:
+            return Direction::DOWN;
+        case Direction::DOWN:
+            return Direction::UP;
+        case Direction::LEFT:
+            return Direction::RIGHT;
+        case Direction::RIGHT:
+            return Direction::LEFT;
+        default:
+            return Direction::STAY;
+    }
+
+}
+
 inline std::ostream& operator<<(std::ostream& out, const Direction d){
     switch(d){
         case Direction::UP:
@@ -65,8 +81,9 @@ struct Coordinate
             return Coordinate{lhs.x - 1, lhs.y};
         case Direction::RIGHT:
             return Coordinate{lhs.x + 1, lhs.y};
+        default:
+            return lhs;
         }
-        return lhs;
     }
 
      friend Coordinate operator+(const Coordinate &lhs, const Coordinate &rhs){

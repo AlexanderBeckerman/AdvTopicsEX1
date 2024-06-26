@@ -13,13 +13,12 @@ protected:
 
 private:
     WallSensor wall_sensor;
-    DirtSensor dirt_sensor;
     BatterySensor battery_sensor;
-
-    int curr_steps = 0;
-
-    Algorithm algorithm;
+    DirtSensor dirt_sensor;
     Location location;
+    Algorithm algorithm;
+    size_t curr_steps = 0;
+
 
     void clean();
     bool canContinue();
