@@ -1,47 +1,84 @@
 #pragma once
-#include <memory>
 
 #include "utils.h"
 #include "tile.h"
+#include "config.h"
 
-class DirtSensor {
+class Robot;
+
+class Sensor
+{
+protected:
     std::shared_ptr<TileLayout> layout;
+    
+    Robot &robot;
+
 public:
-    DirtSensor(std::shared_ptr<TileLayout> layout) : layout(layout){
-        // Initialize the sensor
-    }
-
-    bool isDirty() {
-        // Check if the sensor is dirty
-        return false;
-    }
-
-    int DirtLevel() {
-        // Return the dirt level
-        return 0;
-    }
+    Sensor(std::shared_ptr<TileLayout> &layout, Robot &r) : layout(layout), robot(r) {}
+    Sensor(Robot &r) : robot(r) {}
 };
 
-class WallSensor {
+class DirtSensor : public Sensor
+{
 public:
-    WallSensor() {
+    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
+    {
         // Initialize the sensor
     }
 
-    bool isWall(Direction direction) {
-        // Check if the sensor is detecting a wall
-        return false;
-    }
+    bool isDirty(); // Check if the current tile is dirty.
+
+    int DirtLevel(); // Return the dirt level.
+    Tile &getCurrentTile();
 };
 
-class BatterySensor {
+class WallSensor : public Sensor
+{
+
 public:
-    BatterySensor() {
+    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
+    {
         // Initialize the sensor
     }
 
-    int BatteryLevel() {
-        // Return the battery level
-        return 0;
+    bool isWall(Direction direction); // Check if the sensor is detecting a wall/
+    Tile getWallTile(Direction d) const;
+};
+
+class BatterySensor
+{
+    size_t capacity;
+    size_t charge;
+    size_t steps_at_charging = 0;
+
+public:
+    BatterySensor(size_t capacity, size_t charge = 0) : capacity(capacity), charge(charge) {}
+
+    size_t batteryLevel(){
+        // Update battery level.
+        if (steps_at_charging != 0)
+            return  std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        
+        return charge;
+    }
+
+    void chargeBattery(){
+        // Charge the battery.
+        steps_at_charging++;
+    }
+
+    void stopCharging(){
+        // Stop charging the battery.
+        charge = std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        steps_at_charging = 0;
+    }
+
+    size_t getCapacity() const {
+        return capacity;
+    }
+
+    void decreaseCharge(){
+        // Decrease the battery level.
+        charge--;
     }
 };
