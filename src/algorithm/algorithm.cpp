@@ -45,7 +45,7 @@ bool Algorithm::shouldMove(Direction d) // This checks if the robot should move 
 
 bool Algorithm::notEnoughBattery()
 {
-    return this->path.size() >= this->battery_sensor.batteryLevel()-2 && !this->robot_location.isChargingStation();
+    return (static_cast<int>(this->path.size()) >= this->battery_sensor.batteryLevel()-2) && !this->robot_location.isChargingStation();
 }
 
 Direction Algorithm::returnToChargingStation()
@@ -88,6 +88,7 @@ std::vector<Direction> Algorithm::getPossibleDirections()
     // } 
 
     if (this->dirt_sensor.isDirty()){
+        std::cout << "Current tile dirtiness is:" << this->dirt_sensor.getCurrentTile().getDirtLevel() << std::endl;
         bool clean = rand()%100 < 80; // If current tile is dirty with probability of >80% we want to stay and clean it.
         if(clean){
             possible_directions.push_back(Direction::STAY);
@@ -96,7 +97,7 @@ std::vector<Direction> Algorithm::getPossibleDirections()
      }
 
     // So we won't move from charging station without enough battery to come back.
-    if (this->battery_sensor.batteryLevel() < 2){
+    if ((this->robot_location.isChargingStation() && this->battery_sensor.batteryLevel() < 0.70*this->battery_sensor.getCapacity())){
         possible_directions.push_back(Direction::STAY);
         return possible_directions;
     }
@@ -113,10 +114,10 @@ std::vector<Direction> Algorithm::getPossibleDirections()
     }
 
          // Check if we are on a clean tile and if not then we add STAY to the possible directions.
-    if ((this->robot_location.isChargingStation() && this->battery_sensor.batteryLevel() < this->battery_sensor.getCapacity()))
-    {
-        possible_directions.push_back(Direction::STAY);
-    }
+    // if ((this->robot_location.isChargingStation() && this->battery_sensor.batteryLevel() < this->battery_sensor.getCapacity()))
+    // {
+    //     possible_directions.push_back(Direction::STAY);
+    // }
 
     return possible_directions;
 }

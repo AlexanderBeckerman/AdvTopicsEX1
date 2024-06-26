@@ -31,8 +31,8 @@ def read_moves_file(moves_file_path):
     moves = []
     with open(moves_file_path, 'r') as file:
         for line in file:
-            row, col = map(int, line.strip().split())
-            moves.append((row+1, col+1))
+            row, col, battery_level = map(int, line.strip().split())
+            moves.append((row+1, col+1, battery_level))
     return moves
 
 
@@ -85,23 +85,29 @@ def animate_robot(moves, matrix):
         return circle,
 
     def update(frame):
-        row, col = moves[frame]
+        row, col, battery_lvl = moves[frame]
+        stayed = False
+        if row == moves[frame-1][0] and col == moves[frame-1][1]:
+            stayed = True
         robot_y = len(matrix) - row - 1 + 0.4
         robot_x = col + 0.4
         circle.set_center((robot_x, robot_y))
         circle.set_visible(True)
 
          # Update the color of the grid cell the robot is on
-        if matrix[row][col] >= 0:  # Only update cells that are not walls or charging stations
+        if matrix[row][col] >= 0 and stayed:  # Only update cells that are not walls or charging stations
             matrix[row][col] = max(matrix[row][col] - 1, 0)  # Increase cleanliness level
             cmap = plt.cm.Blues
             norm = plt.Normalize(vmin=0, vmax=9)
             patches[row][col].set_color(cmap(norm(matrix[row][col])))
             texts[row][col].set_text(str(matrix[row][col]))
 
+        battery_text.set_text(f'Battery: {battery_lvl}')
         return circle,
-
-    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=True, interval=500)
+    
+    battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
+    ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=800)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))

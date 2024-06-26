@@ -18,10 +18,13 @@ private:
     Location location;
     Algorithm algorithm;
     size_t curr_steps = 0;
+    std::vector<std::string> path;
 
 
     void clean();
     bool canContinue();
+    void addToPath();
+    void logPath() const;
 
 public:
     Robot(ConfigInfo &cfg) : config(cfg), 
@@ -29,7 +32,8 @@ public:
                              battery_sensor(config.max_battery_steps,config.max_battery_steps),
                              dirt_sensor(cfg.getLayout(), *this),
                              location({0, 0}),
-                             algorithm(dirt_sensor, wall_sensor, battery_sensor) {}
+                             algorithm(dirt_sensor, wall_sensor, battery_sensor) { 
+                                this->path.reserve(config.max_steps);}
 
     void move(Direction direction);
     void step();

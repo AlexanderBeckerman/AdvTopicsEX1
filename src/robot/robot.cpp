@@ -27,24 +27,30 @@ void Robot::step()
     {
         if (this->location.isChargingStation())
             this->battery_sensor.chargeBattery();
-        else
+        else{
+            std::cout << "Staying at location:" << this->location << std::endl;
             this->clean();
+        }
     } else {
         this->move(direction);
     }
 
     this->curr_steps++;
+    addToPath();
 }
 
 void Robot::clean()
 {
     Tile &t = this->dirt_sensor.getCurrentTile();
+    std::cout << "Cleaning: " << this->location << std::endl;
+    std::cout << "Dirt level before clean: " << t.getDirtLevel() << std::endl;
     t.setDirtLevel(t.getDirtLevel() - 1);
+    std::cout << "Dirt level after clean: " << t.getDirtLevel() << std::endl;
+    // TODO(Ohad): log + output. printing for now
+    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
     this->battery_sensor.decreaseCharge();
 
-    // TODO(Ohad): log + output. printing for now
-    std::cout << "Cleaned: " << this->location << std::endl;
-    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
+
 
 }
 
@@ -54,6 +60,7 @@ void Robot::start(){
     {
         this->step();
     }
+    logPath();
 }
 
 void Robot::printLayout()
@@ -88,5 +95,26 @@ bool Robot::canContinue()
         std::cout << "Reached max steps allowed, exiting..." << std::endl;
     }
     return still_have_steps && !cleaned_all && !stuck;
+}
+
+void Robot::addToPath(){
+    Coordinate point = (Coordinate)this->config.getChargingStation() + this->location;
+    std::string s = std::to_string(-point.y) + " " + std::to_string(point.x) + " " + std::to_string(this->battery_sensor.batteryLevel());
+    this->path.push_back(s);
+}
+
+void Robot::logPath() const
+{
+    // log the path vector of directions into a file:
+    std::ofstream file;
+    file.open("../../../src/tests/moves.txt");
+    Coordinate point = (Coordinate)this->config.getChargingStation();
+    file << -point.y << " " << point.x << " " << this->config.getMaxBatterySteps() <<"\n";
+    for (auto &d : this->path)
+    {
+        file << d << "\n";
+    }
+    file.close();
+
 }
 
