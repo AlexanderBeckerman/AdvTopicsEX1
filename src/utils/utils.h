@@ -16,6 +16,10 @@ enum Direction
     STAY,
 };
 
+inline bool trueWithProb(int prob){
+    return rand()%100 < prob;
+}
+
 inline Direction getOppositeDirection(Direction d){
     switch(d){
         case Direction::UP:

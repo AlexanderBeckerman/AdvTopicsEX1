@@ -29,6 +29,7 @@ public:
     int getValueAt(LayoutPoint position) const;
     void clean(LayoutPoint position);
     void print() const;
+    void setAmountToClean(size_t amount) { amount_to_clean = amount; }
     std::shared_ptr<TileLayout> getLayout() const;
     size_t getMaxBatterySteps() const { return max_battery_steps; }
     size_t getMaxSteps() const { return max_steps; }

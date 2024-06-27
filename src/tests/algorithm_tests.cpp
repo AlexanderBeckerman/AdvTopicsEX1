@@ -80,7 +80,6 @@ TEST_F(AlgorithmTest, didntMoveIntoWallTest){
             moved_into_wall = true;
             break;
         }
-
     }
     ASSERT_FALSE(moved_into_wall);
 }

@@ -11,12 +11,12 @@ void Robot::move(Direction direction)
     if (curr_location.isChargingStation())
         this->battery_sensor.stopCharging();
 
-    std::cout << "Moving: " << direction << std::endl; 
-    std::cout << "Current location in grid: " << curr_location << std::endl;
+    // std::cout << "Moving: " << direction << std::endl; 
+    // std::cout << "Current location in grid: " << curr_location << std::endl;
     this->location = curr_location + direction;
-    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
-    std::cout << "New location: " << this->location << std::endl;
-    this->printLayout();
+    // std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
+    // std::cout << "New location: " << this->location << std::endl;
+    // this->printLayout();
     this->battery_sensor.decreaseCharge();
 }
 
@@ -42,12 +42,13 @@ void Robot::step()
 void Robot::clean()
 {
     Tile &t = this->dirt_sensor.getCurrentTile();
-    std::cout << "Cleaning: " << this->location << std::endl;
-    std::cout << "Dirt level before clean: " << t.getDirtLevel() << std::endl;
+    // std::cout << "Cleaning: " << this->location << std::endl;
+    // std::cout << "Dirt level before clean: " << t.getDirtLevel() << std::endl;
     t.setDirtLevel(t.getDirtLevel() - 1);
-    std::cout << "Dirt level after clean: " << t.getDirtLevel() << std::endl;
+    this->config.setAmountToClean(this->config.getAmountToClean() - 1);
+    // std::cout << "Dirt level after clean: " << t.getDirtLevel() << std::endl;
     // TODO(Ohad): log + output. printing for now
-    std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
+    // std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
     this->battery_sensor.decreaseCharge();
 
 
@@ -75,8 +76,6 @@ void Robot::printLayout()
         std::cout << std::endl;
     }
     std::cout << "-----------" << std::endl;
-    // std::cout << "--- LAYOUT INFORMATION (INSIDE CONFIG) ---" << std::endl;
-    // config.print();
 
 }
 
