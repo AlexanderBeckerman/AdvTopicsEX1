@@ -9,7 +9,7 @@ protected:
     ConfigInfo* cfg;
 
     void SetUp() override {
-        cfg = new ConfigInfo("../../../src/tests/input.txt");
+        cfg = new ConfigInfo("../../../input/input.txt");
     }
 
     void TearDown() override {
@@ -19,23 +19,50 @@ protected:
     bool canContinue(Robot& r) {
         return r.canContinue();
     }
+
+    size_t getCurrSteps(Robot& r) {
+        return r.curr_steps;
+    }
+
+    size_t getMaxSteps(Robot& r) {
+        return r.config.getMaxSteps();
+    }
+
+    size_t getAmountToClean(Robot& r) {
+        return r.config.getAmountToClean();
+    }
 };
 
 TEST_F(RobotTest, usedBatteryTest) {
     Robot r = Robot(*cfg);
     int battery_before_step;
     int battery_after_step;
-    bool used_battery = true;
 
     while (canContinue(r)){
         Location last_loc = r.getLocation();
         battery_before_step = r.getBatterySensor().batteryLevel();
         r.step();
         battery_after_step = r.getBatterySensor().batteryLevel();
-        if (!last_loc.isChargingStation() && battery_before_step == battery_after_step){
-            used_battery = false;
-            break;
+        ASSERT_FALSE(!last_loc.isChargingStation() && battery_before_step == battery_after_step);
+    }
+}
+
+TEST_F(RobotTest, didntPassMaxStepsTest){
+    Robot r = Robot(*cfg);
+    size_t steps = 0;
+    while (canContinue(r)){
+        r.step();
+        steps++;
+    }
+    ASSERT_TRUE(steps <= getMaxSteps(r));
+}
+
+TEST_F(RobotTest, cleanedAllTest){
+    Robot r = Robot(*cfg);
+    while (canContinue(r)){
+        r.step();
+        if (getAmountToClean(r) == 0 && r.getLocation().isChargingStation()){
+            ASSERT_FALSE(canContinue(r));
         }
     }
-    ASSERT_TRUE(used_battery);
 }

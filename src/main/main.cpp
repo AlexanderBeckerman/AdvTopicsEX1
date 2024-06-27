@@ -9,7 +9,7 @@
 
 int main()
 {
-    ConfigInfo config = ConfigInfo("../../../src/tests/input.txt"); // TODO(Ohad).
+    ConfigInfo config = ConfigInfo("../../../input/input.txt"); // TODO(Ohad).
     Robot robot = Robot(config);
     robot.start();
 }

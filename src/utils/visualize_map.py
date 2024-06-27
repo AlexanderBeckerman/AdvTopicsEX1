@@ -122,8 +122,8 @@ def animate_robot(moves, matrix):
     plt.show()
 
 def main():
-    map_file_path = '../tests/input.txt' # Adjust this path to your input file location
-    moves_file_path = '../tests/moves.txt' # Adjust this path to your moves file location
+    map_file_path = '../../input/input.txt' # Adjust this path to your input file location
+    moves_file_path = '../../output/moves.txt' # Adjust this path to your moves file location
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
     animate_robot(moves, matrix)

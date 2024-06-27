@@ -47,17 +47,17 @@ public:
 
 class BatterySensor
 {
-    int capacity;
-    int charge;
+    size_t capacity;
+    size_t charge;
     size_t steps_at_charging = 0;
 
 public:
     BatterySensor(int capacity, int charge = 0) : capacity(capacity), charge(charge) {}
 
-    int batteryLevel(){
+    size_t batteryLevel(){
         // Update battery level.
         if (steps_at_charging != 0)
-            return std::min(capacity, (static_cast<int>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
+            return std::min(capacity, (static_cast<size_t>(charge + (steps_at_charging) * (static_cast<float>(capacity) / 20))));
         
         return charge;
     }
@@ -69,11 +69,11 @@ public:
 
     void stopCharging(){
         // Stop charging the battery.
-        charge = std::min(capacity, (static_cast<int>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
+        charge = std::min(capacity, (static_cast<size_t>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
         steps_at_charging = 0;
     }
 
-    int getCapacity() const {
+    size_t getCapacity() const {
         return capacity;
     }
 

@@ -106,7 +106,7 @@ void Robot::logPath() const
 {
     // log the path vector of directions into a file:
     std::ofstream file;
-    file.open("../../../src/tests/moves.txt");
+    file.open("../../../output/moves.txt");
     Coordinate point = (Coordinate)this->config.getChargingStation();
     file << -point.y << " " << point.x << " " << this->config.getMaxBatterySteps() <<"\n";
     for (auto &d : this->path)
