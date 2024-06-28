@@ -35,7 +35,7 @@ public:
                              algorithm(dirt_sensor, wall_sensor, battery_sensor) { 
                                 this->path.reserve(config.max_steps);}
 
-    void move(Direction direction);
+    void move(const Direction direction);
     void step();
     void start();
     void debug()

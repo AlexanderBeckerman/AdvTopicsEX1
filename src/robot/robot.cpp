@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-void Robot::move(Direction direction)
+void Robot::move(const Direction direction)
 {
     // This function will move the robot in the given direction
     auto curr_location = this->location;

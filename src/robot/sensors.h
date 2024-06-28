@@ -6,25 +6,12 @@
 
 class Robot;
 
-class Sensor
+class DirtSensor
 {
-protected:
     std::shared_ptr<TileLayout> layout;
-    
     Robot &robot;
-
 public:
-    Sensor(std::shared_ptr<TileLayout> &layout, Robot &r) : layout(layout), robot(r) {}
-    Sensor(Robot &r) : robot(r) {}
-};
-
-class DirtSensor : public Sensor
-{
-public:
-    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
-    {
-        // Initialize the sensor
-    }
+    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r) : layout(layout), robot(r) {}
 
     bool isDirty(); // Check if the current tile is dirty.
 
@@ -32,17 +19,16 @@ public:
     Tile &getCurrentTile();
 };
 
-class WallSensor : public Sensor
+class WallSensor
 {
+    std::shared_ptr<TileLayout> layout;
+    Robot &robot;
 
 public:
-    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
-    {
-        // Initialize the sensor
-    }
+    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r) : layout(layout), robot(r) {}
 
-    bool isWall(Direction direction); // Check if the sensor is detecting a wall/
-    Tile getWallTile(Direction d) const;
+    bool isWall(const Direction direction); // Check if the sensor is detecting a wall/
+    Tile getWallTile(const Direction d) const;
 };
 
 class BatterySensor

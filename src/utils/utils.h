@@ -20,7 +20,7 @@ inline bool trueWithProb(int prob){
     return rand()%100 < prob;
 }
 
-inline Direction getOppositeDirection(Direction d){
+inline Direction getOppositeDirection(const Direction d){
     switch(d){
         case Direction::UP:
             return Direction::DOWN;
@@ -73,7 +73,7 @@ struct Coordinate
         return lhs.x == rhs.x && lhs.y == rhs.y;
     }
 
-    friend Coordinate operator+(const Coordinate &lhs, Direction rhs)
+    friend Coordinate operator+(const Coordinate &lhs, const Direction rhs)
     {
         switch (rhs)
         {
@@ -98,7 +98,7 @@ struct Coordinate
 struct Location : public Coordinate {
     Location(int x, int y) : Coordinate{x, y} {}
     
-    friend Location operator+(const Location &lhs, Direction rhs){
+    friend Location operator+(const Location &lhs, const Direction rhs){
         Coordinate cord = (Coordinate)lhs + rhs;
         return Location{cord.x, cord.y};
     }

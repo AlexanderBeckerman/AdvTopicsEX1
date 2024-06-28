@@ -32,7 +32,7 @@ Direction Algorithm::nextMove()
 }
 
 
-bool Algorithm::shouldMove(Direction d) // This checks if the robot should move in the given direction
+bool Algorithm::shouldMove(const Direction d) // This checks if the robot should move in the given direction
 {
 
     if (this->dirt_sensor.isDirty() && d == Direction::STAY)
@@ -58,12 +58,12 @@ Direction Algorithm::returnToChargingStation()
     return opposite_dir;
 }
 
-void Algorithm::setLocation(Direction d)
+void Algorithm::setLocation(const Direction d)
 {
     this->robot_location = this->robot_location + d;
 }
 
-void Algorithm::updateMap(Direction d)
+void Algorithm::updateMap(const Direction d)
 {
     if (d != Direction::STAY)
     {
@@ -82,8 +82,8 @@ std::vector<Direction> Algorithm::getPossibleDirections()
 {
     std::vector<Direction> possible_directions;
 
-    // Clean dirty tile with probabilty of 80%
-    if (this->dirt_sensor.isDirty() && trueWithProb(100)){
+    // Clean dirty tile with probabilty of 95%
+    if (this->dirt_sensor.isDirty() && trueWithProb(95)){
         possible_directions.push_back(Direction::STAY);
         return possible_directions; 
      }

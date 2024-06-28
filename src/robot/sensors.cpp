@@ -29,7 +29,7 @@ int DirtSensor::DirtLevel()
     return t.getDirtLevel();
 }
 
-bool WallSensor::isWall(Direction direction)
+bool WallSensor::isWall(const Direction direction)
 {
     // This function will check if there is a wall in the given direction
     Location new_loc = robot.getLocation() + direction; // make this location
@@ -49,7 +49,7 @@ Tile &DirtSensor::getCurrentTile()
     return (*layout)[-point.y][point.x];
 }
 
-Tile WallSensor::getWallTile(Direction d) const
+Tile WallSensor::getWallTile(const Direction d) const
 {
     // This function will return the tile in the given direction
     Location new_loc = robot.getLocation() + d;

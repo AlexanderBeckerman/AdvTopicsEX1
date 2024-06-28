@@ -17,11 +17,11 @@ class Algorithm
     int steps_since_charge = 0;
 
     // Helper functions.
-    bool shouldMove(Direction d);
+    bool shouldMove(const Direction d);
     Direction returnToChargingStation();
     bool notEnoughBattery();
-    void setLocation(Direction d);
-    void updateMap(Direction d); // When we won't pass argument then it means we are updating with current tile, else updating a wall.
+    void setLocation(const Direction d);
+    void updateMap(const Direction d); // When we won't pass argument then it means we are updating with current tile, else updating a wall.
     std::vector<Direction> getPossibleDirections();
     Direction selectDirection(const std::vector<Direction> &possible_directions);
 
