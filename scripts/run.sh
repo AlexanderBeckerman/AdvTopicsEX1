@@ -14,4 +14,4 @@ cd src/main
 # Step 3: Run the Python script to visualize the robot's path
 echo "Running the animation using Python..."
 cd ../../../scripts/
-python3 visualize_map.py
+python3 visualize_map.py ../input/input_b.txt
