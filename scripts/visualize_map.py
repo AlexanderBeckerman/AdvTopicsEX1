@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
-
+import sys
 
 def read_input_file(file_path):
     matrix = []
@@ -136,7 +136,11 @@ def animate_robot(moves, matrix):
     plt.show()
 
 def main():
-    map_file_path = '../input/input_b.txt' # Adjust this path to your input file location
+    args = sys.argv
+    if len(args) < 2:
+        print('Please provide the input file path as argument')
+        return
+    map_file_path = args[1] # Adjust this path to your input file location
     moves_file_path = '../output/moves.txt' # Adjust this path to your moves file location
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)

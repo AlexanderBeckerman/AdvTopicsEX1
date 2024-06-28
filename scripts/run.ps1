@@ -15,6 +15,6 @@ Set-Location -Path "./src/main"
 # Step 3: Run the Python script to visualize the robot's path
 Write-Host "Running the Python script..."
 Set-Location -Path $scriptDir
-python visualize_map.py
+python visualize_map.py "../input/input_a.txt"
 
 Set-Location -Path $originalDir

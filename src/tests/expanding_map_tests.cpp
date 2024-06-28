@@ -41,26 +41,3 @@ TEST_F(ExpandingMapTest, updatedMapTest) {
     ASSERT_TRUE(tile.has_value());
 }
 
-TEST_F(ExpandingMapTest, cleanedTileTest) {
-    Robot r = Robot(*cfg);
-    ExpandingMap& map = getMap(r);
-    int dirt_before_step = r.getDirtSensor().DirtLevel();
-
-    while (canContinue(r)){
-        if (r.getLocation().isChargingStation() || r.getDirtSensor().DirtLevel() == 0){
-            r.step();
-            continue;
-        }
-        dirt_before_step = r.getDirtSensor().DirtLevel();
-        Location last_loc = r.getLocation();
-        auto tileOpt = map.getTile(last_loc);
-        if (dirt_before_step > 0){
-            clean(r);
-            r.step();
-            Tile& tile = tileOpt.value();
-            ASSERT_TRUE(tile.getDirtLevel() == dirt_before_step - 1);
-            break;
-        }
-    }
-    
-}

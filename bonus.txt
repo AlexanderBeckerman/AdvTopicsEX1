@@ -1,0 +1,21 @@
+In this assignment, we added these following bonus features:
+
+A. Unit tests using GTest - 
+Inside the folder tests you will find several tests for different parts of the assignment.
+These tests include testing of the basic functionality of the algorithm such as not walking into walls, not staying in charge more than necessary etc.
+We also added tests for different functions in our code to test their correctness.
+
+To run the tests, simply build the program and then run unit_tests.
+
+B. Robot path animation - 
+Using python, we added a graphical representation of the given input map, and on top of that we animated the steps the robot performed. 
+The animation also includes the robot's battery level each step and the dirtiness level of each floor tile.
+
+To run the program, simply run the run.sh script or use "python3 visualize_map.py ../input/input_a.txt" inside the scripts folder to run it.
+To see the animation, make sure you have the matplotlib python package installed. (if not, install using 'pip install matplotlib').
+If you get an error "UserWarning: Matplotlib is currently using agg...", install tk-inter package using 'sudo apt-get install python3-tk'.
+
+C. Logging to output/logs  -
+We added a logging feature to log every move the robot does, into the output/logs folder. 
+This includes information such as the real-time it ran, the decision it made each step, battery level each step and the current relative location of the robot.
+This includes info, warning and error logs.
