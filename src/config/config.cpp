@@ -5,7 +5,7 @@
 The map constructor will initialize the robot data members (max steps, max battery steps etc.) by reading the input.txt. */
 
 // This function reads the input.txt file and initializes the map and robot data members.
-ConfigInfo::ConfigInfo(const std::string path, const std::string output_path)
+ConfigInfo::ConfigInfo(const std::string path)
 {
     std::string line;
     std::shared_ptr<TileLayout> layout(new TileLayout());

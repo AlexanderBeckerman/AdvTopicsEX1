@@ -10,7 +10,7 @@ protected:
     ConfigInfo* cfg;
 
     void SetUp() override {
-        cfg = new ConfigInfo("../../../input/input.txt", "../../../output/output_a.txt");
+        cfg = new ConfigInfo("../../../input/input.txt");
     }
 
     void TearDown() override {

@@ -18,14 +18,12 @@ private:
     Location location;
     Algorithm algorithm;
     size_t curr_steps = 0;
-    std::vector<std::string> path;
     size_t exit_cond;
 
 
     void clean();
     bool canContinue();
-    void addToPath();
-    void logOutput() const;
+    void logStep();
 
 public:
     Robot(ConfigInfo &cfg) : config(cfg), 
@@ -33,8 +31,7 @@ public:
                              battery_sensor(config.max_battery_steps,config.max_battery_steps),
                              dirt_sensor(cfg.getLayout(), *this),
                              location({0, 0}),
-                             algorithm(dirt_sensor, wall_sensor, battery_sensor) { 
-                                this->path.reserve(config.max_steps);}
+                             algorithm(dirt_sensor, wall_sensor, battery_sensor) { }
 
     void move(const Direction direction);
     void step();
@@ -50,10 +47,13 @@ public:
     WallSensor &getWallSensor() { return wall_sensor; }
     DirtSensor &getDirtSensor() { return dirt_sensor; }
     BatterySensor &getBatterySensor() { return battery_sensor; }
+    void dumpStepsInfo(const std::string &output_file);
+    void serializeAndDumpSteps(const std::string &output_file);
     friend WallSensor;
     friend DirtSensor;
     friend BatterySensor;
     friend class AlgorithmTest;
     friend class RobotTest;
     friend class ExpandingMapTest;
+    std::vector<StepInfo> steps_info;
 };
