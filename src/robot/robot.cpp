@@ -35,7 +35,7 @@ void Robot::step()
     }
 
     this->curr_steps++;
-    addToPath();
+    logStep();
 }
 
 void Robot::clean()
@@ -54,11 +54,11 @@ void Robot::clean()
 
 void Robot::start(){
     // This function will start the robot and make it clean the map
+    logStep();
     while (canContinue())
     {
         this->step();
     }
-    logOutput();
 }
 
 void Robot::printLayout()
@@ -93,39 +93,29 @@ bool Robot::canContinue()
     return still_have_steps && !cleaned_all && !stuck;
 }
 
-void Robot::addToPath(){
+void Robot::logStep(){
     Coordinate point = (Coordinate)this->config.getChargingStation() + this->location;
-    std::string s = std::to_string(-point.y) + " " + std::to_string(point.x) + " " + std::to_string(this->battery_sensor.batteryLevel());
-    this->path.push_back(s);
+    StepInfo s = {point, this->battery_sensor.batteryLevel()};
+    this->steps_info.push_back(s);
 }
 
-void Robot::logOutput() const
-{
-    std::ofstream moves; // moves file for the visualization (also contains battery data)
+void Robot::dumpStepsInfo(const std::string &output_file){
     std::ofstream output;
-    moves.open("../../../output/moves.txt");
-    output.open(this->config.output_path);
-    Coordinate point = (Coordinate)this->config.getChargingStation();
-    moves << -point.y << " " << point.x << " " << this->config.getMaxBatterySteps() <<"\n";
-    output << -point.y << " " << point.x << "\n";
-    for (auto &d : this->path)
-    {
-        std::istringstream iss(d);
-        std::string y, x, battery;
-        iss >> y >> x >> battery;
-        moves << y << " " <<  x << " " << battery << "\n";
-        output << y << " " << x << "\n";
-    }
-    output << "Total number of steps performed: " << this->curr_steps << "\n";
-    output << "Amount of dirt left: " << this->config.getAmountToClean() << "\n";
-    if (exit_cond == 0){
-        output << "Success! no dirt left and robot is at the docking station." << "\n";
-    }
-    else if(exit_cond == 1){
-        output << "Battery is empty and the robot is stuck!" << "\n";
-    }
-    moves.close();
-    output.close();
+    output.open(output_file);
 
+    for (auto &step :this->steps_info){
+        output << step.toOutputString() << "\n";}
+    output << "Total number of steps performed: " << this->steps_info.size() << "\n";
+    output << "Amount of dirt left: " << this->config.getAmountToClean() << "\n";
+    output << getOutputMessage(this->exit_cond);
+
+    output.close();
+}
+
+void Robot::serializeAndDumpSteps(const std::string &output_file){
+    std::ofstream output;
+    output.open(output_file);
+    output << serializeVecSteps(this->steps_info);
+    output.close();
 }
 

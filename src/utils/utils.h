@@ -127,3 +127,43 @@ struct LocationKeyEqual
         return lhs.x == rhs.x && lhs.y == rhs.y;
     }
 };
+
+struct StepInfo {
+    Coordinate point;
+    size_t battery_level;
+
+    // TODO(Sasha): this should not be a string.
+    std::string Serialize() const {
+        return std::to_string(-point.y) + " " + std::to_string(point.x) + " " + std::to_string(battery_level);
+    }
+
+    std::string toOutputString() const {
+        return std::to_string(-point.y) + " " + std::to_string(point.x);
+    }
+};
+
+inline std::string serializeVecSteps(const std::vector<StepInfo> &steps){
+    std::string output = "";
+    for (auto &step : steps)
+    {
+        output += step.Serialize() + "\n";
+    }
+    return output;
+}
+
+inline std::string getOutputMessage (int exit_cond){
+    if (exit_cond == 0){
+       return "Success! no dirt left and robot is at the docking station.\n" ;
+    }
+    return "Battery is empty and the robot is stuck!\n";
+}
+
+
+inline std::string addPrefixToFileName(const std::string& filePath) {
+    std::filesystem::path inputPath(filePath);
+    
+    // Check if the path is a regular file
+        std::filesystem::path outputPath = inputPath.parent_path() / ("output_" + inputPath.filename().string());
+        return outputPath.string();
+
+}

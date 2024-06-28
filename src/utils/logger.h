@@ -32,7 +32,6 @@ public:
         std::string path(dir);
         if (filename.empty()) {
             std::string defaultFilename = generateDefaultLogFileName(dir);
-            std::cout << "Default log file name: " << defaultFilename << std::endl;
             fileStream_.open(defaultFilename, std::ios_base::out | std::ios_base::app);
         } else {
             fileStream_.open(dir + filename, std::ios_base::out | std::ios_base::app);
@@ -89,9 +88,6 @@ private:
         oss << message << std::endl;
 
         std::string logMessage = oss.str();
-
-        // Log to console
-        std::cout << logMessage;
 
         // Log to file
         if (fileStream_.is_open()) {
