@@ -6,7 +6,7 @@ Direction Algorithm::nextMove()
 {
 
     if (notEnoughBattery()) {
-        std::cout << "\nreturning to charging station" << std::endl;
+        LOG(INFO) << "returning to charging station" << std::endl;
         return returnToChargingStation();
     }
 
@@ -114,7 +114,7 @@ Direction Algorithm::selectDirection(const std::vector<Direction> &possible_dire
 {
     if (possible_directions.empty())
     {
-        std::cerr << "No possible direction." << std::endl;
+        LOG(ERROR) << "No possible direction." << std::endl;
         return Direction::STAY;
     }
 

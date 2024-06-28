@@ -61,13 +61,6 @@ TEST_F(ExpandingMapTest, cleanedTileTest) {
             ASSERT_TRUE(tile.getDirtLevel() == dirt_before_step - 1);
             break;
         }
-        // std::cout << "dirt sensor dirt level: " << r.getDirtSensor().DirtLevel() << std::endl;
-        // if (dirt_before_step > 0 && last_loc == curr_loc){
-        //     if (tileOpt.has_value()){
-        //         std::cout << "dirt before step: " << dirt_before_step << std::endl;
-        //         std::cout << "expanding map dirt level: " << tile.getDirtLevel() << std::endl;
-        //     }
-        // }
     }
     
 }

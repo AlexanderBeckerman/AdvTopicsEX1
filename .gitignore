@@ -33,3 +33,6 @@
 
 # Buld files
 build/
+
+# Output files
+output/

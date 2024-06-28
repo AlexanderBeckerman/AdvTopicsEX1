@@ -6,6 +6,7 @@
 #include <iostream>
 #include <ostream>
 #include <memory>
+#include "logger.h"
 
 enum Direction
 {

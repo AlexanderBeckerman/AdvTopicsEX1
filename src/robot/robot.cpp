@@ -11,12 +11,11 @@ void Robot::move(const Direction direction)
     if (curr_location.isChargingStation())
         this->battery_sensor.stopCharging();
 
-    // std::cout << "Moving: " << direction << std::endl; 
-    // std::cout << "Current location in grid: " << curr_location << std::endl;
+    LOG(INFO) << "Moving: " << direction << "" << std::endl; 
+    LOG(INFO) << "Current location in grid: " << curr_location << "" << std::endl;
     this->location = curr_location + direction;
-    // std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
-    // std::cout << "New location: " << this->location << std::endl;
-    // this->printLayout();
+    LOG(INFO) << "Battery level: " << this->battery_sensor.batteryLevel() << "" << std::endl;
+    LOG(INFO) << "New location: " << this->location << "" << std::endl;
     this->battery_sensor.decreaseCharge();
 }
 
@@ -28,7 +27,7 @@ void Robot::step()
         if (this->location.isChargingStation())
             this->battery_sensor.chargeBattery();
         else{
-            std::cout << "Staying at location:" << this->location << std::endl;
+            LOG(INFO) << " Staying at location:" << this->location << "" << std::endl;
             this->clean();
         }
     } else {
@@ -42,13 +41,13 @@ void Robot::step()
 void Robot::clean()
 {
     Tile &t = this->dirt_sensor.getCurrentTile();
-    // std::cout << "Cleaning: " << this->location << std::endl;
-    // std::cout << "Dirt level before clean: " << t.getDirtLevel() << std::endl;
+    LOG(INFO) << "Dirt level before clean: " << t.getDirtLevel() << " | ";
+    LOG(INFO) << "Cleaning: " << this->location << " | ";
     t.setDirtLevel(t.getDirtLevel() - 1);
     this->config.setAmountToClean(this->config.getAmountToClean() - 1);
-    // std::cout << "Dirt level after clean: " << t.getDirtLevel() << std::endl;
+    LOG(INFO) << "Dirt level after clean: " << t.getDirtLevel() << " | ";
     // TODO(Ohad): log + output. printing for now
-    // std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
+    LOG(INFO) << "Battery level: " << this->battery_sensor.batteryLevel() << "" << std::endl;
     this->battery_sensor.decreaseCharge();
 
 }
@@ -64,16 +63,16 @@ void Robot::start(){
 
 void Robot::printLayout()
 {
-    std::cout << "--- LAYOUT INFORMATION (INSIDE ROBOT) ---" << std::endl;
+    LOG(INFO) << "--- LAYOUT INFORMATION (INSIDE ROBOT) ---" << std::endl;
     for (int i = 0; i < static_cast<int>(this->config.getLayout()->size()); i++)
     {
         for (int j = 0; j < static_cast<int>(this->config.getLayout()->at(i).size()); j++)
         {
-            std::cout << (*this->config.getLayout())[i][j].getDirtLevel() << " ";
+            LOG(INFO) << (*this->config.getLayout())[i][j].getDirtLevel() << " ";
         }
-        std::cout << std::endl;
+        LOG(INFO) << "" << std::endl;
     }
-    std::cout << "-----------" << std::endl;
+    LOG(INFO) << "-----------" << std::endl;
 
 }
 
@@ -83,15 +82,13 @@ bool Robot::canContinue()
     bool stuck = !this->location.isChargingStation() && this->battery_sensor.batteryLevel() <= 0;
     bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
     if (cleaned_all){
-        std::cout << "Cleaned all and at charging station, exiting..." << std::endl;
-        exit_cond = 0;
+        LOG(INFO) << "Cleaned all and at charging station, exiting..." << std::endl;
     }
     else if(stuck){
-        std::cout << "Stuck and battery is empty, exiting..." << std::endl;
-        exit_cond = 1;
+        LOG(INFO) << "Stuck and battery is empty, exiting..." << std::endl;
     }
     else if (!still_have_steps){
-        std::cout << "Reached max steps allowed, exiting..." << std::endl;
+        LOG(INFO) << "Reached max steps allowed, exiting..." << std::endl;
     }
     return still_have_steps && !cleaned_all && !stuck;
 }
