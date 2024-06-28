@@ -134,11 +134,11 @@ struct StepInfo {
 
     // TODO(Sasha): this should not be a string.
     std::string Serialize() const {
-        return std::to_string(-point.y) + " " + std::to_string(point.x) + " " + std::to_string(battery_level);
+        return std::to_string(point.y) + " " + std::to_string(point.x) + " " + std::to_string(battery_level);
     }
 
     std::string toOutputString() const {
-        return std::to_string(-point.y) + " " + std::to_string(point.x);
+        return std::to_string(point.y) + " " + std::to_string(point.x);
     }
 };
 
