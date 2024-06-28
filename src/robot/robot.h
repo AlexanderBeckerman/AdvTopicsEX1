@@ -19,12 +19,13 @@ private:
     Algorithm algorithm;
     size_t curr_steps = 0;
     std::vector<std::string> path;
+    size_t exit_cond;
 
 
     void clean();
     bool canContinue();
     void addToPath();
-    void logPath() const;
+    void logOutput() const;
 
 public:
     Robot(ConfigInfo &cfg) : config(cfg), 

@@ -51,8 +51,6 @@ void Robot::clean()
     // std::cout << "Battery level: " << this->battery_sensor.batteryLevel() << std::endl;
     this->battery_sensor.decreaseCharge();
 
-
-
 }
 
 void Robot::start(){
@@ -61,7 +59,7 @@ void Robot::start(){
     {
         this->step();
     }
-    logPath();
+    logOutput();
 }
 
 void Robot::printLayout()
@@ -86,9 +84,11 @@ bool Robot::canContinue()
     bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
     if (cleaned_all){
         std::cout << "Cleaned all and at charging station, exiting..." << std::endl;
+        exit_cond = 0;
     }
     else if(stuck){
         std::cout << "Stuck and battery is empty, exiting..." << std::endl;
+        exit_cond = 1;
     }
     else if (!still_have_steps){
         std::cout << "Reached max steps allowed, exiting..." << std::endl;
@@ -102,18 +102,33 @@ void Robot::addToPath(){
     this->path.push_back(s);
 }
 
-void Robot::logPath() const
+void Robot::logOutput() const
 {
-    // log the path vector of directions into a file:
-    std::ofstream file;
-    file.open("../../../output/moves.txt");
+    std::ofstream moves; // moves file for the visualization (also contains battery data)
+    std::ofstream output;
+    moves.open("../../../output/moves.txt");
+    output.open(this->config.output_path);
     Coordinate point = (Coordinate)this->config.getChargingStation();
-    file << -point.y << " " << point.x << " " << this->config.getMaxBatterySteps() <<"\n";
+    moves << -point.y << " " << point.x << " " << this->config.getMaxBatterySteps() <<"\n";
+    output << -point.y << " " << point.x << "\n";
     for (auto &d : this->path)
     {
-        file << d << "\n";
+        std::istringstream iss(d);
+        std::string y, x, battery;
+        iss >> y >> x >> battery;
+        moves << y << " " <<  x << " " << battery << "\n";
+        output << y << " " << x << "\n";
     }
-    file.close();
+    output << "Total number of steps performed: " << this->curr_steps << "\n";
+    output << "Amount of dirt left: " << this->config.getAmountToClean() << "\n";
+    if (exit_cond == 0){
+        output << "Success! no dirt left and robot is at the docking station." << "\n";
+    }
+    else if(exit_cond == 1){
+        output << "Battery is empty and the robot is stuck!" << "\n";
+    }
+    moves.close();
+    output.close();
 
 }
 
