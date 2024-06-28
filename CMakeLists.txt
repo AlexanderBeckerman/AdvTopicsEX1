@@ -11,7 +11,7 @@ project(MyProject)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_compile_options(-Wall -Wextra -Werror -pedantic)
+add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic)
 
 # Add subdirectories
 add_subdirectory(src/algorithm)

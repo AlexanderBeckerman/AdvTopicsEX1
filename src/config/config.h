@@ -23,7 +23,9 @@ class ConfigInfo
     friend Robot;
 
 public:
-    ConfigInfo(std::string path);
+    std::string input_path;
+    std::string output_path;
+    ConfigInfo(std::string input_path, std::string output_path);
     void draw();
     void setValueAt(LayoutPoint position, int value);
     int getValueAt(LayoutPoint position) const;

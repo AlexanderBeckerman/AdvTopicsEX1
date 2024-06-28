@@ -5,6 +5,7 @@ import matplotlib.animation as animation
 
 def read_input_file(file_path):
     matrix = []
+    max_cols = 0
     counter = 0
     with open(file_path, 'r') as file:
         for line in file:
@@ -18,9 +19,11 @@ def read_input_file(file_path):
      # Add a border of walls (-2) around the original matrix
     rows = len(matrix)
     cols = len(matrix[0])
+    if cols > max_cols:
+        max_cols = cols
     
     # Create a new matrix with an extra border of -2s (walls)
-    bordered_matrix = [[-2] * (cols + 2)]
+    bordered_matrix = [[-2] * (max_cols + 2)]
     for row in matrix:
         bordered_matrix.append([-2] + row + [-2])
     bordered_matrix.append([-2] * (cols + 2))
@@ -122,7 +125,7 @@ def animate_robot(moves, matrix):
     plt.show()
 
 def main():
-    map_file_path = '../../input/input.txt' # Adjust this path to your input file location
+    map_file_path = '../../input/input_b.txt' # Adjust this path to your input file location
     moves_file_path = '../../output/moves.txt' # Adjust this path to your moves file location
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
