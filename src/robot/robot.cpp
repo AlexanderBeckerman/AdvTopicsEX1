@@ -95,6 +95,9 @@ bool Robot::canContinue()
 
 void Robot::logStep(){
     Coordinate point = (Coordinate)this->config.getChargingStation() + this->location;
+    Coordinate charging_idx = (Coordinate)this->config.getChargingStation();
+    Coordinate robot_idx = (Coordinate)this->getLocation();
+    Coordinate point = {charging_idx.x + robot_idx.x, charging_idx.y - robot_idx.y};
     StepInfo s = {point, this->battery_sensor.batteryLevel()};
     this->steps_info.push_back(s);
 }

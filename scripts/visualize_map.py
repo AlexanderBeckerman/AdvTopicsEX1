@@ -16,19 +16,30 @@ def read_input_file(file_path):
             row = list(map(int, line.strip().split()))
             matrix.append(row)
     
-     # Add a border of walls (-2) around the original matrix
-    rows = len(matrix)
-    cols = len(matrix[0])
-    if cols > max_cols:
-        max_cols = cols
+     # Determine the maximum number of columns
+    max_columns = max(len(row) for row in matrix)
     
-    # Create a new matrix with an extra border of -2s (walls)
-    bordered_matrix = [[-2] * (max_cols + 2)]
+    # Create a uniform matrix with each row having the same number of columns
     for row in matrix:
-        bordered_matrix.append([-2] + row + [-2])
-    bordered_matrix.append([-2] * (cols + 2))
+        while len(row) < max_columns:
+            row.append(-2)
+    return wrap_matrix_with_layer(matrix)
+
+def wrap_matrix_with_layer(matrix):
+    rows = len(matrix)
+    cols = len(matrix[0]) if rows > 0 else 0
+    new_rows = rows + 2
+    new_cols = cols + 2
     
-    return bordered_matrix
+    # Create a new matrix filled with -2's
+    wrapped_matrix = [[-2 for _ in range(new_cols)] for _ in range(new_rows)]
+    
+    # Copy the original matrix to the center of the new matrix
+    for i in range(rows):
+        for j in range(cols):
+            wrapped_matrix[i + 1][j + 1] = matrix[i][j]
+    
+    return wrapped_matrix
 
 def read_moves_file(moves_file_path):
     moves = []
@@ -45,7 +56,7 @@ def draw_map(ax, matrix):
     texts = []
     # Create a color map for the different values
     cmap = plt.cm.Blues
-    norm = plt.Normalize(vmin=-1, vmax=9)
+    norm = plt.Normalize(vmin=0, vmax=9)
 
     # Define specific colors for walls and charging stations
     color_map = {-2: 'black', -1: 'green'}
