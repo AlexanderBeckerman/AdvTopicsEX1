@@ -41,9 +41,9 @@ public:
     void start();
     void debug()
     {
-        std::cout << "Robot at: " << location << std::endl;
-        std::cout << "Battery level: " << battery_sensor.batteryLevel() << std::endl;
-        std::cout << "Max steps: " << config.max_steps << std::endl;
+        LOG(INFO) << "Robot at: " << location << "" << std::endl;
+        LOG(INFO) << "Battery level: " << battery_sensor.batteryLevel() << "" << std::endl;
+        LOG(INFO) << "Max steps: " << config.max_steps << "" << std::endl;
     }
     void printLayout();
     Location getLocation() const { return location; }

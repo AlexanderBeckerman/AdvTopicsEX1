@@ -13,5 +13,5 @@ cd src/main
 
 # Step 3: Run the Python script to visualize the robot's path
 echo "Running the Python script..."
-cd ../../../src/utils/
+cd ../.../../scripts/
 python3 visualize_map.py

@@ -5,7 +5,6 @@
 bool DirtSensor::isDirty()
 {
     // This function will check if the current tile is dirty
-    // std::cout << "ROBOT LOCATION: " << robot.getLocation() << std::endl;
     Coordinate charging_idx = (Coordinate)robot.config.getChargingStation();
     Coordinate robot_idx = (Coordinate)robot.getLocation();
     Coordinate point = {charging_idx.x + robot_idx.x, charging_idx.y - robot_idx.y};
@@ -17,20 +16,10 @@ bool DirtSensor::isDirty()
 int DirtSensor::DirtLevel()
 {
     // This function will return the dirt level of the current tile
-    // std::cout << "ROBOT LOCATION: " << robot.getLocation() << std::endl;
     Coordinate charging_idx = (Coordinate)robot.config.getChargingStation();
     Coordinate robot_idx = (Coordinate)robot.getLocation();
     Coordinate point = {charging_idx.x + robot_idx.x, charging_idx.y - robot_idx.y};
     Tile t = (*layout)[point.y][point.x];
-    // std::cout << "--- LAYOUT INFORMATION ---" << std::endl;
-    // for (int i = 0; i < layout->size(); i++)
-    // {
-    //     for (int j = 0; j < layout->at(i).size(); j++)
-    //     {
-    //         std::cout << (*layout)[i][j].getDirtLevel() << " ";
-    //     }
-    //     std::cout << std::endl;
-    // }
     return t.getDirtLevel();
 }
 

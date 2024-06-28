@@ -35,15 +35,15 @@ public:
         switch (type)
         {
         case TileType::WALL:
-            std::cout << "W";
+            LOG(INFO) << "W";
             break;
         case TileType::CHARGING_STATION:
-            std::cout << "C";
+            LOG(INFO) << "C";
             break;
         case TileType::FLOOR:
-            std::cout << dirt_level;
+            LOG(INFO) << dirt_level;
             break;
         }
-        std::cout << " ";
+        LOG(INFO) << " ";
     }
 };
