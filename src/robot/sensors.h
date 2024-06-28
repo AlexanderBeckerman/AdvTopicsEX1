@@ -6,25 +6,12 @@
 
 class Robot;
 
-class Sensor
+class DirtSensor
 {
-protected:
     std::shared_ptr<TileLayout> layout;
-    
     Robot &robot;
-
 public:
-    Sensor(std::shared_ptr<TileLayout> &layout, Robot &r) : layout(layout), robot(r) {}
-    Sensor(Robot &r) : robot(r) {}
-};
-
-class DirtSensor : public Sensor
-{
-public:
-    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
-    {
-        // Initialize the sensor
-    }
+    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r) : layout(layout), robot(r) {}
 
     bool isDirty(); // Check if the current tile is dirty.
 
@@ -32,17 +19,16 @@ public:
     Tile &getCurrentTile();
 };
 
-class WallSensor : public Sensor
+class WallSensor
 {
+    std::shared_ptr<TileLayout> layout;
+    Robot &robot;
 
 public:
-    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r) : Sensor(layout, r)
-    {
-        // Initialize the sensor
-    }
+    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r) : layout(layout), robot(r) {}
 
-    bool isWall(Direction direction); // Check if the sensor is detecting a wall/
-    Tile getWallTile(Direction d) const;
+    bool isWall(const Direction direction); // Check if the sensor is detecting a wall/
+    Tile getWallTile(const Direction d) const;
 };
 
 class BatterySensor
@@ -52,12 +38,12 @@ class BatterySensor
     size_t steps_at_charging = 0;
 
 public:
-    BatterySensor(size_t capacity, size_t charge = 0) : capacity(capacity), charge(charge) {}
+    BatterySensor(int capacity, int charge = 0) : capacity(capacity), charge(charge) {}
 
     size_t batteryLevel(){
         // Update battery level.
         if (steps_at_charging != 0)
-            return  std::min(capacity, charge + steps_at_charging * (capacity / 20));
+            return std::min(capacity, (static_cast<size_t>(charge + (steps_at_charging) * (static_cast<float>(capacity) / 20))));
         
         return charge;
     }
@@ -69,7 +55,7 @@ public:
 
     void stopCharging(){
         // Stop charging the battery.
-        charge = std::min(capacity, charge + steps_at_charging * (capacity / 20));
+        charge = std::min(capacity, (static_cast<size_t>(charge + static_cast<float>(steps_at_charging) * (static_cast<float>(capacity) / 20))));
         steps_at_charging = 0;
     }
 

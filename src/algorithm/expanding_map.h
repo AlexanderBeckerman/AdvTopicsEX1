@@ -1,7 +1,8 @@
 #pragma once
 #include "utils.h"
 #include <unordered_map>
-#include <tile.h>
+#include <optional>
+#include "tile.h"
 
 class ExpandingMap
 {
@@ -11,5 +12,5 @@ class ExpandingMap
 public:
     ExpandingMap() : charging_station({0, 0}){}; 
     void addTile(const Coordinate loc, Tile &tile);
-    Tile &getTile(const Coordinate &loc);
+    std::optional<std::reference_wrapper<Tile>> getTile(const Coordinate &loc);
 };

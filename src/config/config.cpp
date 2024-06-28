@@ -5,11 +5,11 @@
 The map constructor will initialize the robot data members (max steps, max battery steps etc.) by reading the input.txt. */
 
 // This function reads the input.txt file and initializes the map and robot data members.
-ConfigInfo::ConfigInfo(const std::string path)
+ConfigInfo::ConfigInfo(const std::string path, const std::string output_path)
 {
     std::string line;
     std::shared_ptr<TileLayout> layout(new TileLayout());
-
+    this->output_path = output_path;
     std::ifstream file(path);
     if (!file)
     {
@@ -68,7 +68,8 @@ void ConfigInfo::setValueAt(LayoutPoint loc, int value)
 }
 
 void ConfigInfo::clean(LayoutPoint p)
-{
+{   
+    std::cout << "Cleaning tile at" << p.x << ","  << p.y << std::endl;
     int value = (*topograhpy_data)[p.y][p.x].getDirtLevel();
     if (value <= 0)
     {
@@ -95,11 +96,12 @@ void ConfigInfo::print() const
         }
         std::cout << std::endl;
     }
+    std::cout << "-----------" << std::endl;
 }
 
 bool ConfigInfo::checkInRange(LayoutPoint p) const
 {
-    if (p.y < 0 || p.y >= topograhpy_data->size() || p.x < 0 || p.x >= (*topograhpy_data)[p.y].size())
+    if (p.y < 0 || p.y >= static_cast<int>(topograhpy_data->size()) || p.x < 0 || p.x >= static_cast<int>((*topograhpy_data)[p.y].size()))
     {
         std::cout << "Index out of range" << std::endl;
         return false;

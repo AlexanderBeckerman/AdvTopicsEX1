@@ -13,16 +13,19 @@ protected:
 
 private:
     WallSensor wall_sensor;
-    DirtSensor dirt_sensor;
     BatterySensor battery_sensor;
-
-    int curr_steps = 0;
-
-    Algorithm algorithm;
+    DirtSensor dirt_sensor;
     Location location;
+    Algorithm algorithm;
+    size_t curr_steps = 0;
+    std::vector<std::string> path;
+    size_t exit_cond;
+
 
     void clean();
     bool canContinue();
+    void addToPath();
+    void logOutput() const;
 
 public:
     Robot(ConfigInfo &cfg) : config(cfg), 
@@ -30,9 +33,10 @@ public:
                              battery_sensor(config.max_battery_steps,config.max_battery_steps),
                              dirt_sensor(cfg.getLayout(), *this),
                              location({0, 0}),
-                             algorithm(dirt_sensor, wall_sensor, battery_sensor) {}
+                             algorithm(dirt_sensor, wall_sensor, battery_sensor) { 
+                                this->path.reserve(config.max_steps);}
 
-    void move(Direction direction);
+    void move(const Direction direction);
     void step();
     void start();
     void debug()
@@ -49,4 +53,7 @@ public:
     friend WallSensor;
     friend DirtSensor;
     friend BatterySensor;
+    friend class AlgorithmTest;
+    friend class RobotTest;
+    friend class ExpandingMapTest;
 };

@@ -16,6 +16,26 @@ enum Direction
     STAY,
 };
 
+inline bool trueWithProb(int prob){
+    return rand()%100 < prob;
+}
+
+inline Direction getOppositeDirection(const Direction d){
+    switch(d){
+        case Direction::UP:
+            return Direction::DOWN;
+        case Direction::DOWN:
+            return Direction::UP;
+        case Direction::LEFT:
+            return Direction::RIGHT;
+        case Direction::RIGHT:
+            return Direction::LEFT;
+        default:
+            return Direction::STAY;
+    }
+
+}
+
 inline std::ostream& operator<<(std::ostream& out, const Direction d){
     switch(d){
         case Direction::UP:
@@ -53,7 +73,7 @@ struct Coordinate
         return lhs.x == rhs.x && lhs.y == rhs.y;
     }
 
-    friend Coordinate operator+(const Coordinate &lhs, Direction rhs)
+    friend Coordinate operator+(const Coordinate &lhs, const Direction rhs)
     {
         switch (rhs)
         {
@@ -65,8 +85,9 @@ struct Coordinate
             return Coordinate{lhs.x - 1, lhs.y};
         case Direction::RIGHT:
             return Coordinate{lhs.x + 1, lhs.y};
+        default:
+            return lhs;
         }
-        return lhs;
     }
 
      friend Coordinate operator+(const Coordinate &lhs, const Coordinate &rhs){
@@ -77,7 +98,7 @@ struct Coordinate
 struct Location : public Coordinate {
     Location(int x, int y) : Coordinate{x, y} {}
     
-    friend Location operator+(const Location &lhs, Direction rhs){
+    friend Location operator+(const Location &lhs, const Direction rhs){
         Coordinate cord = (Coordinate)lhs + rhs;
         return Location{cord.x, cord.y};
     }
