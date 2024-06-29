@@ -18,7 +18,7 @@ private:
     Location location;
     Algorithm algorithm;
     size_t curr_steps = 0;
-    size_t exit_cond;
+    size_t exit_cond = 0;
 
 
     void clean();

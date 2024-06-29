@@ -86,9 +86,11 @@ bool Robot::canContinue()
     }
     else if(stuck){
         LOG(INFO) << "Stuck and battery is empty, exiting..." << std::endl;
+        this->exit_cond = 1;
     }
     else if (!still_have_steps){
         LOG(INFO) << "Reached max steps allowed, exiting..." << std::endl;
+        this->exit_cond = 2;
     }
     return still_have_steps && !cleaned_all && !stuck;
 }

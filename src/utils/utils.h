@@ -155,7 +155,12 @@ inline std::string getOutputMessage (int exit_cond){
     if (exit_cond == 0){
        return "Success! no dirt left and robot is at the docking station.\n" ;
     }
-    return "Battery is empty and the robot is stuck!\n";
+    else if(exit_cond == 1){
+        return "Battery is empty and the robot is stuck!\n";
+    }
+    else{
+        return "Reached max steps allowed\n";
+    }
 }
 
 
