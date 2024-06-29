@@ -2,7 +2,7 @@
 #include "tile.h"
 #include "robot.h"
 
-bool DirtSensor::isDirty()
+bool DirtSensor::isDirty() const
 {
     // This function will check if the current tile is dirty
     Coordinate charging_idx = (Coordinate)robot.config.getChargingStation();
@@ -13,7 +13,7 @@ bool DirtSensor::isDirty()
     return t.getType() == TileType::FLOOR && t.getDirtLevel() > 0;
 }
 
-int DirtSensor::DirtLevel()
+int DirtSensor::DirtLevel() const
 {
     // This function will return the dirt level of the current tile
     Coordinate charging_idx = (Coordinate)robot.config.getChargingStation();
@@ -23,7 +23,7 @@ int DirtSensor::DirtLevel()
     return t.getDirtLevel();
 }
 
-bool WallSensor::isWall(const Direction direction)
+bool WallSensor::isWall(const Direction direction) const
 {
     // This function will check if there is a wall in the given direction
     Coordinate charging_idx = (Coordinate)robot.config.getChargingStation();

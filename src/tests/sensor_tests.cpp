@@ -9,7 +9,7 @@ protected:
     ConfigInfo *cfg;
     void SetUp() override
     {
-        cfg = new ConfigInfo("../../../input/input.txt");
+        cfg = new ConfigInfo("../../../input/input_a.txt");
     }
 
     void TearDown() override
@@ -22,7 +22,7 @@ TEST_F(SensorTest, isDirtyTest)
 {
     cfg->setValueAt({1, 0}, 4);
     Robot r = Robot(*cfg);
-    DirtSensor &dirt_sensor = r.getDirtSensor();
+    const DirtSensor &dirt_sensor = r.getDirtSensor();
 
     bool is_dirty = dirt_sensor.isDirty();
 
@@ -33,7 +33,7 @@ TEST_F(SensorTest, dirtLevelTest)
 {
     cfg->setValueAt({1, 0}, 4);
     Robot r = Robot(*cfg);
-    DirtSensor &dirt_sensor = r.getDirtSensor();
+    const DirtSensor &dirt_sensor = r.getDirtSensor();
 
     size_t dirt_level = dirt_sensor.DirtLevel();
 
@@ -42,7 +42,7 @@ TEST_F(SensorTest, dirtLevelTest)
 
 TEST_F(SensorTest, isWallTest) {
     Robot r = Robot(*cfg);
-    WallSensor& wall_sensor = r.getWallSensor();
+    const WallSensor& wall_sensor = r.getWallSensor();
     ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
     ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
     ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
@@ -51,6 +51,6 @@ TEST_F(SensorTest, isWallTest) {
 
 TEST_F(SensorTest, batteryLevelTest) {
     Robot r = Robot(*cfg);
-    BatterySensor& battery_sensor = r.getBatterySensor();
+    const BatterySensor& battery_sensor = r.getBatterySensor();
     ASSERT_EQ(battery_sensor.batteryLevel(),cfg->getMaxBatterySteps());
 }
