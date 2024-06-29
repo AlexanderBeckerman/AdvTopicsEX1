@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
     std::string outputPath = "../../../output/" + outputFile;
 
     // Run.
-    Logger::getInstance().setLogFile("../../../output/");
+    Logger::getInstance().setLogFile("../../../output/logs/");
     ConfigInfo config = ConfigInfo(inputPath);
     Robot robot = Robot(config);
     robot.start();

@@ -20,7 +20,7 @@ class Robot {
     size_t exit_cond;
 
     void clean();
-    bool canContinue() const;
+    bool canContinue();
     void logStep();
 
   public:

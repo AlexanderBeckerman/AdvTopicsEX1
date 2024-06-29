@@ -74,7 +74,7 @@ void Robot::printLayout() const {
     LOG(INFO) << "-----------" << std::endl;
 }
 
-bool Robot::canContinue() const {
+bool Robot::canContinue() {
     bool cleaned_all = this->location.isChargingStation() &&
                        this->config.getAmountToClean() == 0;
     bool stuck = !this->location.isChargingStation() &&
@@ -83,10 +83,13 @@ bool Robot::canContinue() const {
     if (cleaned_all) {
         LOG(INFO) << "Cleaned all and at charging station, exiting..."
                   << std::endl;
+        this->exit_cond = 0;
     } else if (stuck) {
         LOG(INFO) << "Stuck and battery is empty, exiting..." << std::endl;
+        this->exit_cond = 1;
     } else if (!still_have_steps) {
         LOG(INFO) << "Reached max steps allowed, exiting..." << std::endl;
+        this->exit_cond = 2;
     }
     return still_have_steps && !cleaned_all && !stuck;
 }

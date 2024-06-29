@@ -51,7 +51,6 @@ TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
 
 TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
     Robot r = Robot(*cfg);
-    Algorithm a = getAlgorithm(r);
     WallSensor &wall_sensor = getWallSensor(r);
 
     while (canContinue(r)) {
