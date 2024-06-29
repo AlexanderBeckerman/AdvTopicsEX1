@@ -1,25 +1,19 @@
-#include <gtest/gtest.h>
-#include "robot.h"
 #include "config.h"
+#include "robot.h"
 #include "sensors.h"
+#include <gtest/gtest.h>
 
-class SensorTest : public ::testing::Test
-{
-protected:
+class SensorTest : public ::testing::Test {
+  protected:
     ConfigInfo *cfg;
-    void SetUp() override
-    {
+    void SetUp() override {
         cfg = new ConfigInfo("../../../input/input_a.txt");
     }
 
-    void TearDown() override
-    {
-        delete cfg;
-    }
+    void TearDown() override { delete cfg; }
 };
 
-TEST_F(SensorTest, isDirtyTest)
-{
+TEST_F(SensorTest, isDirtyTest) {
     cfg->setValueAt({1, 0}, 4);
     Robot r = Robot(*cfg);
     const DirtSensor &dirt_sensor = r.getDirtSensor();
@@ -29,8 +23,7 @@ TEST_F(SensorTest, isDirtyTest)
     ASSERT_TRUE(is_dirty);
 }
 
-TEST_F(SensorTest, dirtLevelTest)
-{
+TEST_F(SensorTest, dirtLevelTest) {
     cfg->setValueAt({1, 0}, 4);
     Robot r = Robot(*cfg);
     const DirtSensor &dirt_sensor = r.getDirtSensor();
@@ -42,7 +35,7 @@ TEST_F(SensorTest, dirtLevelTest)
 
 TEST_F(SensorTest, isWallTest) {
     Robot r = Robot(*cfg);
-    const WallSensor& wall_sensor = r.getWallSensor();
+    const WallSensor &wall_sensor = r.getWallSensor();
     ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
     ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
     ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
@@ -51,6 +44,6 @@ TEST_F(SensorTest, isWallTest) {
 
 TEST_F(SensorTest, batteryLevelTest) {
     Robot r = Robot(*cfg);
-    const BatterySensor& battery_sensor = r.getBatterySensor();
-    ASSERT_EQ(battery_sensor.batteryLevel(),cfg->getMaxBatterySteps());
+    const BatterySensor &battery_sensor = r.getBatterySensor();
+    ASSERT_EQ(battery_sensor.batteryLevel(), cfg->getMaxBatterySteps());
 }
