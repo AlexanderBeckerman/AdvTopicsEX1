@@ -36,6 +36,8 @@ class Algorithm {
                           t); // Add the charging station tile.
     }
 
+    Algorithm(const Algorithm &other) = delete;
+
     Direction nextMove();
 
     friend class AlgorithmTest;
