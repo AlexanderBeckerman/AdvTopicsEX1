@@ -61,7 +61,7 @@ void Robot::start(){
     }
 }
 
-void Robot::printLayout()
+void Robot::printLayout() const
 {
     LOG(INFO) << "--- LAYOUT INFORMATION (INSIDE ROBOT) ---" << std::endl;
     for (int i = 0; i < static_cast<int>(this->config.getLayout()->size()); i++)
@@ -76,7 +76,7 @@ void Robot::printLayout()
 
 }
 
-bool Robot::canContinue()
+bool Robot::canContinue() const
 {
     bool cleaned_all = this->location.isChargingStation() && this->config.getAmountToClean() == 0;
     bool stuck = !this->location.isChargingStation() && this->battery_sensor.batteryLevel() <= 0;
@@ -101,7 +101,7 @@ void Robot::logStep(){
     this->steps_info.push_back(s);
 }
 
-void Robot::dumpStepsInfo(const std::string &output_file){
+void Robot::dumpStepsInfo(const std::string &output_file) const{
     std::ofstream output;
     output.open(output_file);
 
@@ -114,7 +114,7 @@ void Robot::dumpStepsInfo(const std::string &output_file){
     output.close();
 }
 
-void Robot::serializeAndDumpSteps(const std::string &output_file){
+void Robot::serializeAndDumpSteps(const std::string &output_file) const{
     std::ofstream output;
     output.open(output_file);
     output << serializeVecSteps(this->steps_info);

@@ -22,33 +22,39 @@ private:
 
 
     void clean();
-    bool canContinue();
+    bool canContinue() const;
     void logStep();
 
 public:
-    Robot(ConfigInfo &cfg) : config(cfg), 
-                             wall_sensor(cfg.getLayout(), *this),
+    Robot(ConfigInfo &&cfg) :config(std::move(cfg)), 
+                             wall_sensor(config.getLayout(), *this),
                              battery_sensor(config.max_battery_steps,config.max_battery_steps),
-                             dirt_sensor(cfg.getLayout(), *this),
+                             dirt_sensor(config.getLayout(), *this),
+                             location({0, 0}),
+                             algorithm(dirt_sensor, wall_sensor, battery_sensor) { }
+    Robot(ConfigInfo &cfg) : config(cfg), 
+                             wall_sensor(config.getLayout(), *this),
+                             battery_sensor(config.max_battery_steps,config.max_battery_steps),
+                             dirt_sensor(config.getLayout(), *this),
                              location({0, 0}),
                              algorithm(dirt_sensor, wall_sensor, battery_sensor) { }
 
     void move(const Direction direction);
     void step();
     void start();
-    void debug()
+    void debug() const
     {
         LOG(INFO) << "Robot at: " << location << "" << std::endl;
         LOG(INFO) << "Battery level: " << battery_sensor.batteryLevel() << "" << std::endl;
         LOG(INFO) << "Max steps: " << config.max_steps << "" << std::endl;
     }
-    void printLayout();
+    void printLayout() const;
     Location getLocation() const { return location; }
-    WallSensor &getWallSensor() { return wall_sensor; }
-    DirtSensor &getDirtSensor() { return dirt_sensor; }
-    BatterySensor &getBatterySensor() { return battery_sensor; }
-    void dumpStepsInfo(const std::string &output_file);
-    void serializeAndDumpSteps(const std::string &output_file);
+    const WallSensor &getWallSensor() const { return wall_sensor; }
+    const DirtSensor &getDirtSensor() const { return dirt_sensor; }
+    const BatterySensor &getBatterySensor() { return battery_sensor; }
+    void dumpStepsInfo(const std::string &output_file) const;
+    void serializeAndDumpSteps(const std::string &output_file) const;
     friend WallSensor;
     friend DirtSensor;
     friend BatterySensor;

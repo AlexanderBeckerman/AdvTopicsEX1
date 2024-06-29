@@ -30,6 +30,5 @@ int main(int argc, char* argv[])
     robot.dumpStepsInfo(outputPath);
 
     // Output the steps to the visualizer script.
-
     robot.serializeAndDumpSteps("../../../output/moves.txt");
 }

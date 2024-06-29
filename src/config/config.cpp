@@ -54,6 +54,15 @@ ConfigInfo::ConfigInfo(const std::string path)
     this->topograhpy_data = layout;
 }
 
+ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept
+{
+    this->topograhpy_data = std::move(other.topograhpy_data);
+    this->charging_station = other.charging_station;
+    this->max_battery_steps = other.max_battery_steps;
+    this->max_steps = other.max_steps;
+    this->amount_to_clean = other.amount_to_clean;
+}
+
 int ConfigInfo::getValueAt(LayoutPoint loc) const
 {
     if (!checkInRange(loc))
