@@ -1,19 +1,19 @@
 #pragma once
-#include "utils.h"
 #include "tile.h"
+#include "utils.h"
 
 class Robot;
 
 typedef std::vector<std::vector<Tile>> TileLayout;
 struct LayoutPoint : public Coordinate {
-    friend LayoutPoint operator+(const LayoutPoint &lhs, const Coordinate &rhs){
+    friend LayoutPoint operator+(const LayoutPoint &lhs,
+                                 const Coordinate &rhs) {
         Coordinate cord = lhs + rhs;
         return LayoutPoint{cord.x, cord.y};
     }
 };
 
-class ConfigInfo
-{
+class ConfigInfo {
     std::shared_ptr<TileLayout> topograhpy_data;
     LayoutPoint charging_station;
     size_t max_battery_steps;
@@ -22,7 +22,7 @@ class ConfigInfo
 
     friend Robot;
 
-public:
+  public:
     ConfigInfo(std::string input_path);
     ConfigInfo(ConfigInfo &&other) noexcept;
     ConfigInfo(ConfigInfo &other) = default;
@@ -40,14 +40,12 @@ public:
     LayoutPoint getChargingStation() const { return charging_station; }
     size_t getAmountToClean() const { return amount_to_clean; }
 
-private:
+  private:
     bool checkInRange(LayoutPoint p) const;
 };
 
-inline Tile TileFromCode(LayoutPoint loc, int code)
-{
-    switch (code)
-    {
+inline Tile TileFromCode(LayoutPoint loc, int code) {
+    switch (code) {
     case -2:
         return Tile(loc, TileType::WALL);
     case -1:
@@ -59,10 +57,9 @@ inline Tile TileFromCode(LayoutPoint loc, int code)
 
 /*
 The input file will be in the following format:
-The first line will hold the max_battery_steps and max_steps respectively separated by a space.
-After that the map will be represented by a matrix of integers.
-Each integer will be separated by a space.
--2 will represent a wall.
+The first line will hold the max_battery_steps and max_steps respectively
+separated by a space. After that the map will be represented by a matrix of
+integers. Each integer will be separated by a space. -2 will represent a wall.
 -1 will represent a charging station.
 0-9 will represent the cleanliness of the cell, 0 being the cleanest.
 */

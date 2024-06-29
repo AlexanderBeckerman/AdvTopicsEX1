@@ -1,8 +1,8 @@
 
-#include <iostream>
-#include <gtest/gtest.h>
 #include "config.h"
 #include "robot.h"
+#include <gtest/gtest.h>
+#include <iostream>
 
 int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
