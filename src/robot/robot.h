@@ -35,6 +35,8 @@ class Robot {
           dirt_sensor(config.getLayout(), *this), location({0, 0}),
           algorithm(dirt_sensor, wall_sensor, battery_sensor) {}
 
+    Robot(const Robot &other) = delete;
+
     void move(const Direction direction);
     void step();
     void start();
