@@ -110,7 +110,7 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     for (auto &step : this->steps_info) {
         output << step.toOutputString() << "\n";
     }
-    output << "Total number of steps performed: " << this->steps_info.size()
+    output << "Total number of steps performed: " << this->curr_steps
            << "\n";
     output << "Amount of dirt left: " << this->config.getAmountToClean()
            << "\n";
