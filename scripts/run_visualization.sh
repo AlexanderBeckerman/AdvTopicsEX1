@@ -12,5 +12,9 @@ echo "Running the C++ program..."
 cd src/main
 ./main $1
 
-# Return to starting folder
-cd ../../../
+# Step 3: Run the Python script to visualize the robot's path
+echo "Running the animation using Python..."
+cd ../../../scripts/
+python3 visualize_map.py ../input/$1
+
+cd ../

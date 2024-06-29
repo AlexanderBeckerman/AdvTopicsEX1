@@ -7,10 +7,10 @@ cd build
 cmake ..
 make
 
-# Step 2: Run the compiled C++ program to generate the moves file
-echo "Running the C++ program..."
-cd src/main
-./main $1
+# Step 2: Run the compiled C++ program 
+echo "Running the program tests..."
+cd src/tests/
+./unit_tests 
 
 # Return to starting folder
 cd ../../../
