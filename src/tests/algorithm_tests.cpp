@@ -24,9 +24,9 @@ TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
 
     while (canContinue(r)) {
         battery_before_step = r.getBatterySensor().batteryLevel();
-        Location last_loc = r.getLocation();
+        auto last_loc = r.getLocation();
         r.step();
-        Location curr_loc = r.getLocation();
+        auto curr_loc = r.getLocation();
         ASSERT_FALSE(curr_loc.isChargingStation() && last_loc == curr_loc &&
                      battery_before_step == r.getBatterySensor().getCapacity());
     }
@@ -42,9 +42,9 @@ TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
             continue;
         }
         dirt_before_step = r.getDirtSensor().DirtLevel();
-        Location last_loc = r.getLocation();
+        auto last_loc = r.getLocation();
         r.step();
-        Location curr_loc = r.getLocation();
+        auto curr_loc = r.getLocation();
         ASSERT_FALSE(dirt_before_step == 0 && last_loc == curr_loc);
     }
 }

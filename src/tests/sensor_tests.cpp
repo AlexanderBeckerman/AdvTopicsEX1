@@ -14,7 +14,7 @@ class SensorTest : public ::testing::Test {
 };
 
 TEST_F(SensorTest, isDirtyTest) {
-    cfg->setValueAt({1, 0}, 4);
+    cfg->setValueAt({0, 1}, 4);
     Robot r = Robot(*cfg);
     const DirtSensor &dirt_sensor = r.getDirtSensor();
 
@@ -24,7 +24,7 @@ TEST_F(SensorTest, isDirtyTest) {
 }
 
 TEST_F(SensorTest, dirtLevelTest) {
-    cfg->setValueAt({1, 0}, 4);
+    cfg->setValueAt({0, 1}, 4);
     Robot r = Robot(*cfg);
     const DirtSensor &dirt_sensor = r.getDirtSensor();
 
