@@ -1,14 +1,7 @@
 #include "expanding_map.h"
 
-void ExpandingMap::addTile(const Coordinate loc, Tile &tile) {
-    auto search = data.find(loc);
-    if (search == data.end()) {
-        data.insert({loc, tile});
-    }
-}
-
 std::optional<std::reference_wrapper<Tile>>
-ExpandingMap::getTile(const Coordinate &loc) {
+ExpandingMap::getTile(const RelativePoint &loc) {
     auto search = data.find(loc);
     if (search == data.end()) {
         LOG(ERROR) << "No tile at location: " << loc << "" << std::endl;

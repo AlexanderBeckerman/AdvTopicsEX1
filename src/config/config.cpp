@@ -10,7 +10,7 @@ the input.txt. */
 // members.
 ConfigInfo::ConfigInfo(const std::string path) {
     std::string line;
-    std::shared_ptr<TileLayout> layout(new TileLayout());
+    TileLayout layout;
     this->output_path = output_path;
     std::ifstream file(path);
     if (!file) {
@@ -18,7 +18,7 @@ ConfigInfo::ConfigInfo(const std::string path) {
         throw std::runtime_error("Couldn't build ConfigInfo, File not found!");
     }
 
-    int curr_row = 0;
+    size_t curr_row = 0;
     while (getline(file, line)) {
         std::istringstream file_reader(line);
 
@@ -31,24 +31,24 @@ ConfigInfo::ConfigInfo(const std::string path) {
         }
         std::vector<Tile> row;
         int tile_code;
-        int col = 0;
+        size_t col = 0;
         while (file_reader >> tile_code) {
-            LayoutPoint loc{col, curr_row - 1};
+            LayoutPoint loc{curr_row - 1, col};
             if (tile_code == -1) {
                 charging_station = loc;
             }
             col++;
-            row.push_back(TileFromCode(loc, tile_code));
+            row.push_back(TileFromCode(tile_code));
             if (tile_code >= 0) {
                 amount_to_clean += tile_code;
             }
         }
-        layout->push_back(row);
+        layout.push_back(row);
         curr_row++;
     }
 
     file.close();
-    this->topograhpy_data = layout;
+    this->topograhpy_data = std::make_shared<TileLayout>(layout);
 }
 
 ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept {
@@ -62,44 +62,45 @@ ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept {
 int ConfigInfo::getValueAt(LayoutPoint loc) const {
     if (!checkInRange(loc))
         return -1;
-    return (*topograhpy_data)[loc.y][loc.x].getDirtLevel();
+    return (*topograhpy_data)[loc.row][loc.col].getDirtLevel();
 }
 void ConfigInfo::setValueAt(LayoutPoint loc, int value) {
     if (!checkInRange(loc))
-        return;
-    (*topograhpy_data)[loc.y][loc.x] = TileFromCode(loc, value);
+        throw std::out_of_range("Index out of range");
+    (*topograhpy_data)[loc.row][loc.col] = TileFromCode(value);
 }
 
 void ConfigInfo::clean(LayoutPoint p) {
-    LOG(INFO) << "Cleaning tile at" << p.x << "," << p.y << "" << std::endl;
-    int value = (*topograhpy_data)[p.y][p.x].getDirtLevel();
-    if (value <= 0) {
-        LOG(INFO) << "Tile is already clean" << std::endl;
+    LOG(INFO) << "Cleaning tile at" << p.row << "," << p.col << "" << std::endl;
+    Tile &tile = (*topograhpy_data)[p.row][p.col];
+    try {
+        tile.Clean();
+    } catch (std::underflow_error &e) {
+        LOG(ERROR) << "Tile at: " << p << " is already clean" << std::endl;
         return;
     }
-    setValueAt(p, value - 1);
+
     this->amount_to_clean--;
 }
 
-std::shared_ptr<TileLayout> ConfigInfo::getLayout() const {
-    return topograhpy_data;
-}
+std::shared_ptr<TileLayout> ConfigInfo::getLayout() { return topograhpy_data; }
 
-void ConfigInfo::print() const {
-    LOG(INFO) << "Charging station location: " << charging_station.y << ","
-              << charging_station.x << "" << std::endl;
+std::string ConfigInfo::toString() const {
+    std::string output = "";
+    output += "Charging station at: " + charging_station.toString() + "\n";
     for (const auto &row : *topograhpy_data) {
         for (Tile tile : row) {
-            tile.print();
+            output += tile.toString();
         }
-        LOG(INFO) << "" << std::endl;
+        output += "\n";
     }
-    LOG(INFO) << "-----------" << std::endl;
+    output += "-----------\n";
+    return output;
 }
 
 bool ConfigInfo::checkInRange(LayoutPoint p) const {
-    if (p.y < 0 || p.y >= static_cast<int>(topograhpy_data->size()) ||
-        p.x < 0 || p.x >= static_cast<int>((*topograhpy_data)[p.y].size())) {
+    if (p.row >= topograhpy_data->size() ||
+        p.col >= (*topograhpy_data)[p.row].size()) {
         LOG(ERROR) << "Index out of range" << std::endl;
         return false;
     }

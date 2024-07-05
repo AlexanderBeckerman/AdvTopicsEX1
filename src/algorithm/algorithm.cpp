@@ -9,7 +9,7 @@ Direction Algorithm::nextMove() {
 
     // Decide the next move.
     Direction next_direction = selectDirection(getPossibleDirections());
-    Location next_location = this->robot_location + next_direction;
+    RelativePoint next_location = this->robot_location + next_direction;
     if (next_location.isChargingStation()) {
         // Reset the path if we are at the charging station.
         path = std::stack<Direction>();
@@ -20,7 +20,7 @@ Direction Algorithm::nextMove() {
     }
 
     // Update the map with the current tile we discovered.
-    updateMap(Direction::STAY);
+    updateMapFloor();
 
     // Update the current location of the robot
     this->robot_location = next_location;
@@ -58,15 +58,15 @@ void Algorithm::setLocation(const Direction d) {
     this->robot_location = this->robot_location + d;
 }
 
-void Algorithm::updateMap(const Direction d) {
-    if (d != Direction::STAY) {
-        Location l = this->robot_location + d;
-        Tile t = this->wall_sensor.getWallTile(d);
-        this->map.addTile(l, t);
-    } else {
-        Tile &t = this->dirt_sensor.getCurrentTile();
-        this->map.addTile(this->robot_location, t);
-    }
+void Algorithm::updateMapWall(const Direction d) {
+    RelativePoint p = this->robot_location + d;
+    this->map.addWallTile(p);
+}
+
+void Algorithm::updateMapFloor() {
+    if (this->robot_location.isChargingStation())
+        return;
+    this->map.addFloorTile(this->robot_location, this->dirt_sensor.DirtLevel());
 }
 
 std::vector<Direction> Algorithm::getPossibleDirections() {
@@ -91,7 +91,7 @@ std::vector<Direction> Algorithm::getPossibleDirections() {
                               Direction::RIGHT};
     for (auto d : directions) {
         if (this->wall_sensor.isWall(d))
-            updateMap(d);
+            updateMapWall(d);
         else {
             possible_directions.push_back(d);
         }

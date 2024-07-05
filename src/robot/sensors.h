@@ -6,30 +6,40 @@
 
 class Robot;
 
-class DirtSensor {
+class LayoutReader {
+  protected:
     std::shared_ptr<TileLayout> layout;
-    Robot &robot;
+    LayoutPoint location;
 
   public:
-    DirtSensor(std::shared_ptr<TileLayout> layout, Robot &r)
-        : layout(layout), robot(r) {}
+    explicit LayoutReader(std::shared_ptr<TileLayout> layout,
+                          const LayoutPoint &location)
+        : layout(layout), location(location) {}
 
-    bool isDirty() const;
+    const Tile &getCurrentTile() const {
+        return (*layout)[location.row][location.col];
+    }
 
-    int DirtLevel() const;
-    Tile &getCurrentTile();
+    void step(Direction direction) { location = location + direction; }
+
+    friend Robot;
 };
 
-class WallSensor {
-    std::shared_ptr<TileLayout> layout;
-    Robot &robot;
-
+class DirtSensor : public LayoutReader {
   public:
-    WallSensor(std::shared_ptr<TileLayout> layout, Robot &r)
-        : layout(layout), robot(r) {}
+    using LayoutReader::LayoutReader;
+    bool isDirty() const;
+    int DirtLevel() const;
+    Tile &getDirtyTile() {
+        Tile &tile = (*layout)[location.row][location.col];
+        return tile;
+    }
+};
 
+class WallSensor : public LayoutReader {
+  public:
+    using LayoutReader::LayoutReader;
     bool isWall(const Direction direction) const;
-    Tile getWallTile(const Direction d) const;
 };
 
 class BatterySensor {

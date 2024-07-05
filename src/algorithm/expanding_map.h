@@ -1,16 +1,25 @@
 #pragma once
+#include "relative_point.h"
 #include "tile.h"
 #include "utils.h"
 #include <optional>
 #include <unordered_map>
 
 class ExpandingMap {
-    std::unordered_map<Coordinate, Tile, LocationKeyHash, LocationKeyEqual>
-        data;
-    Coordinate charging_station;
+    std::unordered_map<RelativePoint, Tile, PointKeyHash, PointKeyEqual> data;
 
   public:
-    ExpandingMap() : charging_station({0, 0}){};
-    void addTile(const Coordinate loc, Tile &tile);
-    std::optional<std::reference_wrapper<Tile>> getTile(const Coordinate &loc);
+    ExpandingMap() : data(){};
+    void addFloorTile(const RelativePoint &loc, size_t dirt_level) {
+        data.insert({loc, Tile(dirt_level)});
+    }
+    void addWallTile(const RelativePoint &loc) {
+        data.insert({loc, Tile(TileType::WALL)});
+    }
+    void addChargingStationTile(const RelativePoint &loc) {
+        data.insert({loc, Tile(TileType::CHARGING_STATION)});
+    }
+
+    std::optional<std::reference_wrapper<Tile>>
+    getTile(const RelativePoint &loc);
 };

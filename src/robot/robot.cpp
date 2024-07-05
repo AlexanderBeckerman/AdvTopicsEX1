@@ -14,6 +14,9 @@ void Robot::move(const Direction direction) {
     LOG(INFO) << "Current location in grid: " << curr_location << ""
               << std::endl;
     this->location = curr_location + direction;
+    this->wall_sensor.step(direction);
+    this->dirt_sensor.step(direction);
+
     LOG(INFO) << "Battery level: " << this->battery_sensor.batteryLevel() << ""
               << std::endl;
     LOG(INFO) << "New location: " << this->location << "" << std::endl;
@@ -39,10 +42,10 @@ void Robot::step() {
 }
 
 void Robot::clean() {
-    Tile &t = this->dirt_sensor.getCurrentTile();
+    Tile &t = this->dirt_sensor.getDirtyTile();
     LOG(INFO) << "Dirt level before clean: " << t.getDirtLevel() << " | ";
     LOG(INFO) << "Cleaning: " << this->location << " | ";
-    t.setDirtLevel(t.getDirtLevel() - 1);
+    t.Clean();
     this->config.setAmountToClean(this->config.getAmountToClean() - 1);
     LOG(INFO) << "Dirt level after clean: " << t.getDirtLevel() << " | ";
     // TODO(Ohad): log + output. printing for now
@@ -57,21 +60,6 @@ void Robot::start() {
     while (canContinue()) {
         this->step();
     }
-}
-
-void Robot::printLayout() const {
-    LOG(INFO) << "--- LAYOUT INFORMATION (INSIDE ROBOT) ---" << std::endl;
-    for (int i = 0; i < static_cast<int>(this->config.getLayout()->size());
-         i++) {
-        for (int j = 0;
-             j < static_cast<int>(this->config.getLayout()->at(i).size());
-             j++) {
-            LOG(INFO) << (*this->config.getLayout())[i][j].getDirtLevel()
-                      << " ";
-        }
-        LOG(INFO) << "" << std::endl;
-    }
-    LOG(INFO) << "-----------" << std::endl;
 }
 
 bool Robot::canContinue() {
@@ -95,10 +83,7 @@ bool Robot::canContinue() {
 }
 
 void Robot::logStep() {
-    Coordinate charging_idx = (Coordinate)this->config.getChargingStation();
-    Coordinate robot_idx = (Coordinate)this->getLocation();
-    Coordinate point = {charging_idx.x + robot_idx.x,
-                        charging_idx.y - robot_idx.y};
+    auto point = this->wall_sensor.location;
     StepInfo s = {point, this->battery_sensor.batteryLevel()};
     this->steps_info.push_back(s);
 }
@@ -110,8 +95,7 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     for (auto &step : this->steps_info) {
         output << step.toOutputString() << "\n";
     }
-    output << "Total number of steps performed: " << this->curr_steps
-           << "\n";
+    output << "Total number of steps performed: " << this->curr_steps << "\n";
     output << "Amount of dirt left: " << this->config.getAmountToClean()
            << "\n";
     output << getOutputMessage(this->exit_cond);

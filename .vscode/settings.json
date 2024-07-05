@@ -79,6 +79,17 @@
         "ranges": "cpp",
         "span": "cpp",
         "stack": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "*.tcc": "cpp",
+        "codecvt": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "memory_resource": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "string_view": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "text_encoding": "cpp"
     }
 }
