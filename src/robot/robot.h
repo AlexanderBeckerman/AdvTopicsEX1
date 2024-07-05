@@ -12,9 +12,9 @@ class Robot {
     ConfigInfo config;
 
   private:
-    WallSensor wall_sensor;
-    BatterySensor battery_sensor;
-    DirtSensor dirt_sensor;
+    ConcreteWallSensor wall_sensor;
+    ConcreteBatteryMeter battery_sensor;
+    ConcreteDirtSensor dirt_sensor;
     RelativePoint location;
     Algorithm algorithm;
     size_t curr_steps = 0;
@@ -46,19 +46,19 @@ class Robot {
     void start();
     void debug() const {
         LOG(INFO) << "Robot at: " << location << std::endl;
-        LOG(INFO) << "Battery level: " << battery_sensor.batteryLevel() << ""
+        LOG(INFO) << "Battery level: " << battery_sensor.getBatteryState() << ""
                   << std::endl;
         LOG(INFO) << "Max steps: " << config.max_steps << "" << std::endl;
     }
     RelativePoint getLocation() const { return location; }
-    const WallSensor &getWallSensor() const { return wall_sensor; }
-    const DirtSensor &getDirtSensor() const { return dirt_sensor; }
-    const BatterySensor &getBatterySensor() { return battery_sensor; }
+    const ConcreteWallSensor &getWallSensor() const { return wall_sensor; }
+    const ConcreteDirtSensor &getDirtSensor() const { return dirt_sensor; }
+    const ConcreteBatteryMeter &getBatterySensor() { return battery_sensor; }
     void dumpStepsInfo(const std::string &output_file) const;
     void serializeAndDumpSteps(const std::string &output_file) const;
-    friend WallSensor;
-    friend DirtSensor;
-    friend BatterySensor;
+    friend ConcreteWallSensor;
+    friend ConcreteDirtSensor;
+    friend ConcreteBatteryMeter;
     friend class AlgorithmTest;
     friend class RobotTest;
     friend class ExpandingMapTest;

@@ -6,6 +6,24 @@
 
 class Robot;
 
+class WallsSensor {
+  public:
+    virtual ~WallsSensor() {}
+    virtual bool isWall(Direction d) const = 0;
+};
+
+class DirtSensor {
+  public:
+    virtual ~DirtSensor() {}
+    virtual int dirtLevel() const = 0;
+};
+
+class BatteryMeter {
+  public:
+    virtual ~BatteryMeter() {}
+    virtual std::size_t getBatteryState() const = 0;
+};
+
 class LayoutReader {
   protected:
     std::shared_ptr<TileLayout> layout;
@@ -25,33 +43,33 @@ class LayoutReader {
     friend Robot;
 };
 
-class DirtSensor : public LayoutReader {
+class ConcreteDirtSensor : public LayoutReader, public DirtSensor {
   public:
     using LayoutReader::LayoutReader;
     bool isDirty() const;
-    int DirtLevel() const;
+    int dirtLevel() const override;
     Tile &getDirtyTile() {
         Tile &tile = (*layout)[location.row][location.col];
         return tile;
     }
 };
 
-class WallSensor : public LayoutReader {
+class ConcreteWallSensor : public LayoutReader, public WallsSensor {
   public:
     using LayoutReader::LayoutReader;
-    bool isWall(const Direction direction) const;
+    bool isWall(Direction d) const override;
 };
 
-class BatterySensor {
+class ConcreteBatteryMeter : public BatteryMeter {
     size_t capacity;
     size_t charge;
     size_t steps_at_charging = 0;
 
   public:
-    BatterySensor(int capacity, int charge = 0)
+    ConcreteBatteryMeter(int capacity, int charge = 0)
         : capacity(capacity), charge(charge) {}
 
-    size_t batteryLevel() const {
+    size_t getBatteryState() const override {
         // Update battery level.
         if (steps_at_charging != 0)
             return std::min(

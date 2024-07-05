@@ -28,9 +28,9 @@ TEST_F(RobotTest, usedBatteryTest) {
 
     while (canContinue(r)) {
         auto last_loc = r.getLocation();
-        battery_before_step = r.getBatterySensor().batteryLevel();
+        battery_before_step = r.getBatterySensor().getBatteryState();
         r.step();
-        battery_after_step = r.getBatterySensor().batteryLevel();
+        battery_after_step = r.getBatterySensor().getBatteryState();
         ASSERT_FALSE(!last_loc.isChargingStation() &&
                      battery_before_step == battery_after_step);
     }

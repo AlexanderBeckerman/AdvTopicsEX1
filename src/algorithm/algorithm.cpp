@@ -40,7 +40,7 @@ bool Algorithm::shouldMove(const Direction d) // This checks if the robot should
 }
 
 bool Algorithm::notEnoughBattery() {
-    return (this->path.size() >= this->battery_sensor.batteryLevel() - 1) &&
+    return (this->path.size() >= this->battery_sensor.getBatteryState() - 1) &&
            !this->robot_location.isChargingStation();
 }
 
@@ -66,7 +66,7 @@ void Algorithm::updateMapWall(const Direction d) {
 void Algorithm::updateMapFloor() {
     if (this->robot_location.isChargingStation())
         return;
-    this->map.addFloorTile(this->robot_location, this->dirt_sensor.DirtLevel());
+    this->map.addFloorTile(this->robot_location, this->dirt_sensor.dirtLevel());
 }
 
 std::vector<Direction> Algorithm::getPossibleDirections() {
@@ -81,7 +81,7 @@ std::vector<Direction> Algorithm::getPossibleDirections() {
     // So we won't move from charging station without enough battery to come
     // back.
     if ((this->robot_location.isChargingStation() &&
-         this->battery_sensor.batteryLevel() <
+         this->battery_sensor.getBatteryState() <
              0.90 * this->battery_sensor.getCapacity())) {
         possible_directions.push_back(Direction::STAY);
         return possible_directions;

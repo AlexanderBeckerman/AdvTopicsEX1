@@ -8,9 +8,9 @@
 
 class Algorithm {
     // State.
-    DirtSensor &dirt_sensor;
-    WallSensor &wall_sensor;
-    BatterySensor &battery_sensor;
+    ConcreteDirtSensor &dirt_sensor;
+    ConcreteWallSensor &wall_sensor;
+    ConcreteBatteryMeter &battery_sensor;
     ExpandingMap map;
     RelativePoint robot_location;
     std::stack<Direction> path;
@@ -28,7 +28,8 @@ class Algorithm {
     selectDirection(const std::vector<Direction> &possible_directions);
 
   public:
-    Algorithm(DirtSensor &ds, WallSensor &ws, BatterySensor &bs)
+    Algorithm(ConcreteDirtSensor &ds, ConcreteWallSensor &ws,
+              ConcreteBatteryMeter &bs)
         : dirt_sensor(ds), wall_sensor(ws), battery_sensor(bs),
           map(ExpandingMap()), robot_location(RelativePoint{0, 0}) {
         // Add the charging station tile.
