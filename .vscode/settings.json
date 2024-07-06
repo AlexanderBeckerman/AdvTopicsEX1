@@ -1,4 +1,8 @@
-{
+{   "cmake.debugConfig": {
+        "args": [
+            "input_a.txt"
+        ]
+    },
     "files.associations": {
         "algorithm": "cpp",
         "atomic": "cpp",

@@ -39,9 +39,9 @@ class Tile {
         case TileType::WALL:
             return "W";
         case TileType::CHARGING_STATION:
-            return "C";
+            return "D";
         case TileType::FLOOR:
-            return std::format("{}", dirt_level.value());
+            return std::to_string(dirt_level.value());
         }
 
         throw std::invalid_argument("Invalid tile type.");
