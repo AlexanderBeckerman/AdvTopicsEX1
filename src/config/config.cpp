@@ -11,40 +11,45 @@ the input.txt. */
 ConfigInfo::ConfigInfo(const std::string path) {
     std::string line;
     TileLayout layout;
-    this->output_path = output_path;
     std::ifstream file(path);
     if (!file) {
         LOG(ERROR) << "Error: file not found" << std::endl;
         throw std::runtime_error("Couldn't build ConfigInfo, File not found!");
     }
-
-    size_t curr_row = 0;
-    while (getline(file, line)) {
-        std::istringstream file_reader(line);
-
-        if (curr_row ==
-            0) { // Read max_battery_steps and max_steps from first line.
-            file_reader >> this->max_battery_steps;
-            file_reader >> this->max_steps;
-            curr_row++;
-            continue;
-        }
+    try {
+        parseConfigLines(file); // Parse the first 5 lines of the input file.
+    } catch (const std::exception &e) {
+        LOG(ERROR) << "Error parsing file: " << e.what() << std::endl;
+        throw std::runtime_error(
+            "Couldn't build ConfigInfo, Error parsing file");
+    }
+    layout.reserve(this->rows);
+    for (size_t curr_row = 0; curr_row < this->rows; curr_row++) {
+        std::getline(file, line);
         std::vector<Tile> row;
-        int tile_code;
-        size_t col = 0;
-        while (file_reader >> tile_code) {
-            LayoutPoint loc{curr_row - 1, col};
-            if (tile_code == -1) {
-                charging_station = loc;
+        row.reserve(this->cols);
+        auto start = line.begin();
+        for (size_t col = 0; col < this->cols; col++) {
+            LayoutPoint loc{curr_row, col};
+            if (start == line.end() || std::isspace(*start) || line == "") {
+                row.push_back(TileFromCode(0));
+                start++;
+                continue;
+            } else if (*start == 'W') {
+                row.push_back(TileFromCode(-2));
+            } else if (*start == 'D') {
+                this->charging_station = loc;
+                row.push_back(TileFromCode(-1));
+            } else if (std::isdigit(*start)) {
+                size_t dirt = *start - '0';
+                this->amount_to_clean += dirt;
+                row.push_back(TileFromCode(dirt));
+            } else { // If it's non of the above, treat it like space.
+                row.push_back(TileFromCode(0));
             }
-            col++;
-            row.push_back(TileFromCode(tile_code));
-            if (tile_code >= 0) {
-                amount_to_clean += tile_code;
-            }
+            start++;
         }
         layout.push_back(row);
-        curr_row++;
     }
 
     file.close();
@@ -57,6 +62,76 @@ ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept {
     this->max_battery_steps = other.max_battery_steps;
     this->max_steps = other.max_steps;
     this->amount_to_clean = other.amount_to_clean;
+}
+
+void ConfigInfo::parseConfigLines(std::ifstream &file_reader) {
+    std::string line;
+    for (int line_num = 1; line_num < 6; line_num++) {
+        std::getline(file_reader, line);
+        line.erase(std::remove_if(line.begin(), line.end(), ::isspace),
+                   line.end());
+        std::string trimmedLine = line;
+        std::istringstream iss(trimmedLine);
+        std::string prefix;
+        int value;
+        size_t pos;
+
+        switch (line_num) {
+        case 1:
+            // Ignore this line
+            continue;
+        case 2:
+            pos = trimmedLine.find('=');
+            if (pos == std::string::npos ||
+                trimmedLine.substr(0, pos) != "MaxSteps") {
+                throw std::runtime_error("Invalid format in line 2");
+            }
+            value = std::stoi(trimmedLine.substr(pos + 1));
+            if (value < 0) {
+                throw std::runtime_error("Invalid MaxSteps value");
+            }
+            this->max_steps = value;
+            break;
+        case 3:
+            pos = trimmedLine.find('=');
+            if (pos == std::string::npos ||
+                trimmedLine.substr(0, pos) != "MaxBattery") {
+                throw std::runtime_error("Invalid format in line 3");
+            }
+            value = std::stoi(trimmedLine.substr(pos + 1));
+            if (value < 0) {
+                throw std::runtime_error("Invalid MaxBattery value");
+            }
+            this->max_battery_steps = value;
+            break;
+        case 4:
+            pos = trimmedLine.find('=');
+            if (pos == std::string::npos ||
+                trimmedLine.substr(0, pos) != "Rows") {
+                throw std::runtime_error("Invalid format in line 4");
+            }
+            value = std::stoi(trimmedLine.substr(pos + 1));
+            if (value < 0) {
+                throw std::runtime_error("Invalid Rows value");
+            }
+            this->rows = value;
+            break;
+        case 5:
+            pos = trimmedLine.find('=');
+            if (pos == std::string::npos ||
+                trimmedLine.substr(0, pos) != "Cols") {
+                throw std::runtime_error("Invalid format in line 5");
+            }
+            value = std::stoi(trimmedLine.substr(pos + 1));
+            if (value < 0) {
+                throw std::runtime_error("Invalid Cols value");
+            }
+            this->cols = value;
+            break;
+        default:
+            throw std::runtime_error("Unexpected line in the input file");
+        }
+    }
 }
 
 int ConfigInfo::getValueAt(LayoutPoint loc) const {

@@ -13,6 +13,8 @@ class ConfigInfo {
     size_t max_battery_steps;
     size_t max_steps;
     size_t amount_to_clean = 0;
+    size_t rows;
+    size_t cols;
 
     friend Robot;
 
@@ -36,6 +38,7 @@ class ConfigInfo {
 
   private:
     bool checkInRange(LayoutPoint p) const;
+    void parseConfigLines(std::ifstream &file_reader);
 };
 
 inline Tile TileFromCode(int code) {
