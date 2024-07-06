@@ -16,7 +16,7 @@ class SensorTest : public ::testing::Test {
 TEST_F(SensorTest, isDirtyTest) {
     cfg->setValueAt({0, 1}, 4);
     Robot r = Robot(*cfg);
-    const DirtSensor &dirt_sensor = r.getDirtSensor();
+    const ConcreteDirtSensor &dirt_sensor = r.getDirtSensor();
 
     bool is_dirty = dirt_sensor.isDirty();
 
@@ -26,16 +26,16 @@ TEST_F(SensorTest, isDirtyTest) {
 TEST_F(SensorTest, dirtLevelTest) {
     cfg->setValueAt({0, 1}, 4);
     Robot r = Robot(*cfg);
-    const DirtSensor &dirt_sensor = r.getDirtSensor();
+    const ConcreteDirtSensor &dirt_sensor = r.getDirtSensor();
 
-    size_t dirt_level = dirt_sensor.DirtLevel();
+    size_t dirt_level = dirt_sensor.dirtLevel();
 
     ASSERT_EQ(dirt_level, 4);
 }
 
 TEST_F(SensorTest, isWallTest) {
     Robot r = Robot(*cfg);
-    const WallSensor &wall_sensor = r.getWallSensor();
+    const ConcreteWallSensor &wall_sensor = r.getWallSensor();
     ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
     ASSERT_TRUE(wall_sensor.isWall(Direction::DOWN));
     ASSERT_TRUE(wall_sensor.isWall(Direction::LEFT));
@@ -44,6 +44,6 @@ TEST_F(SensorTest, isWallTest) {
 
 TEST_F(SensorTest, batteryLevelTest) {
     Robot r = Robot(*cfg);
-    const BatterySensor &battery_sensor = r.getBatterySensor();
-    ASSERT_EQ(battery_sensor.batteryLevel(), cfg->getMaxBatterySteps());
+    const ConcreteBatteryMeter &battery_sensor = r.getBatterySensor();
+    ASSERT_EQ(battery_sensor.getBatteryState(), cfg->getMaxBatterySteps());
 }

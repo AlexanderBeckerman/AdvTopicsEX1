@@ -6,11 +6,11 @@
 #include <stack>
 #include <vector>
 
-class Algorithm {
+class StupidAlgorithm {
     // State.
     DirtSensor &dirt_sensor;
-    WallSensor &wall_sensor;
-    BatterySensor &battery_sensor;
+    WallsSensor &wall_sensor;
+    BatteryMeter &battery_sensor;
     ExpandingMap map;
     RelativePoint robot_location;
     std::stack<Direction> path;
@@ -28,14 +28,15 @@ class Algorithm {
     selectDirection(const std::vector<Direction> &possible_directions);
 
   public:
-    Algorithm(DirtSensor &ds, WallSensor &ws, BatterySensor &bs)
+    StupidAlgorithm(DirtSensor &ds, WallsSensor &ws,
+                    BatteryMeter &bs)
         : dirt_sensor(ds), wall_sensor(ws), battery_sensor(bs),
           map(ExpandingMap()), robot_location(RelativePoint{0, 0}) {
         // Add the charging station tile.
         this->map.addChargingStationTile(this->robot_location);
     }
 
-    Algorithm(const Algorithm &other) = delete;
+    StupidAlgorithm(const StupidAlgorithm &other) = delete;
 
     Direction nextMove();
 

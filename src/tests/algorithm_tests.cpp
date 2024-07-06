@@ -1,7 +1,7 @@
-#include "algorithm.h"
 #include "config.h"
 #include "robot.h"
 #include "sensors.h"
+#include "stupid_algorithm.h"
 #include <gtest/gtest.h>
 
 class AlgorithmTest : public ::testing::Test {
@@ -13,9 +13,9 @@ class AlgorithmTest : public ::testing::Test {
     }
     void TearDown() override { delete cfg; }
 
-    Algorithm &getAlgorithm(Robot &r) { return r.algorithm; }
+    StupidAlgorithm &getAlgorithm(Robot &r) { return r.algorithm; }
     bool canContinue(Robot &r) { return r.canContinue(); }
-    WallSensor &getWallSensor(Robot &r) { return r.wall_sensor; }
+    ConcreteWallSensor &getWallSensor(Robot &r) { return r.wall_sensor; }
 };
 
 TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
@@ -23,7 +23,7 @@ TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
     size_t battery_before_step = r.getBatterySensor().getCapacity();
 
     while (canContinue(r)) {
-        battery_before_step = r.getBatterySensor().batteryLevel();
+        battery_before_step = r.getBatterySensor().getBatteryState();
         auto last_loc = r.getLocation();
         r.step();
         auto curr_loc = r.getLocation();
@@ -34,14 +34,14 @@ TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
 
 TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
     Robot r = Robot(*cfg);
-    int dirt_before_step = r.getDirtSensor().DirtLevel();
+    int dirt_before_step = r.getDirtSensor().dirtLevel();
 
     while (canContinue(r)) {
         if (r.getLocation().isChargingStation()) {
             r.step();
             continue;
         }
-        dirt_before_step = r.getDirtSensor().DirtLevel();
+        dirt_before_step = r.getDirtSensor().dirtLevel();
         auto last_loc = r.getLocation();
         r.step();
         auto curr_loc = r.getLocation();
@@ -51,7 +51,7 @@ TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
 
 TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
     Robot r = Robot(*cfg);
-    WallSensor &wall_sensor = getWallSensor(r);
+    ConcreteWallSensor &wall_sensor = getWallSensor(r);
 
     while (canContinue(r)) {
         r.step();
@@ -65,6 +65,6 @@ TEST_F(AlgorithmTest, didntGetStuckTest) {
     while (canContinue(r)) {
         r.step();
         ASSERT_FALSE(!r.getLocation().isChargingStation() &&
-                     r.getBatterySensor().batteryLevel() == 0);
+                     r.getBatterySensor().getBatteryState() == 0);
     }
 }

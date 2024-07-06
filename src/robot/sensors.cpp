@@ -3,16 +3,16 @@
 #include "tile.h"
 
 // This function will check if the current tile is dirty.
-bool DirtSensor::isDirty() const {
+bool ConcreteDirtSensor::isDirty() const {
     return this->getCurrentTile().getDirtLevel() > 0;
 }
 
-int DirtSensor::DirtLevel() const {
+int ConcreteDirtSensor::dirtLevel() const {
     // This function will return the dirt level of the current tile
     return this->getCurrentTile().getDirtLevel();
 }
 
-bool WallSensor::isWall(const Direction direction) const {
+bool ConcreteWallSensor::isWall(const Direction direction) const {
     size_t row = location.row;
     size_t col = location.col;
     switch (direction) {

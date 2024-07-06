@@ -17,8 +17,8 @@ void Robot::move(const Direction direction) {
     this->wall_sensor.step(direction);
     this->dirt_sensor.step(direction);
 
-    LOG(INFO) << "Battery level: " << this->battery_sensor.batteryLevel() << ""
-              << std::endl;
+    LOG(INFO) << "Battery level: " << this->battery_sensor.getBatteryState()
+              << "" << std::endl;
     LOG(INFO) << "New location: " << this->location << "" << std::endl;
     this->battery_sensor.decreaseCharge();
 }
@@ -49,8 +49,8 @@ void Robot::clean() {
     this->config.setAmountToClean(this->config.getAmountToClean() - 1);
     LOG(INFO) << "Dirt level after clean: " << t.getDirtLevel() << " | ";
     // TODO(Ohad): log + output. printing for now
-    LOG(INFO) << "Battery level: " << this->battery_sensor.batteryLevel() << ""
-              << std::endl;
+    LOG(INFO) << "Battery level: " << this->battery_sensor.getBatteryState()
+              << "" << std::endl;
     this->battery_sensor.decreaseCharge();
 }
 
@@ -66,7 +66,7 @@ bool Robot::canContinue() {
     bool cleaned_all = this->location.isChargingStation() &&
                        this->config.getAmountToClean() == 0;
     bool stuck = !this->location.isChargingStation() &&
-                 this->battery_sensor.batteryLevel() <= 0;
+                 this->battery_sensor.getBatteryState() <= 0;
     bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
     if (cleaned_all) {
         LOG(INFO) << "Cleaned all and at charging station, exiting..."
@@ -84,7 +84,7 @@ bool Robot::canContinue() {
 
 void Robot::logStep() {
     auto point = this->wall_sensor.location;
-    StepInfo s = {point, this->battery_sensor.batteryLevel()};
+    StepInfo s = {point, this->battery_sensor.getBatteryState()};
     this->steps_info.push_back(s);
 }
 
