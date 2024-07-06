@@ -1,6 +1,6 @@
-#include "algorithm.h"
 #include "config.h"
 #include "robot.h"
+#include "stupid_algorithm.h"
 #include <gtest/gtest.h>
 
 class ExpandingMapTest : public ::testing::Test {

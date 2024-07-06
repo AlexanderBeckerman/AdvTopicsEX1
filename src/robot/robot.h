@@ -1,11 +1,11 @@
 #pragma once
-#include "algorithm.h"
 #include "config.h"
 #include "sensors.h"
 #include "step_info.h"
+#include "stupid_algorithm.h"
 #include "utils.h"
 
-class Algorithm;
+class StupidAlgorithm;
 
 class Robot {
   protected:
@@ -16,7 +16,7 @@ class Robot {
     ConcreteBatteryMeter battery_sensor;
     ConcreteDirtSensor dirt_sensor;
     RelativePoint location;
-    Algorithm algorithm;
+    StupidAlgorithm algorithm;
     size_t curr_steps = 0;
     size_t exit_cond;
 

@@ -1,7 +1,7 @@
-#include "algorithm.h"
 #include "config.h"
 #include "robot.h"
 #include "sensors.h"
+#include "stupid_algorithm.h"
 #include <gtest/gtest.h>
 
 class AlgorithmTest : public ::testing::Test {
@@ -13,7 +13,7 @@ class AlgorithmTest : public ::testing::Test {
     }
     void TearDown() override { delete cfg; }
 
-    Algorithm &getAlgorithm(Robot &r) { return r.algorithm; }
+    StupidAlgorithm &getAlgorithm(Robot &r) { return r.algorithm; }
     bool canContinue(Robot &r) { return r.canContinue(); }
     ConcreteWallSensor &getWallSensor(Robot &r) { return r.wall_sensor; }
 };

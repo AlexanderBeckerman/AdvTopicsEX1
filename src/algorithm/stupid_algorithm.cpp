@@ -1,6 +1,6 @@
-#include "algorithm.h"
+#include "stupid_algorithm.h"
 
-Direction Algorithm::nextMove() {
+Direction StupidAlgorithm::nextMove() {
 
     if (notEnoughBattery()) {
         LOG(INFO) << "returning to charging station" << std::endl;
@@ -27,11 +27,12 @@ Direction Algorithm::nextMove() {
     return next_direction;
 }
 
-bool Algorithm::shouldMove(const Direction d) // This checks if the robot should
-                                              // move in the given direction
+bool StupidAlgorithm::shouldMove(
+    const Direction d) // This checks if the robot should
+                       // move in the given direction
 {
 
-    if (this->dirt_sensor.isDirty() && d == Direction::STAY) {
+    if (this->dirt_sensor.dirtLevel() > 0 && d == Direction::STAY) {
         // We don't want to stay on a clean tile.
         return true;
     }
@@ -39,12 +40,12 @@ bool Algorithm::shouldMove(const Direction d) // This checks if the robot should
         d); // Move if there is no wall in the given direction.
 }
 
-bool Algorithm::notEnoughBattery() {
+bool StupidAlgorithm::notEnoughBattery() {
     return (this->path.size() >= this->battery_sensor.getBatteryState() - 1) &&
            !this->robot_location.isChargingStation();
 }
 
-Direction Algorithm::returnToChargingStation() {
+Direction StupidAlgorithm::returnToChargingStation() {
     // Returns the direction opposite to the one at the top of the stack so we
     // reach the charging station.
     Direction last_dir = this->path.top();
@@ -54,35 +55,38 @@ Direction Algorithm::returnToChargingStation() {
     return opposite_dir;
 }
 
-void Algorithm::setLocation(const Direction d) {
+void StupidAlgorithm::setLocation(const Direction d) {
     this->robot_location = this->robot_location + d;
 }
 
-void Algorithm::updateMapWall(const Direction d) {
+void StupidAlgorithm::updateMapWall(const Direction d) {
     RelativePoint p = this->robot_location + d;
     this->map.addWallTile(p);
 }
 
-void Algorithm::updateMapFloor() {
+void StupidAlgorithm::updateMapFloor() {
     if (this->robot_location.isChargingStation())
         return;
     this->map.addFloorTile(this->robot_location, this->dirt_sensor.dirtLevel());
 }
 
-std::vector<Direction> Algorithm::getPossibleDirections() {
+std::vector<Direction> StupidAlgorithm::getPossibleDirections() {
     std::vector<Direction> possible_directions;
 
     // Clean dirty tile with probabilty of 95%
-    if (this->dirt_sensor.isDirty() && trueWithProb(95)) {
+    if (this->dirt_sensor.dirtLevel() > 0 && trueWithProb(95)) {
         possible_directions.push_back(Direction::STAY);
         return possible_directions;
     }
 
     // So we won't move from charging station without enough battery to come
     // back.
+    // TODO(Sasha): The abstract battery meter does reveal capacity, solve this
+    // or delete this section (dynamic cast here is baf).
     if ((this->robot_location.isChargingStation() &&
          this->battery_sensor.getBatteryState() <
-             0.90 * this->battery_sensor.getCapacity())) {
+             0.90 * (dynamic_cast<ConcreteBatteryMeter &>(this->battery_sensor))
+                        .getCapacity())) {
         possible_directions.push_back(Direction::STAY);
         return possible_directions;
     }
@@ -100,8 +104,8 @@ std::vector<Direction> Algorithm::getPossibleDirections() {
     return possible_directions;
 }
 
-Direction
-Algorithm::selectDirection(const std::vector<Direction> &possible_directions) {
+Direction StupidAlgorithm::selectDirection(
+    const std::vector<Direction> &possible_directions) {
     if (possible_directions.empty()) {
         LOG(ERROR) << "No possible direction." << std::endl;
         return Direction::STAY;
