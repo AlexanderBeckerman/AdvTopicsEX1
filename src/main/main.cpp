@@ -22,12 +22,12 @@ int main(int argc, char *argv[]) {
     // Run.
     Logger::getInstance().setLogFile("../../../output/logs/");
     ConfigInfo config = ConfigInfo(inputPath);
-    Robot robot = Robot(config);
-    robot.start();
+    // Robot robot = Robot(config);
+    // robot.start();
 
     // Output the steps info to the output file.
-    robot.dumpStepsInfo(outputPath);
+    // robot.dumpStepsInfo(outputPath);
 
     // Output the steps to the visualizer script.
-    robot.serializeAndDumpSteps("../../../output/moves.txt");
+    // robot.serializeAndDumpSteps("../../../output/moves.txt");
 }

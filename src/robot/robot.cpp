@@ -23,9 +23,8 @@ void Robot::move(const Direction direction) {
     this->battery_sensor.decreaseCharge();
 }
 
-void Robot::step() {
-    Direction direction = algorithm.nextMove();
-    if (direction == Direction::STAY) {
+void Robot::step(const Step next_step) {
+    if (next_step == Step::Stay) {
         if (this->location.isChargingStation())
             this->battery_sensor.chargeBattery();
         else {
@@ -34,7 +33,8 @@ void Robot::step() {
             this->clean();
         }
     } else {
-        this->move(direction);
+        Direction d = stepToDirection(next_step);
+        this->move(d);
     }
 
     this->curr_steps++;
@@ -54,11 +54,18 @@ void Robot::clean() {
     this->battery_sensor.decreaseCharge();
 }
 
-void Robot::start() {
+void Robot::start(SmartAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
     logStep();
     while (canContinue()) {
-        this->step();
+        Step next_step = algorithm.nextStep();
+        if (next_step == Step::Finish) {
+            LOG(INFO) << "Algorithm returned step finished, exiting..."
+                      << std::endl;
+            this->exit_cond = 0;
+            break;
+        }
+        this->step(next_step);
     }
 }
 

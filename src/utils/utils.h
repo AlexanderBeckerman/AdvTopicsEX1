@@ -19,6 +19,8 @@ enum Direction {
     STAY,
 };
 
+enum class Step { North, East, South, West, Stay, Finish };
+
 inline bool trueWithProb(int prob) { return rand() % 100 < prob; }
 
 inline Direction getOppositeDirection(const Direction d) {
@@ -31,6 +33,23 @@ inline Direction getOppositeDirection(const Direction d) {
         return Direction::RIGHT;
     case Direction::RIGHT:
         return Direction::LEFT;
+    default:
+        return Direction::STAY;
+    }
+}
+
+inline Direction stepToDirection(const Step step) {
+    switch (step) {
+    case Step::North:
+        return Direction::UP;
+    case Step::East:
+        return Direction::RIGHT;
+    case Step::South:
+        return Direction::DOWN;
+    case Step::West:
+        return Direction::LEFT;
+    case Step::Stay:
+        return Direction::STAY;
     default:
         return Direction::STAY;
     }
