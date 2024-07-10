@@ -42,7 +42,7 @@ class Robot {
 
     void move(const Direction direction);
     void step(const Step next_step);
-    void start(SmartAlgorithm &algorithm);
+    void start(AbstractAlgorithm &algorithm);
     void debug() const {
         LOG(INFO) << "Robot at: " << location << std::endl;
         LOG(INFO) << "Battery level: " << battery_sensor.getBatteryState() << ""
@@ -60,6 +60,7 @@ class Robot {
     friend ConcreteBatteryMeter;
     friend class AlgorithmTest;
     friend class RobotTest;
+    friend class SensorTest;
     friend class ExpandingMapTest;
     std::vector<StepInfo> steps_info;
 };

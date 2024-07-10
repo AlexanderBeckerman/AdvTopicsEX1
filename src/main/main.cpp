@@ -1,5 +1,6 @@
 #include "config.h"
 #include "expanding_map.h"
+#include "my_simulator.h"
 #include "robot.h"
 #include "sensors.h"
 #include "stupid_algorithm.h"
@@ -21,13 +22,15 @@ int main(int argc, char *argv[]) {
 
     // Run.
     Logger::getInstance().setLogFile("../../../output/logs/");
-    ConfigInfo config = ConfigInfo(inputPath);
-    // Robot robot = Robot(config);
-    // robot.start();
+    MySimulator simulator = MySimulator();
+    simulator.readHouseFile(inputPath);
+    SmartAlgorithm algorithm;
+    simulator.setAlgorithm(algorithm);
+    simulator.run();
 
     // Output the steps info to the output file.
-    // robot.dumpStepsInfo(outputPath);
+    simulator.dumpStepsInfo(outputPath);
 
     // Output the steps to the visualizer script.
-    // robot.serializeAndDumpSteps("../../../output/moves.txt");
+    simulator.serializeAndDumpSteps("../../../output/moves.txt");
 }

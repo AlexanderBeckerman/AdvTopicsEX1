@@ -24,7 +24,9 @@ class RobotTest : public ::testing::Test {
 
     ConfigInfo &getConfig(MySimulator &sim) { return *sim.config; }
 
-    SmartAlgorithm &getAlgorithm(MySimulator &sim) { return *sim.algorithm; }
+    SmartAlgorithm &getAlgorithm(MySimulator &sim) {
+        return dynamic_cast<SmartAlgorithm &>(*sim.algorithm);
+    }
 };
 
 TEST_F(RobotTest, usedBatteryTest) {

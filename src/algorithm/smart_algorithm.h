@@ -8,11 +8,9 @@
 
 class SmartAlgorithm : public AbstractAlgorithm {
 
-    std::shared_ptr<ConcreteDirtSensor>
-        dirt_sensor; // Had to use shared ptr so we can have an empty
-                     // constructor or else I got an error.
-    std::shared_ptr<ConcreteWallSensor> wall_sensor;
-    std::shared_ptr<ConcreteBatteryMeter> battery_sensor;
+    std::shared_ptr<DirtSensor> dirt_sensor;
+    std::shared_ptr<WallsSensor> wall_sensor;
+    std::shared_ptr<BatteryMeter> battery_sensor;
     ExpandingMap map;
     size_t max_steps;
     RelativePoint robot_location;
@@ -23,21 +21,16 @@ class SmartAlgorithm : public AbstractAlgorithm {
         this->max_steps = maxSteps;
     }
     void setWallsSensor(const WallsSensor &ws) override {
-        // Had to do this weird stuff to convert from abstract to concrete while
-        // using a shared ptr.
-        const ConcreteWallSensor *cws =
-            dynamic_cast<const ConcreteWallSensor *>(&ws);
-        this->wall_sensor = std::make_shared<ConcreteWallSensor>(*cws);
+        this->wall_sensor = std::make_shared<ConcreteWallSensor>(
+            dynamic_cast<const ConcreteWallSensor &>(ws));
     }
     void setDirtSensor(const DirtSensor &ds) override {
-        const ConcreteDirtSensor *cds =
-            dynamic_cast<const ConcreteDirtSensor *>(&ds);
-        this->dirt_sensor = std::make_shared<ConcreteDirtSensor>(*cds);
+        this->dirt_sensor = std::make_shared<ConcreteDirtSensor>(
+            dynamic_cast<const ConcreteDirtSensor &>(ds));
     }
     void setBatteryMeter(const BatteryMeter &bm) override {
-        const ConcreteBatteryMeter *cbm =
-            dynamic_cast<const ConcreteBatteryMeter *>(&bm);
-        this->battery_sensor = std::make_shared<ConcreteBatteryMeter>(*cbm);
+        this->battery_sensor = std::make_shared<ConcreteBatteryMeter>(
+            dynamic_cast<const ConcreteBatteryMeter &>(bm));
     }
     Step nextStep() { return Step::Stay; }
 };

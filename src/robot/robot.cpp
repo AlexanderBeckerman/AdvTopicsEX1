@@ -33,6 +33,7 @@ void Robot::step(const Step next_step) {
             this->clean();
         }
     } else {
+        // TODO(Sasha): Maybe overload move to receieve Step, deprecating this.
         Direction d = stepToDirection(next_step);
         this->move(d);
     }
@@ -54,7 +55,7 @@ void Robot::clean() {
     this->battery_sensor.decreaseCharge();
 }
 
-void Robot::start(SmartAlgorithm &algorithm) {
+void Robot::start(AbstractAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
     logStep();
     while (canContinue()) {
