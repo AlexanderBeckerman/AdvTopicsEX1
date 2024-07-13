@@ -15,6 +15,7 @@ add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic)
 
 # Add subdirectories
 add_subdirectory(src/algorithm)
+add_subdirectory(src/smart_map)
 add_subdirectory(src/robot)
 add_subdirectory(src/tests)
 add_subdirectory(src/config)
