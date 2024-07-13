@@ -5,15 +5,34 @@
 #include "relative_point.h"
 #include "sensors.h"
 #include "utils.h"
+#include <optional>
+#include <stack>
+#include <unordered_set>
 
 class SmartAlgorithm : public AbstractAlgorithm {
-
+    // Configuration.
     std::shared_ptr<DirtSensor> dirt_sensor;
     std::shared_ptr<WallsSensor> wall_sensor;
     std::shared_ptr<BatteryMeter> battery_sensor;
-    ExpandingMap map;
     size_t max_steps;
     RelativePoint robot_location;
+
+    // BFS state
+    std::unordered_set<RelativePoint, RelativePointKeyHash> visited;
+    std::stack<Direction> direction_stack;
+
+    std::optional<std::stack<Direction>> return_path;
+
+    bool isValidMove(const Direction &direction) const {
+        if (wall_sensor->isWall(direction))
+            return false;
+
+        // Not facing a wall.
+        auto new_point = robot_location + direction;
+        return visited.find(new_point) == visited.end();
+    }
+
+    void startReturn();
 
   public:
     SmartAlgorithm() = default;
@@ -32,5 +51,6 @@ class SmartAlgorithm : public AbstractAlgorithm {
         this->battery_sensor = std::make_shared<ConcreteBatteryMeter>(
             dynamic_cast<const ConcreteBatteryMeter &>(bm));
     }
-    Step nextStep() { return Step::Stay; }
+
+    Step nextStep() override;
 };
