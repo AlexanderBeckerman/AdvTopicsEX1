@@ -11,9 +11,9 @@
 
 class SmartAlgorithm : public AbstractAlgorithm {
     // Configuration.
-    std::shared_ptr<DirtSensor> dirt_sensor;
-    std::shared_ptr<WallsSensor> wall_sensor;
-    std::shared_ptr<BatteryMeter> battery_sensor;
+    const DirtSensor* dirt_sensor;
+    const WallsSensor* wall_sensor;
+    const BatteryMeter* battery_sensor;
     size_t max_steps;
     RelativePoint robot_location;
 
@@ -35,21 +35,21 @@ class SmartAlgorithm : public AbstractAlgorithm {
     void startReturn();
 
   public:
-    SmartAlgorithm() = default;
+    SmartAlgorithm() {
+        max_steps = 0;
+        robot_location = {0, 0};
+    }
     void setMaxSteps(std::size_t maxSteps) override {
         this->max_steps = maxSteps;
     }
     void setWallsSensor(const WallsSensor &ws) override {
-        this->wall_sensor = std::make_shared<ConcreteWallSensor>(
-            dynamic_cast<const ConcreteWallSensor &>(ws));
+        this->wall_sensor = &ws;
     }
     void setDirtSensor(const DirtSensor &ds) override {
-        this->dirt_sensor = std::make_shared<ConcreteDirtSensor>(
-            dynamic_cast<const ConcreteDirtSensor &>(ds));
+        this->dirt_sensor = &ds;
     }
     void setBatteryMeter(const BatteryMeter &bm) override {
-        this->battery_sensor = std::make_shared<ConcreteBatteryMeter>(
-            dynamic_cast<const ConcreteBatteryMeter &>(bm));
+        this->battery_sensor = &bm;
     }
 
     Step nextStep() override;

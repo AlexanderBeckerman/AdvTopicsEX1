@@ -5,7 +5,7 @@
 Step SmartAlgorithm::nextStep() {
     // If we are at the charging station, and battery not full we should charge.
     if (robot_location == RelativePoint{0, 0}) {
-        if (battery_sensor->getBatteryState() < 100) {
+        if (battery_sensor->getBatteryState() < 20) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
             return Step::Stay;
         } else {
             // Battery is full, we can start exploring.
@@ -15,17 +15,20 @@ Step SmartAlgorithm::nextStep() {
 
     // If we have a return path, we should follow it.
     if (this->return_path.has_value()) {
+        LOG(INFO) << "Following return path." << std::endl;
         auto &dir = return_path->top();
         return_path->pop();
+        robot_location = robot_location + dir;
         return directionToStep(dir);
     }
 
     // If we are out of battery, we should return to the charging station.
     // Initilize the return path, and follow it.
-    if (battery_sensor->getBatteryState() <= 1) { // TODO
+    if (battery_sensor->getBatteryState() <= 5) { // TODO
         startReturn();
         auto &dir = return_path->top();
         return_path->pop();
+        robot_location = robot_location + dir;
         return directionToStep(dir);
     }
 
@@ -41,6 +44,7 @@ Step SmartAlgorithm::nextStep() {
     for (const auto &dir : allDirections) {
         if (isValidMove(dir)) {
             direction_stack.emplace(dir);
+            robot_location = robot_location + dir;
             return directionToStep(dir);
         }
     }
@@ -56,10 +60,11 @@ Step SmartAlgorithm::nextStep() {
     // We are stuck, backtrack.
     auto &dir = direction_stack.top();
     direction_stack.pop();
+    robot_location = robot_location + dir;
     return directionToStep(oppositeDirection(dir));
 }
 
-std::stack<Step> shortestPathToOrigin(
+std::stack<Direction> shortestPathToOrigin(
     const std::unordered_set<RelativePoint, RelativePointKeyHash>
         &visitedPoints,
     RelativePoint currentLocation) {
@@ -98,7 +103,7 @@ std::stack<Step> shortestPathToOrigin(
     }
 
     // Reconstruct path using parent map
-    std::stack<Step> path;
+    std::stack<Direction> path;
     RelativePoint current = origin;
 
     while (current != parent[current]) {
@@ -106,13 +111,13 @@ std::stack<Step> shortestPathToOrigin(
         int dy = current.y - parent[current].y;
 
         if (dx == -1 && dy == 0) {
-            path.push(Step::North);
+            path.push(Direction::UP);
         } else if (dx == 1 && dy == 0) {
-            path.push(Step::South);
+            path.push(Direction::DOWN);
         } else if (dx == 0 && dy == -1) {
-            path.push(Step::West);
+            path.push(Direction::LEFT);
         } else if (dx == 0 && dy == 1) {
-            path.push(Step::East);
+            path.push(Direction::RIGHT);
         }
 
         current = parent[current];
@@ -123,4 +128,8 @@ std::stack<Step> shortestPathToOrigin(
 
 void SmartAlgorithm::startReturn() {
     std::cout << "Starting return to charging station." << std::endl;
+    LOG(INFO) << "Starting return to charging station." << std::endl;
+    return_path =
+        std::make_optional(shortestPathToOrigin(visited, robot_location));
+    std::cout << "Return path length: " << return_path->size() << std::endl;
 }
