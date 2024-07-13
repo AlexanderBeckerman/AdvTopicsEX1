@@ -2,6 +2,11 @@
 #include "utils.h"
 #include <queue>
 
+std::stack<Direction> shortestPathToOrigin(
+    const std::unordered_set<RelativePoint, RelativePointKeyHash>
+        &visitedPoints,
+    RelativePoint currentLocation);
+
 Step SmartAlgorithm::nextStep() {
     // If we are at the charging station, and battery not full we should charge.
     if (robot_location == RelativePoint{0, 0}) {
@@ -15,6 +20,10 @@ Step SmartAlgorithm::nextStep() {
 
     // If we have a return path, we should follow it.
     if (this->return_path.has_value()) {
+        // This should never happen.
+        if (return_path->empty()) {
+            LOG(ERROR) << "Return path is empty." << std::endl;
+        }
         LOG(INFO) << "Following return path." << std::endl;
         auto &dir = return_path->top();
         return_path->pop();
@@ -24,7 +33,8 @@ Step SmartAlgorithm::nextStep() {
 
     // If we are out of battery, we should return to the charging station.
     // Initilize the return path, and follow it.
-    if (battery_sensor->getBatteryState() <= 5) { // TODO
+    auto return_path_ = shortestPathToOrigin(visited, robot_location); // TODO
+    if (battery_sensor->getBatteryState() - 1 <= return_path_.size()) { 
         startReturn();
         auto &dir = return_path->top();
         return_path->pop();
@@ -50,17 +60,17 @@ Step SmartAlgorithm::nextStep() {
     }
 
     if (direction_stack.empty()) {
-        if (robot_location == RelativePoint{0, 0}) {
-            return Step::Finish;
-        }
+        if (robot_location != RelativePoint{0, 0}) {
         LOG(ERROR) << "No valid moves, and not at charging station."
                    << std::endl;
+        }
+        return Step::Finish;
     }
 
     // We are stuck, backtrack.
     auto &dir = direction_stack.top();
     direction_stack.pop();
-    robot_location = robot_location + dir;
+    robot_location = robot_location + oppositeDirection(dir);
     return directionToStep(oppositeDirection(dir));
 }
 
@@ -111,13 +121,13 @@ std::stack<Direction> shortestPathToOrigin(
         int dy = current.y - parent[current].y;
 
         if (dx == -1 && dy == 0) {
-            path.push(Direction::UP);
-        } else if (dx == 1 && dy == 0) {
-            path.push(Direction::DOWN);
-        } else if (dx == 0 && dy == -1) {
             path.push(Direction::LEFT);
-        } else if (dx == 0 && dy == 1) {
+        } else if (dx == 1 && dy == 0) {
             path.push(Direction::RIGHT);
+        } else if (dx == 0 && dy == -1) {
+            path.push(Direction::DOWN);
+        } else if (dx == 0 && dy == 1) {
+            path.push(Direction::UP);
         }
 
         current = parent[current];

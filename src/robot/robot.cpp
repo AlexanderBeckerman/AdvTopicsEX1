@@ -68,6 +68,7 @@ void Robot::start(AbstractAlgorithm &algorithm) {
         }
         this->step(next_step);
     }
+    LOG(INFO) << "Robot finished job" << std::endl;
 }
 
 bool Robot::canContinue() {

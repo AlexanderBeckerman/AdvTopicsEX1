@@ -38,6 +38,7 @@ class SmartAlgorithm : public AbstractAlgorithm {
     SmartAlgorithm() {
         max_steps = 0;
         robot_location = {0, 0};
+        visited.insert(robot_location);
     }
     void setMaxSteps(std::size_t maxSteps) override {
         this->max_steps = maxSteps;
