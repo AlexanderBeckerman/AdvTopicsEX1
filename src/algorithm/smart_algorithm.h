@@ -11,9 +11,9 @@
 
 class SmartAlgorithm : public AbstractAlgorithm {
     // Configuration.
-    const DirtSensor* dirt_sensor;
-    const WallsSensor* wall_sensor;
-    const BatteryMeter* battery_sensor;
+    const DirtSensor *dirt_sensor;
+    const WallsSensor *wall_sensor;
+    const BatteryMeter *battery_sensor;
     size_t max_steps;
     RelativePoint robot_location;
 

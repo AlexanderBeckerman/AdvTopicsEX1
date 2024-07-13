@@ -10,11 +10,13 @@ std::stack<Direction> shortestPathToOrigin(
 Step SmartAlgorithm::nextStep() {
     // If we are at the charging station, and battery not full we should charge.
     if (robot_location == RelativePoint{0, 0}) {
-        if (battery_sensor->getBatteryState() < 20) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
+        if (battery_sensor->getBatteryState() <
+            20) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
             return Step::Stay;
         } else {
             // Battery is full, we can start exploring.
             return_path = std::nullopt;
+            this->direction_stack = std::stack<Direction>();
         }
     }
 
@@ -34,7 +36,7 @@ Step SmartAlgorithm::nextStep() {
     // If we are out of battery, we should return to the charging station.
     // Initilize the return path, and follow it.
     auto return_path_ = shortestPathToOrigin(visited, robot_location); // TODO
-    if (battery_sensor->getBatteryState() - 1 <= return_path_.size()) { 
+    if (battery_sensor->getBatteryState() - 1 <= return_path_.size()) {
         startReturn();
         auto &dir = return_path->top();
         return_path->pop();
@@ -61,8 +63,8 @@ Step SmartAlgorithm::nextStep() {
 
     if (direction_stack.empty()) {
         if (robot_location != RelativePoint{0, 0}) {
-        LOG(ERROR) << "No valid moves, and not at charging station."
-                   << std::endl;
+            LOG(ERROR) << "No valid moves, and not at charging station."
+                       << std::endl;
         }
         return Step::Finish;
     }
