@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
     simulator.setAlgorithm(algorithm);
     simulator.run();
 
-    // Output the steps info to the output file.
+    // Output the assignment required  info to the output file.
     simulator.dumpStepsInfo(outputPath);
 
     // Output the steps to the visualizer script.

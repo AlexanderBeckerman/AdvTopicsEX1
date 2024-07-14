@@ -4,6 +4,7 @@
 struct StepInfo {
     LayoutPoint point;
     size_t battery_level;
+    Step step;
 
     // TODO(Sasha): this should not be a string.
     std::string Serialize() const {
@@ -13,6 +14,24 @@ struct StepInfo {
 
     std::string toOutputString() const {
         return std::to_string(point.row) + " " + std::to_string(point.col);
+    }
+
+    std::string toOutputStep() const {
+        switch (step) {
+        case Step::North:
+            return "N";
+        case Step::East:
+            return "E";
+        case Step::South:
+            return "S";
+        case Step::West:
+            return "W";
+        case Step::Stay:
+            return "s";
+        case Step::Finish:
+            return "F";
+        }
+        return "Unknown";
     }
 };
 

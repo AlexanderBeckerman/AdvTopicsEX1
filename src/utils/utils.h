@@ -96,13 +96,13 @@ inline std::ostream &operator<<(std::ostream &out, const Direction d) {
     return out;
 }
 
-inline std::string getOutputMessage(int exit_cond) {
+inline std::string getStatus(int exit_cond) {
     if (exit_cond == 0) {
-        return "Success! no dirt left and robot is at the docking station.\n";
+        return "FINISHED";
     } else if (exit_cond == 1) {
-        return "Battery is empty and the robot is stuck!\n";
+        return "DEAD";
     }
-    return "Reached max steps allowed.\n";
+    return "WORKING";
 }
 
 inline std::string addPrefixToFileName(const std::string &filePath) {

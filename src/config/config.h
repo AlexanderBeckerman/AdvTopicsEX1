@@ -24,7 +24,8 @@ class ConfigInfo {
     ConfigInfo(ConfigInfo &other) = default;
     std::string input_path;
     std::string output_path;
-    void draw();
+    void draw() const; // Will write a parsed version of the map to a file for
+                       // the visualization.
     void setValueAt(LayoutPoint position, int value);
     int getValueAt(LayoutPoint position) const;
     void clean(LayoutPoint position);

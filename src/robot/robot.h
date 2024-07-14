@@ -23,7 +23,7 @@ class Robot {
 
     void clean();
     bool canContinue();
-    void logStep();
+    void logStep(const Step step);
 
   public:
     Robot(ConfigInfo &&cfg) noexcept

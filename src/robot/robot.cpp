@@ -39,7 +39,7 @@ void Robot::step(const Step next_step) {
     }
 
     this->curr_steps++;
-    logStep();
+    logStep(next_step);
 }
 
 void Robot::clean() {
@@ -57,17 +57,22 @@ void Robot::clean() {
 
 void Robot::start(AbstractAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
-    logStep();
-    while (canContinue()) {
+    while (this->curr_steps < this->config.getMaxSteps()) {
         Step next_step = algorithm.nextStep();
         if (next_step == Step::Finish) {
             LOG(INFO) << "Algorithm returned step finished, exiting..."
                       << std::endl;
-            this->exit_cond = 0;
-            break;
+            logStep(next_step);
+            this->exit_cond =
+                (this->location.isChargingStation())
+                    ? 0
+                    : 1; // 0 for finished, 1 for dead, 2 for working.
+            return;
         }
         this->step(next_step);
     }
+    this->exit_cond = 2; // If we reached here it means we reached max steps and
+                         // algorithm didnt return finish.
     LOG(INFO) << "Robot finished job" << std::endl;
 }
 
@@ -91,9 +96,9 @@ bool Robot::canContinue() {
     return still_have_steps && !cleaned_all && !stuck;
 }
 
-void Robot::logStep() {
+void Robot::logStep(const Step step) {
     auto point = this->wall_sensor.location;
-    StepInfo s = {point, this->battery_sensor.getBatteryState()};
+    StepInfo s = {point, this->battery_sensor.getBatteryState(), step};
     this->steps_info.push_back(s);
 }
 
@@ -101,14 +106,14 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     std::ofstream output;
     output.open(output_file);
 
-    for (auto &step : this->steps_info) {
-        output << step.toOutputString() << "\n";
-    }
-    output << "Total number of steps performed: " << this->curr_steps << "\n";
-    output << "Amount of dirt left: " << this->config.getAmountToClean()
-           << "\n";
-    output << getOutputMessage(this->exit_cond);
+    output << "NumSteps = " << this->curr_steps << "\n";
+    output << "DirtLeft = " << this->config.getAmountToClean() << "\n";
+    output << "Status = " << getStatus(this->exit_cond) << "\n";
+    output << "Steps: \n";
 
+    for (auto &step : this->steps_info) {
+        output << step.toOutputStep();
+    }
     output.close();
 }
 

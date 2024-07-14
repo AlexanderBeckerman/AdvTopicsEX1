@@ -10,9 +10,6 @@ def read_input_file(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             # skip first line:
-            if counter == 0:
-                counter += 1
-                continue
             row = list(map(int, line.strip().split()))
             matrix.append(row)
     
@@ -140,7 +137,7 @@ def main():
     if len(args) < 2:
         print('Please provide the input file path as argument')
         return
-    map_file_path = args[1] # Adjust this path to your input file location
+    map_file_path = '../output/cleaned_input.txt' # Adjust this path to your parsed map file location
     moves_file_path = '../output/moves.txt' # Adjust this path to your moves file location
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
