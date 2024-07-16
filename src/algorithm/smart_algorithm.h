@@ -17,11 +17,14 @@ class SmartAlgorithm : public AbstractAlgorithm {
     size_t max_steps;
     RelativePoint robot_location;
 
-    // BFS state
+    // DFS state
+    std::unordered_set<RelativePoint, RelativePointKeyHash> cleaned;
     std::unordered_set<RelativePoint, RelativePointKeyHash> visited;
     std::stack<Direction> direction_stack;
 
-    std::optional<std::stack<Direction>> return_path;
+    std::optional<std::stack<Direction>> predetermined_path = std::nullopt;
+    std::optional<RelativePoint> last_return_point = std::nullopt;
+    size_t steps_left = 0;
 
     bool isValidMove(const Direction &direction) const {
         if (wall_sensor->isWall(direction))
@@ -29,19 +32,25 @@ class SmartAlgorithm : public AbstractAlgorithm {
 
         // Not facing a wall.
         auto new_point = robot_location + direction;
-        return visited.find(new_point) == visited.end();
+        return cleaned.find(new_point) == cleaned.end();
     }
 
     void startReturn();
 
   public:
+    ~SmartAlgorithm() override = default;
+    SmartAlgorithm(SmartAlgorithm &) = delete;
+
     SmartAlgorithm() {
         max_steps = 0;
+        steps_left = 0;
         robot_location = {0, 0};
+        cleaned.insert(robot_location);
         visited.insert(robot_location);
     }
     void setMaxSteps(std::size_t maxSteps) override {
         this->max_steps = maxSteps;
+        this->steps_left = maxSteps;
     }
     void setWallsSensor(const WallsSensor &ws) override {
         this->wall_sensor = &ws;
