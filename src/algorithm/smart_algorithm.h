@@ -15,6 +15,7 @@ class SmartAlgorithm : public AbstractAlgorithm {
     const WallsSensor *wall_sensor;
     const BatteryMeter *battery_sensor;
     size_t max_steps;
+    size_t max_battery = 0;
     RelativePoint robot_location;
 
     // DFS state
@@ -59,6 +60,7 @@ class SmartAlgorithm : public AbstractAlgorithm {
         this->dirt_sensor = &ds;
     }
     void setBatteryMeter(const BatteryMeter &bm) override {
+        this->max_battery = bm.getBatteryState();
         this->battery_sensor = &bm;
     }
 

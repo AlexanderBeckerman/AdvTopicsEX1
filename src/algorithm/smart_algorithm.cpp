@@ -14,10 +14,13 @@ shortestPath(const std::unordered_set<RelativePoint, RelativePointKeyHash>
              const RelativePoint &destination);
 
 Step SmartAlgorithm::nextStep() {
+    if (steps_left == 0) {
+        return Step::Finish;
+    }
     // If we are at the charging station, and battery not full we should charge.
     if (robot_location == RelativePoint{0, 0}) {
         if (battery_sensor->getBatteryState() <
-            20) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
+            this->max_battery) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
             steps_left--;
             return Step::Stay;
         } else {
@@ -85,10 +88,15 @@ Step SmartAlgorithm::nextStep() {
 
     if (direction_stack.empty()) {
         if (robot_location != RelativePoint{0, 0}) {
-            LOG(ERROR) << "No valid moves, and not at charging station."
-                       << std::endl;
+            LOG(INFO) << "No valid moves, and not at charging station."
+                      << std::endl;
+            startReturn();
+            steps_left = predetermined_path->size();
+            auto &dir = predetermined_path->top();
+            predetermined_path->pop();
+            robot_location = robot_location + dir;
+            return directionToStep(dir);
         }
-        steps_left--;
         return Step::Finish;
     }
 
