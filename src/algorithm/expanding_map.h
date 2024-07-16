@@ -6,7 +6,8 @@
 #include <unordered_map>
 
 class ExpandingMap {
-    std::unordered_map<RelativePoint, Tile, PointKeyHash, PointKeyEqual> data;
+    std::unordered_map<RelativePoint, Tile, RelativePointKeyHash, PointKeyEqual>
+        data;
 
   public:
     ExpandingMap() : data(){};

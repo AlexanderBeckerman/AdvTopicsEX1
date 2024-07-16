@@ -50,7 +50,7 @@ Direction StupidAlgorithm::returnToChargingStation() {
     // reach the charging station.
     Direction last_dir = this->path.top();
     this->path.pop();
-    Direction opposite_dir = getOppositeDirection(last_dir);
+    Direction opposite_dir = oppositeDirection(last_dir);
     this->robot_location = this->robot_location + opposite_dir;
     return opposite_dir;
 }

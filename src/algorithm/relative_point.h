@@ -41,7 +41,7 @@ struct RelativePoint {
     }
 };
 
-struct PointKeyHash {
+struct RelativePointKeyHash {
     std::size_t operator()(const RelativePoint &k) const {
         return std::hash<int>()(k.x) ^ (std::hash<int>()(k.y) << 1);
     }

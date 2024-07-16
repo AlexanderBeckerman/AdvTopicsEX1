@@ -36,3 +36,4 @@ build/
 
 # Output files
 output/
+.vscode/settings.json

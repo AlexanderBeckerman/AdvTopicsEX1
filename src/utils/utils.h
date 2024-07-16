@@ -19,11 +19,31 @@ enum Direction {
     STAY,
 };
 
+const std::vector<Direction> allDirections = {
+    Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
+
 enum class Step { North, East, South, West, Stay, Finish };
+
+inline Step directionToStep(Direction d) {
+    switch (d) {
+    case Direction::UP:
+        return Step::North;
+    case Direction::DOWN:
+        return Step::South;
+    case Direction::LEFT:
+        return Step::West;
+    case Direction::RIGHT:
+        return Step::East;
+    case Direction::STAY:
+        return Step::Stay;
+    default:
+        return Step::Finish;
+    }
+}
 
 inline bool trueWithProb(int prob) { return rand() % 100 < prob; }
 
-inline Direction getOppositeDirection(const Direction d) {
+inline Direction oppositeDirection(const Direction &d) {
     switch (d) {
     case Direction::UP:
         return Direction::DOWN;
@@ -76,13 +96,13 @@ inline std::ostream &operator<<(std::ostream &out, const Direction d) {
     return out;
 }
 
-inline std::string getOutputMessage(int exit_cond) {
+inline std::string getStatus(int exit_cond) {
     if (exit_cond == 0) {
-        return "Success! no dirt left and robot is at the docking station.\n";
+        return "FINISHED";
     } else if (exit_cond == 1) {
-        return "Battery is empty and the robot is stuck!\n";
+        return "DEAD";
     }
-    return "Reached max steps allowed.\n";
+    return "WORKING";
 }
 
 inline std::string addPrefixToFileName(const std::string &filePath) {

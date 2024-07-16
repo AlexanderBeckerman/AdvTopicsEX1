@@ -54,6 +54,7 @@ ConfigInfo::ConfigInfo(const std::string path) {
 
     file.close();
     this->topograhpy_data = std::make_shared<TileLayout>(layout);
+    this->draw();
 }
 
 ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept {
@@ -164,7 +165,9 @@ std::string ConfigInfo::toString() const {
     std::string output = "";
     output += "Charging station at: " + charging_station.toString() + "\n";
     for (const auto &row : *topograhpy_data) {
-        for (Tile tile : row) {
+        for (const auto &tile : row) {
+            auto dirt = tile.getDirtLevel();
+            std::cout << " Dirt: " << dirt << std::endl;
             output += tile.toString();
         }
         output += "\n";
@@ -180,4 +183,31 @@ bool ConfigInfo::checkInRange(LayoutPoint p) const {
         return false;
     }
     return true;
+}
+
+void ConfigInfo::draw() const {
+    std::ofstream outFile("../../../output/cleaned_input.txt");
+    if (!outFile) {
+        std::cerr << "Failed to open file for writing." << std::endl;
+        return;
+    }
+
+    for (const auto &row : *this->topograhpy_data) {
+        for (const auto &tile : row) {
+            if (tile.getType() == TileType::WALL) {
+                outFile << -2;
+            } else if (tile.getType() == TileType::CHARGING_STATION) {
+                outFile << -1;
+            } else if (tile.getType() == TileType::FLOOR) {
+                outFile << tile.getDirtLevel();
+            }
+            outFile << " "; // Separate each value with a space
+        }
+        outFile << "\n"; // Newline after each row
+    }
+
+    outFile.close();
+    if (!outFile) {
+        std::cerr << "Error occurred while closing the file " << std::endl;
+    }
 }

@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
 import sys
+import os
 
 def read_input_file(file_path):
     matrix = []
@@ -10,9 +11,6 @@ def read_input_file(file_path):
     with open(file_path, 'r') as file:
         for line in file:
             # skip first line:
-            if counter == 0:
-                counter += 1
-                continue
             row = list(map(int, line.strip().split()))
             matrix.append(row)
     
@@ -121,7 +119,7 @@ def animate_robot(moves, matrix):
     
     battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
     ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
-    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=800)
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=100)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))
@@ -140,8 +138,14 @@ def main():
     if len(args) < 2:
         print('Please provide the input file path as argument')
         return
-    map_file_path = args[1] # Adjust this path to your input file location
+    map_file_path = '../output/cleaned_input.txt' # Adjust this path to your parsed map file location
     moves_file_path = '../output/moves.txt' # Adjust this path to your moves file location
+    if not os.path.exists(map_file_path) or not os.path.exists(moves_file_path):
+        print('Error reading input files: File not found')
+        return
+    if (os.path.getsize(map_file_path) == 0) or (os.path.getsize(moves_file_path) == 0):
+        print('Error reading input files: Empty file')
+        return
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
     animate_robot(moves, matrix)
