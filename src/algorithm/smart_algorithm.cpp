@@ -25,6 +25,7 @@ Step SmartAlgorithm::nextStep() {
             if (last_return_point.has_value()) {
                 predetermined_path = shortestPath(visited, robot_location,
                                                   *this->last_return_point);
+                last_return_point = std::nullopt;
             } else {
                 predetermined_path = std::nullopt;
             }
@@ -52,7 +53,9 @@ Step SmartAlgorithm::nextStep() {
     // Initilize the return path, and follow it.
     auto return_path_ = shortestPathToOrigin(
         visited, robot_location); // TODO: don't compute it every time.
-    if (battery_sensor->getBatteryState() - 1 <= return_path_.size()) {
+    size_t return_path_size = return_path_.size();
+    return_path_size += dirt_sensor->dirtLevel() > 0 ? 0 : 1;
+    if (battery_sensor->getBatteryState() - 1 <= return_path_size) {
         startReturn();
         auto &dir = predetermined_path->top();
         predetermined_path->pop();

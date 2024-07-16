@@ -43,7 +43,7 @@ inline Step directionToStep(Direction d) {
 
 inline bool trueWithProb(int prob) { return rand() % 100 < prob; }
 
-inline Direction oppositeDirection(const Direction d) {
+inline Direction oppositeDirection(const Direction &d) {
     switch (d) {
     case Direction::UP:
         return Direction::DOWN;

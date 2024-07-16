@@ -118,7 +118,7 @@ def animate_robot(moves, matrix):
     
     battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
     ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
-    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=800)
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=100)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))
