@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.animation as animation
 import sys
+import os
 
 def read_input_file(file_path):
     matrix = []
@@ -139,6 +140,12 @@ def main():
         return
     map_file_path = '../output/cleaned_input.txt' # Adjust this path to your parsed map file location
     moves_file_path = '../output/moves.txt' # Adjust this path to your moves file location
+    if not os.path.exists(map_file_path) or not os.path.exists(moves_file_path):
+        print('Error reading input files: File not found')
+        return
+    if (os.path.getsize(map_file_path) == 0) or (os.path.getsize(moves_file_path) == 0):
+        print('Error reading input files: Empty file')
+        return
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
     animate_robot(moves, matrix)

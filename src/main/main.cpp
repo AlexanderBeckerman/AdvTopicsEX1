@@ -23,7 +23,13 @@ int main(int argc, char *argv[]) {
     // Run.
     Logger::getInstance().setLogFile("../../../output/logs/");
     MySimulator simulator = MySimulator();
-    simulator.readHouseFile(inputPath);
+    try {
+        simulator.readHouseFile(inputPath); // In case of invalid input file,
+                                            // this might throw an exception.
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n' << std::endl;
+        return 1;
+    }
     SmartAlgorithm algorithm;
     simulator.setAlgorithm(algorithm);
     simulator.run();

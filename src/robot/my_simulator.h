@@ -11,12 +11,7 @@ class MySimulator {
 
   public:
     void readHouseFile(std::string input_path) {
-        try {
-            config = std::make_unique<ConfigInfo>(input_path);
-        } catch (const std::exception &e) {
-            std::cerr << e.what() << '\n' << std::endl;
-        }
-
+        config = std::make_unique<ConfigInfo>(input_path);
         robot = std::make_unique<Robot>(*config);
     }
     void setAlgorithm(AbstractAlgorithm &algorithm) {
