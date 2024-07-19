@@ -4,13 +4,19 @@ import matplotlib.animation as animation
 import sys
 import os
 
+charging_station = []
 def read_input_file(file_path):
     matrix = []
     max_cols = 0
     counter = 0
     with open(file_path, 'r') as file:
         for line in file:
-            # skip first line:
+            if counter == 0:
+                charging_station.append(list(map(int, line.strip().split())))
+                charging_station[0][0] += 1
+                charging_station[0][1] += 1
+                counter += 1
+                continue
             row = list(map(int, line.strip().split()))
             matrix.append(row)
     
@@ -40,7 +46,7 @@ def wrap_matrix_with_layer(matrix):
     return wrapped_matrix
 
 def read_moves_file(moves_file_path):
-    moves = []
+    moves = charging_station
     with open(moves_file_path, 'r') as file:
         for line in file:
             row, col, battery_level = map(int, line.strip().split())
@@ -119,7 +125,7 @@ def animate_robot(moves, matrix):
     
     battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
     ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
-    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=100)
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=300)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))

@@ -16,27 +16,27 @@ bool ConcreteWallSensor::isWall(const Direction direction) const {
     size_t row = location.row;
     size_t col = location.col;
     switch (direction) {
-    case Direction::UP:
+    case Direction::North:
         if (row == 0) {
             return true;
         }
         break;
-    case Direction::DOWN:
+    case Direction::South:
         if (row == layout->size() - 1) {
             return true;
         }
         break;
-    case Direction::LEFT:
+    case Direction::West:
         if (col == 0) {
             return true;
         }
         break;
-    case Direction::RIGHT:
+    case Direction::East:
         if (col == (*layout)[row].size() - 1) {
             return true;
         }
         break;
-    case Direction::STAY:
+    default:
         return false;
     };
     auto layout_point = location + direction;

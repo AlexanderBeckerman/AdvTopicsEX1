@@ -33,7 +33,6 @@ void Robot::step(const Step next_step) {
             this->clean();
         }
     } else {
-        // TODO(Sasha): Maybe overload move to receieve Step, deprecating this.
         Direction d = stepToDirection(next_step);
         this->move(d);
     }

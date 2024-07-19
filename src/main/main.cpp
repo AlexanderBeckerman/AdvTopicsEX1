@@ -3,7 +3,6 @@
 #include "my_simulator.h"
 #include "robot.h"
 #include "sensors.h"
-#include "stupid_algorithm.h"
 #include "utils.h"
 #include <filesystem>
 #include <iostream>

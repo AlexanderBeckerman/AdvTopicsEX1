@@ -4,7 +4,6 @@
 #include "sensors.h"
 #include "smart_algorithm.h"
 #include "step_info.h"
-#include "stupid_algorithm.h"
 #include "utils.h"
 
 class StupidAlgorithm;

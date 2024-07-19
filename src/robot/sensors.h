@@ -52,6 +52,7 @@ class ConcreteDirtSensor : public LayoutReader, public DirtSensor {
         Tile &tile = (*layout)[location.row][location.col];
         return tile;
     }
+    friend class AlgorithmTest;
 };
 
 class ConcreteWallSensor : public LayoutReader, public WallsSensor {
