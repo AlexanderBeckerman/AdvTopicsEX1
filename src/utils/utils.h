@@ -12,30 +12,27 @@
 #include <vector>
 
 enum Direction {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    STAY,
+    North,
+    South,
+    West,
+    East,
 };
 
 const std::vector<Direction> allDirections = {
-    Direction::UP, Direction::DOWN, Direction::LEFT, Direction::RIGHT};
+    Direction::North, Direction::South, Direction::West, Direction::East};
 
 enum class Step { North, East, South, West, Stay, Finish };
 
 inline Step directionToStep(Direction d) {
     switch (d) {
-    case Direction::UP:
+    case Direction::North:
         return Step::North;
-    case Direction::DOWN:
+    case Direction::South:
         return Step::South;
-    case Direction::LEFT:
+    case Direction::West:
         return Step::West;
-    case Direction::RIGHT:
+    case Direction::East:
         return Step::East;
-    case Direction::STAY:
-        return Step::Stay;
     default:
         return Step::Finish;
     }
@@ -45,52 +42,49 @@ inline bool trueWithProb(int prob) { return rand() % 100 < prob; }
 
 inline Direction oppositeDirection(const Direction &d) {
     switch (d) {
-    case Direction::UP:
-        return Direction::DOWN;
-    case Direction::DOWN:
-        return Direction::UP;
-    case Direction::LEFT:
-        return Direction::RIGHT;
-    case Direction::RIGHT:
-        return Direction::LEFT;
+    case Direction::North:
+        return Direction::South;
+    case Direction::South:
+        return Direction::North;
+    case Direction::West:
+        return Direction::East;
+    case Direction::East:
+        return Direction::West;
     default:
-        return Direction::STAY;
+        return Direction::North; // Should not reach here (have to add default
+                                 // to avoid error)
     }
 }
 
 inline Direction stepToDirection(const Step step) {
     switch (step) {
     case Step::North:
-        return Direction::UP;
+        return Direction::North;
     case Step::East:
-        return Direction::RIGHT;
+        return Direction::East;
     case Step::South:
-        return Direction::DOWN;
+        return Direction::South;
     case Step::West:
-        return Direction::LEFT;
-    case Step::Stay:
-        return Direction::STAY;
+        return Direction::West;
     default:
-        return Direction::STAY;
+        return Direction::North; // Should not reach here (have to add default
+                                 // to avoid error)
     }
 }
 
 inline std::ostream &operator<<(std::ostream &out, const Direction d) {
     switch (d) {
-    case Direction::UP:
+    case Direction::North:
         out << "UP";
         break;
-    case Direction::DOWN:
+    case Direction::South:
         out << "DOWN";
         break;
-    case Direction::LEFT:
+    case Direction::West:
         out << "LEFT";
         break;
-    case Direction::RIGHT:
+    case Direction::East:
         out << "RIGHT";
-        break;
-    case Direction::STAY:
-        out << "STAY";
         break;
     }
     return out;

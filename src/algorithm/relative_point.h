@@ -16,13 +16,13 @@ struct RelativePoint {
 
     RelativePoint operator+(const Direction rhs) const {
         switch (rhs) {
-        case Direction::UP:
+        case Direction::North:
             return RelativePoint{x, y + 1};
-        case Direction::DOWN:
+        case Direction::South:
             return RelativePoint{x, y - 1};
-        case Direction::LEFT:
+        case Direction::West:
             return RelativePoint{x - 1, y};
-        case Direction::RIGHT:
+        case Direction::East:
             return RelativePoint{x + 1, y};
         default:
             return *this;

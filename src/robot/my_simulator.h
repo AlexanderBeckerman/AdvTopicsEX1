@@ -33,4 +33,5 @@ class MySimulator {
 
     friend class RobotTest;
     friend class SensorTest;
+    friend class AlgorithmTest;
 };

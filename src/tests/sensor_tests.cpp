@@ -45,10 +45,10 @@ TEST_F(SensorTest, dirtLevelTest) {
 TEST_F(SensorTest, isWallTest) {
     Robot &r = getRobot(*sim);
     const ConcreteWallSensor &wall_sensor = r.getWallSensor();
-    ASSERT_TRUE(wall_sensor.isWall(Direction::UP));
-    ASSERT_FALSE(wall_sensor.isWall(Direction::DOWN));
-    ASSERT_FALSE(wall_sensor.isWall(Direction::LEFT));
-    ASSERT_FALSE(wall_sensor.isWall(Direction::RIGHT));
+    ASSERT_TRUE(wall_sensor.isWall(Direction::North));
+    ASSERT_FALSE(wall_sensor.isWall(Direction::South));
+    ASSERT_FALSE(wall_sensor.isWall(Direction::West));
+    ASSERT_FALSE(wall_sensor.isWall(Direction::East));
 }
 
 TEST_F(SensorTest, batteryLevelTest) {

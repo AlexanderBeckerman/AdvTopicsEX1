@@ -21,13 +21,13 @@ struct LayoutPoint {
 
     friend LayoutPoint operator+(const LayoutPoint &lhs, const Direction rhs) {
         switch (rhs) {
-        case Direction::UP:
+        case Direction::North:
             return LayoutPoint{lhs.row - 1, lhs.col};
-        case Direction::DOWN:
+        case Direction::South:
             return LayoutPoint{lhs.row + 1, lhs.col};
-        case Direction::LEFT:
+        case Direction::West:
             return LayoutPoint{lhs.row, lhs.col - 1};
-        case Direction::RIGHT:
+        case Direction::East:
             return LayoutPoint{lhs.row, lhs.col + 1};
         default:
             return lhs;

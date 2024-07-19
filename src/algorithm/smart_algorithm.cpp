@@ -154,13 +154,13 @@ shortestPath(const std::unordered_set<RelativePoint, RelativePointKeyHash>
         int dy = current.y - parent[current].y;
 
         if (dx == -1 && dy == 0) {
-            path.push(Direction::LEFT);
+            path.push(Direction::West);
         } else if (dx == 1 && dy == 0) {
-            path.push(Direction::RIGHT);
+            path.push(Direction::East);
         } else if (dx == 0 && dy == -1) {
-            path.push(Direction::DOWN);
+            path.push(Direction::South);
         } else if (dx == 0 && dy == 1) {
-            path.push(Direction::UP);
+            path.push(Direction::North);
         }
 
         current = parent[current];

@@ -140,6 +140,13 @@ int ConfigInfo::getValueAt(LayoutPoint loc) const {
         return -1;
     return (*topograhpy_data)[loc.row][loc.col].getDirtLevel();
 }
+
+Tile ConfigInfo::getTileAt(LayoutPoint loc) const {
+    if (!checkInRange(loc))
+        return Tile(TileType::WALL);
+    return (*topograhpy_data)[loc.row][loc.col];
+}
+
 void ConfigInfo::setValueAt(LayoutPoint loc, int value) {
     if (!checkInRange(loc))
         throw std::out_of_range("Index out of range");
@@ -191,7 +198,8 @@ void ConfigInfo::draw() const {
         std::cerr << "Failed to open file for writing." << std::endl;
         return;
     }
-
+    outFile << this->charging_station.row << " " << this->charging_station.col
+            << " " << this->max_battery_steps << "\n";
     for (const auto &row : *this->topograhpy_data) {
         for (const auto &tile : row) {
             if (tile.getType() == TileType::WALL) {
