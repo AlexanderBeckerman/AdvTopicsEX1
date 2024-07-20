@@ -97,7 +97,8 @@ bool Robot::canContinue() {
 
 void Robot::logStep(const Step step) {
     auto point = this->wall_sensor.location;
-    StepInfo s = {point, this->battery_sensor.getBatteryState(), step};
+    StepInfo s = {point, this->battery_sensor.getBatteryState(), step,
+                  this->config.getMaxSteps() - this->curr_steps};
     this->steps_info.push_back(s);
 }
 

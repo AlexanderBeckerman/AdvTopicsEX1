@@ -199,7 +199,7 @@ void ConfigInfo::draw() const {
         return;
     }
     outFile << this->charging_station.row << " " << this->charging_station.col
-            << " " << this->max_battery_steps << "\n";
+            << " " << this->max_battery_steps << " " << this->max_steps << "\n";
     for (const auto &row : *this->topograhpy_data) {
         for (const auto &tile : row) {
             if (tile.getType() == TileType::WALL) {

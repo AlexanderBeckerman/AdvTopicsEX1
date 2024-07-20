@@ -49,8 +49,8 @@ def read_moves_file(moves_file_path):
     moves = charging_station
     with open(moves_file_path, 'r') as file:
         for line in file:
-            row, col, battery_level = map(int, line.strip().split())
-            moves.append((row+1, col+1, battery_level))
+            row, col, battery_level, steps_left = map(int, line.strip().split())
+            moves.append((row+1, col+1, battery_level, steps_left))
     return moves
 
 
@@ -103,7 +103,7 @@ def animate_robot(moves, matrix):
         return circle,
 
     def update(frame):
-        row, col, battery_lvl = moves[frame]
+        row, col, battery_lvl, steps_left = moves[frame]
         stayed = False
         if row == moves[frame-1][0] and col == moves[frame-1][1]:
             stayed = True
@@ -121,11 +121,13 @@ def animate_robot(moves, matrix):
             texts[row][col].set_text(str(matrix[row][col]))
 
         battery_text.set_text(f'Battery: {battery_lvl}')
+        steps_text.set_text(f'Steps Left: {steps_left}')
         return circle,
     
     battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
+    steps_text = ax.text(1, len(matrix) + 0.5, f'Steps Left:{moves[0][3]}', ha='right', va='top')
     ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
-    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=100)
+    ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=400)
 
     # Set the limits and aspect ratio
     ax.set_xlim(0, len(matrix[0]))

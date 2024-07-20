@@ -5,11 +5,13 @@ struct StepInfo {
     LayoutPoint point;
     size_t battery_level;
     Step step;
+    size_t steps_left;
 
     // TODO(Sasha): this should not be a string.
     std::string Serialize() const {
         return std::to_string(point.row) + " " + std::to_string(point.col) +
-               " " + std::to_string(battery_level);
+               " " + std::to_string(battery_level) + " " +
+               std::to_string(steps_left);
     }
 
     std::string toOutputString() const {
