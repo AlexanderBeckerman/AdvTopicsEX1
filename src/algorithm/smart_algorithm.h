@@ -38,6 +38,8 @@ class SmartAlgorithm : public AbstractAlgorithm {
 
     void startReturn();
 
+    Step moveDirection(const Direction &dir);
+
   public:
     ~SmartAlgorithm() override = default;
     SmartAlgorithm(SmartAlgorithm &) = delete;

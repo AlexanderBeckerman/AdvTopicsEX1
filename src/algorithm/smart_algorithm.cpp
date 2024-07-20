@@ -17,22 +17,31 @@ Step SmartAlgorithm::nextStep() {
     if (steps_left == 0) {
         return Step::Finish;
     }
-    // If we are at the charging station, and battery not full we should charge.
+
     if (robot_location == RelativePoint{0, 0}) {
-        if (battery_sensor->getBatteryState() <
-            this->max_battery) { // CHANGE!!!!!!!!!!!!!!!!!!!!!!!!
+        // No point in moving.
+        if (steps_left <= 1) {
+            return Step::Finish;
+        }
+
+        // If we are at the charging station, and battery not full we should
+        // charge.
+        if (battery_sensor->getBatteryState() < this->max_battery) {
             steps_left--;
             return Step::Stay;
         } else {
             // Battery is full, we can start exploring.
             if (last_return_point.has_value()) {
-                predetermined_path = shortestPath(visited, robot_location,
-                                                  *this->last_return_point);
+                auto path_to_last_return = shortestPath(
+                    visited, robot_location, *this->last_return_point);
+                if (path_to_last_return.size() < steps_left / 2) {
+                    predetermined_path =
+                        std::make_optional(path_to_last_return);
+                } else {
+                    this->direction_stack = std::stack<Direction>();
+                }
                 last_return_point = std::nullopt;
-            } else {
-                predetermined_path = std::nullopt;
             }
-            this->direction_stack = std::stack<Direction>();
         }
     }
 
@@ -47,9 +56,7 @@ Step SmartAlgorithm::nextStep() {
         }
         auto &dir = predetermined_path->top();
         predetermined_path->pop();
-        robot_location = robot_location + dir;
-        steps_left--;
-        return directionToStep(dir);
+        return this->moveDirection(dir);
     }
 
     // If we are out of battery, we should return to the charging station.
@@ -58,17 +65,18 @@ Step SmartAlgorithm::nextStep() {
         visited, robot_location); // TODO: don't compute it every time.
     size_t return_path_size = return_path_.size();
     return_path_size += dirt_sensor->dirtLevel() > 0 ? 0 : 1;
-    if (battery_sensor->getBatteryState() - 1 <= return_path_size) {
+    if (battery_sensor->getBatteryState() - 1 <= return_path_size ||
+        steps_left <= return_path_size) {
         startReturn();
         auto &dir = predetermined_path->top();
         predetermined_path->pop();
-        robot_location = robot_location + dir;
-        steps_left--;
-        return directionToStep(dir);
+        LOG(INFO) << "Returning to charging station." << dir << std::endl;
+        return this->moveDirection(dir);
     }
 
     // Always stay if there is dirt (and battery).
     if (dirt_sensor->dirtLevel() > 0) {
+        steps_left--;
         return Step::Stay;
     } else {
         // Tile is clean, mark as visited.
@@ -79,10 +87,9 @@ Step SmartAlgorithm::nextStep() {
     for (const auto &dir : allDirections) {
         if (isValidMove(dir)) {
             direction_stack.emplace(dir);
-            robot_location = robot_location + dir;
+            auto step = this->moveDirection(dir);
             visited.insert(robot_location);
-            steps_left--;
-            return directionToStep(dir);
+            return step;
         }
     }
 
@@ -94,18 +101,15 @@ Step SmartAlgorithm::nextStep() {
             steps_left = predetermined_path->size();
             auto &dir = predetermined_path->top();
             predetermined_path->pop();
-            robot_location = robot_location + dir;
-            return directionToStep(dir);
+            return this->moveDirection(dir);
         }
         return Step::Finish;
     }
 
     // We are stuck, backtrack.
-    auto &dir = direction_stack.top();
+    auto dir = oppositeDirection(direction_stack.top());
     direction_stack.pop();
-    robot_location = robot_location + oppositeDirection(dir);
-    steps_left--;
-    return directionToStep(oppositeDirection(dir));
+    return this->moveDirection(dir);
 }
 
 std::stack<Direction>
@@ -181,4 +185,10 @@ void SmartAlgorithm::startReturn() {
     LOG(INFO) << "Starting return to charging station." << std::endl;
     predetermined_path =
         std::make_optional(shortestPathToOrigin(cleaned, robot_location));
+}
+
+Step SmartAlgorithm::moveDirection(const Direction &dir) {
+    robot_location = robot_location + dir;
+    steps_left--;
+    return directionToStep(dir);
 }
