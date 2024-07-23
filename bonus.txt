@@ -12,3 +12,5 @@ To run the program, simply run the run.sh script or use "python3 visualize_map.p
 To see the animation, make sure you have the matplotlib python package installed. (if not, install using 'pip install matplotlib').
 If you get an error "UserWarning: Matplotlib is currently using agg...", install tk-inter package using 'sudo apt-get install python3-tk'.
 
+C. UML DIAGRAM - 
+We created a UML Class Diagram and a UML Sequence Diagram for the current assignment.
