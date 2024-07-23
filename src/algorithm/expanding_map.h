@@ -10,7 +10,7 @@ class ExpandingMap {
         data;
 
   public:
-    ExpandingMap() : data(){};
+    ExpandingMap() : data() {};
     void addFloorTile(const RelativePoint &loc, size_t dirt_level) {
         data.insert({loc, Tile(dirt_level)});
     }

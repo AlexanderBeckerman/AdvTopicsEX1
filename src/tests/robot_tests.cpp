@@ -18,11 +18,13 @@ class RobotTest : public ::testing::Test {
 
     size_t getCurrSteps(Robot &r) { return r.curr_steps; }
 
-    size_t getMaxSteps(Robot &r) { return r.config.getMaxSteps(); }
+    size_t getMaxSteps(Robot &r) { return r.config->getMaxSteps(); }
 
-    size_t getAmountToClean(Robot &r) { return r.config.getAmountToClean(); }
+    size_t getAmountToClean(Robot &r) { return r.config->getAmountToClean(); }
 
-    ConfigInfo &getConfig(MySimulator &sim) { return *sim.config; }
+    std::shared_ptr<ConfigInfo> getConfig(MySimulator *sim) {
+        return sim->config;
+    }
 
     SmartAlgorithm &getAlgorithm(MySimulator &sim) {
         return dynamic_cast<SmartAlgorithm &>(*sim.algorithm);
@@ -30,7 +32,7 @@ class RobotTest : public ::testing::Test {
 };
 
 TEST_F(RobotTest, usedBatteryTest) {
-    Robot r = Robot(getConfig(*sim));
+    Robot r = Robot(getConfig(sim));
     SmartAlgorithm algo;
     sim->setAlgorithm(algo);
     int battery_before_step;
@@ -48,7 +50,7 @@ TEST_F(RobotTest, usedBatteryTest) {
 }
 
 TEST_F(RobotTest, didntPassMaxStepsTest) {
-    Robot r = Robot(getConfig(*sim));
+    Robot r = Robot(getConfig(sim));
     SmartAlgorithm algo;
     sim->setAlgorithm(algo);
     size_t steps = 0;
@@ -61,7 +63,7 @@ TEST_F(RobotTest, didntPassMaxStepsTest) {
 }
 
 TEST_F(RobotTest, cleanedAllTest) {
-    Robot r = Robot(getConfig(*sim));
+    Robot r = Robot(getConfig(sim));
     SmartAlgorithm algo;
     sim->setAlgorithm(algo);
     while (canContinue(r)) {

@@ -14,16 +14,16 @@ class SensorTest : public ::testing::Test {
 
     void TearDown() override { delete sim; }
 
-    ConfigInfo &getConfigInfo(MySimulator &sim) {
-        return (*(sim.robot)).config;
+    std::shared_ptr<ConfigInfo> getConfigInfo(MySimulator *sim) {
+        return std::shared_ptr<ConfigInfo>(sim->config);
     }
 
     Robot &getRobot(MySimulator &sim) { return *(sim.robot); }
 };
 
 TEST_F(SensorTest, isDirtyTest) {
-    ConfigInfo &cfg = getConfigInfo(*sim);
-    cfg.setValueAt({1, 2}, 4);
+    std::shared_ptr<ConfigInfo> cfg = getConfigInfo(sim);
+    cfg->setValueAt({1, 2}, 4);
     Robot &r = getRobot(*sim);
     const ConcreteDirtSensor &dirt_sensor = r.getDirtSensor();
     bool is_dirty = dirt_sensor.isDirty();
@@ -32,8 +32,8 @@ TEST_F(SensorTest, isDirtyTest) {
 }
 
 TEST_F(SensorTest, dirtLevelTest) {
-    ConfigInfo &cfg = getConfigInfo(*sim);
-    cfg.setValueAt({1, 2}, 4);
+    auto cfg = getConfigInfo(sim);
+    cfg->setValueAt({1, 2}, 4);
     Robot &r = getRobot(*sim);
     const ConcreteDirtSensor &dirt_sensor = r.getDirtSensor();
 
@@ -52,8 +52,8 @@ TEST_F(SensorTest, isWallTest) {
 }
 
 TEST_F(SensorTest, batteryLevelTest) {
-    ConfigInfo &cfg = getConfigInfo(*sim);
+    auto cfg = getConfigInfo(sim);
     Robot &r = getRobot(*sim);
     const ConcreteBatteryMeter &battery_sensor = r.getBatterySensor();
-    ASSERT_EQ(battery_sensor.getBatteryState(), cfg.getMaxBatterySteps());
+    ASSERT_EQ(battery_sensor.getBatteryState(), cfg->getMaxBatterySteps());
 }
