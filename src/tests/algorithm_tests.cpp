@@ -11,10 +11,12 @@ class AlgorithmTest : public ::testing::Test {
 
     void SetUp() override {
         sim = new MySimulator();
-        sim->readHouseFile("../../../input/input_a.txt");
+        sim->readHouseFile("../../../input/test_input_a.txt");
     }
 
-    ConfigInfo &getConfig(MySimulator &sim) { return *sim.config; }
+    std::shared_ptr<ConfigInfo> getConfig(MySimulator &sim) {
+        return sim.config;
+    }
     bool canContinue(Robot &r) { return r.canContinue(); }
     LayoutPoint getLocation(const ConcreteDirtSensor &ds) {
         return ds.location;
@@ -39,53 +41,56 @@ TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
     }
 }
 
-// TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
-//     Robot r = Robot(getConfig(*sim));
-//     SmartAlgorithm algo;
-//     sim->setAlgorithm(algo);
-//     int dirt_before_step = r.getDirtSensor().dirtLevel();
-
-//     while (canContinue(r)) {
-//         Step next_step = algo.nextStep();
-//         if (next_step == Step::Finish) {
-//             break;
-//         }
-//         if (r.getLocation().isChargingStation()) {
-//             r.step(next_step);
-//             continue;
-//         }
-//         dirt_before_step = r.getDirtSensor().dirtLevel();
-//         auto last_loc = r.getLocation();
-//         r.step(next_step);
-//         auto curr_loc = r.getLocation();
-//         ASSERT_FALSE(dirt_before_step == 0 && last_loc == curr_loc);
-//     }
-// }
-
-TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
-    ConfigInfo &cfg = getConfig(*sim);
-    Robot r = Robot(cfg);
+TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
+    Robot r = Robot(getConfig(*sim));
     SmartAlgorithm algo;
-    sim->setAlgorithm(algo);
+    algo.setDirtSensor(r.getDirtSensor());
+    algo.setBatteryMeter(r.getBatterySensor());
+    algo.setWallsSensor(r.getWallSensor());
+    int dirt_before_step = r.getDirtSensor().dirtLevel();
 
     while (canContinue(r)) {
         Step next_step = algo.nextStep();
         if (next_step == Step::Finish) {
             break;
         }
+        if (r.getLocation().isChargingStation()) {
+            r.step(next_step);
+            continue;
+        }
+        dirt_before_step = r.getDirtSensor().dirtLevel();
+        auto last_loc = r.getLocation();
         r.step(next_step);
-        const ConcreteDirtSensor &ds = r.getDirtSensor();
-        auto loc = getLocation(ds);
-        Tile t = cfg.getTileAt(loc);
-        TileType type = t.getType();
-        ASSERT_FALSE(type == TileType::WALL);
+        auto curr_loc = r.getLocation();
+        ASSERT_FALSE(dirt_before_step == 0 && last_loc == curr_loc);
+    }
+}
+
+TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
+    auto cfg = getConfig(*sim);
+    Robot r = Robot(cfg);
+    SmartAlgorithm algo;
+    algo.setWallsSensor(r.getWallSensor());
+    algo.setDirtSensor(r.getDirtSensor());
+    algo.setBatteryMeter(r.getBatterySensor());
+    while (canContinue(r)) {
+        Step next_step = algo.nextStep();
+        if (next_step == Step::Finish) {
+            break;
+        }
+        r.step(next_step);
+
+        auto t = r.getDirtSensor().getCurrentTile().getType();
+        ASSERT_FALSE(t == TileType::WALL);
     }
 }
 
 TEST_F(AlgorithmTest, didntGetStuckTest) {
     Robot r = Robot(getConfig(*sim));
     SmartAlgorithm algo;
-    sim->setAlgorithm(algo);
+    algo.setWallsSensor(r.getWallSensor());
+    algo.setDirtSensor(r.getDirtSensor());
+    algo.setBatteryMeter(r.getBatterySensor());
 
     while (canContinue(r)) {
         Step next_step = algo.nextStep();
@@ -96,4 +101,23 @@ TEST_F(AlgorithmTest, didntGetStuckTest) {
         ASSERT_FALSE(!r.getLocation().isChargingStation() &&
                      r.getBatterySensor().getBatteryState() == 0);
     }
+}
+
+TEST_F(AlgorithmTest, testInputSuccess) {
+    SmartAlgorithm algo;
+    sim->setAlgorithm(algo);
+    sim->run();
+
+    ASSERT_EQ(sim->dirtLeft(), 0);
+}
+
+TEST_F(AlgorithmTest, impossibleCleanFinishedAtDock) {
+    SmartAlgorithm algo;
+    MySimulator sim;
+    sim.readHouseFile("../../../input/test_input_b.txt");
+    sim.setAlgorithm(algo);
+    sim.run();
+
+    ASSERT_FALSE(sim.dirtLeft() == 0);
+    ASSERT_TRUE(sim.location().isChargingStation());
 }

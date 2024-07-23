@@ -173,8 +173,6 @@ std::string ConfigInfo::toString() const {
     output += "Charging station at: " + charging_station.toString() + "\n";
     for (const auto &row : *topograhpy_data) {
         for (const auto &tile : row) {
-            auto dirt = tile.getDirtLevel();
-            std::cout << " Dirt: " << dirt << std::endl;
             output += tile.toString();
         }
         output += "\n";

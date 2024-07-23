@@ -5,14 +5,16 @@
 
 class MySimulator {
   private:
-    std::unique_ptr<ConfigInfo> config;
-    std::unique_ptr<Robot> robot;
+    std::shared_ptr<ConfigInfo> config;
     AbstractAlgorithm *algorithm;
+
+  protected:
+    std::unique_ptr<Robot> robot;
 
   public:
     void readHouseFile(std::string input_path) {
-        config = std::make_unique<ConfigInfo>(input_path);
-        robot = std::make_unique<Robot>(*config);
+        config = std::make_shared<ConfigInfo>(input_path);
+        robot = std::make_unique<Robot>(config);
     }
     void setAlgorithm(AbstractAlgorithm &algorithm) {
         this->algorithm = &algorithm;
@@ -30,6 +32,9 @@ class MySimulator {
     void serializeAndDumpSteps(const std::string &output_file) const {
         robot->serializeAndDumpSteps(output_file);
     }
+
+    size_t dirtLeft() const { return config->getAmountToClean(); }
+    RelativePoint location() const { return robot->getLocation(); }
 
     friend class RobotTest;
     friend class SensorTest;

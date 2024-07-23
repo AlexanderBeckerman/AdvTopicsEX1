@@ -38,6 +38,18 @@ class ConfigInfo {
     LayoutPoint getChargingStation() const { return charging_station; }
     size_t getAmountToClean() const { return amount_to_clean; }
 
+    std::string print_debug() const {
+        auto output = std::string();
+        for (size_t i = 0; i < rows; i++) {
+            for (size_t j = 0; j < cols; j++) {
+                output += topograhpy_data->at(i).at(j).toString();
+                output += " ";
+            }
+            output += "\n";
+        }
+        return output;
+    }
+
   private:
     bool checkInRange(LayoutPoint p) const;
     void parseConfigLines(std::ifstream &file_reader);

@@ -46,7 +46,7 @@ void Robot::clean() {
     LOG(INFO) << "Dirt level before clean: " << t.getDirtLevel() << " | ";
     LOG(INFO) << "Cleaning: " << this->location << " | ";
     t.Clean();
-    this->config.setAmountToClean(this->config.getAmountToClean() - 1);
+    this->config->setAmountToClean(this->config->getAmountToClean() - 1);
     LOG(INFO) << "Dirt level after clean: " << t.getDirtLevel() << " | ";
     // TODO(Ohad): log + output. printing for now
     LOG(INFO) << "Battery level: " << this->battery_sensor.getBatteryState()
@@ -56,7 +56,7 @@ void Robot::clean() {
 
 void Robot::start(AbstractAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
-    while (this->curr_steps < this->config.getMaxSteps()) {
+    while (this->curr_steps < this->config->getMaxSteps()) {
         Step next_step = algorithm.nextStep();
         if (next_step == Step::Finish) {
             LOG(INFO) << "Algorithm returned step finished, exiting..."
@@ -77,10 +77,10 @@ void Robot::start(AbstractAlgorithm &algorithm) {
 
 bool Robot::canContinue() {
     bool cleaned_all = this->location.isChargingStation() &&
-                       this->config.getAmountToClean() == 0;
+                       this->config->getAmountToClean() == 0;
     bool stuck = !this->location.isChargingStation() &&
                  this->battery_sensor.getBatteryState() <= 0;
-    bool still_have_steps = this->curr_steps < this->config.getMaxSteps();
+    bool still_have_steps = this->curr_steps < this->config->getMaxSteps();
     if (cleaned_all) {
         LOG(INFO) << "Cleaned all and at charging station, exiting..."
                   << std::endl;
@@ -98,7 +98,7 @@ bool Robot::canContinue() {
 void Robot::logStep(const Step step) {
     auto point = this->wall_sensor.location;
     StepInfo s = {point, this->battery_sensor.getBatteryState(), step,
-                  this->config.getMaxSteps() - this->curr_steps};
+                  this->config->getMaxSteps() - this->curr_steps};
     this->steps_info.push_back(s);
 }
 
@@ -107,7 +107,7 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     output.open(output_file);
 
     output << "NumSteps = " << this->curr_steps << "\n";
-    output << "DirtLeft = " << this->config.getAmountToClean() << "\n";
+    output << "DirtLeft = " << this->config->getAmountToClean() << "\n";
     output << "Status = " << getStatus(this->exit_cond) << "\n";
     output << "Steps: \n";
 
