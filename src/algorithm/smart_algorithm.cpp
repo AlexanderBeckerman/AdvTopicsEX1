@@ -65,7 +65,7 @@ Step SmartAlgorithm::nextStep() {
         visited, robot_location); // TODO: don't compute it every time.
     size_t return_path_size = return_path_.size();
     return_path_size += dirt_sensor->dirtLevel() > 0 ? 0 : 1;
-    if (battery_sensor->getBatteryState() - 1 <= return_path_size ||
+    if (battery_sensor->getBatteryState() <= return_path_size ||
         steps_left <= return_path_size) {
         startReturn();
         auto &dir = predetermined_path->top();

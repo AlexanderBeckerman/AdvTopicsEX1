@@ -3,10 +3,10 @@ file(GLOB MAP_SOURCES "*.cpp")
 file(GLOB MAP_HEADERS "*.h")
 
 # Create a library from the source files
-add_library(config_lib ${MAP_SOURCES} ${MAP_HEADERS})
+add_library(config_lib  ${MAP_SOURCES} ${MAP_HEADERS})
 
 # Include this directory's headers
 target_include_directories(config_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(config_lib PUBLIC robot_lib utils_lib)
+target_link_libraries(config_lib PUBLIC  utils_lib)
  

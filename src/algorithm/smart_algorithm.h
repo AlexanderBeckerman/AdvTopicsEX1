@@ -1,6 +1,5 @@
 #pragma once
 #include "abstract_algorithm.h"
-#include "config.h"
 #include "expanding_map.h"
 #include "relative_point.h"
 #include "sensors.h"

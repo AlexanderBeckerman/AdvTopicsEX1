@@ -1,5 +1,4 @@
 #include "config.h"
-#include "robot.h"
 
 /*Each robot will have a map instance. To initialize his map, he will pass the
 given input.txt path with a reference to himself. The map constructor will
