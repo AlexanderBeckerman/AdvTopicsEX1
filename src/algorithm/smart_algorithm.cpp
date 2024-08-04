@@ -1,6 +1,9 @@
 #include "smart_algorithm.h"
+#include "AlgorithmRegistration.h"
 #include "utils.h"
 #include <queue>
+
+REGISTER_ALGORITHM(SmartAlgorithm);
 
 std::stack<Direction> shortestPathToOrigin(
     const std::unordered_set<RelativePoint, RelativePointKeyHash>

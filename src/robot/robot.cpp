@@ -62,10 +62,16 @@ void Robot::start(AbstractAlgorithm &algorithm) {
             LOG(INFO) << "Algorithm returned step finished, exiting..."
                       << std::endl;
             logStep(next_step);
+            finished = true;
             this->exit_cond =
                 (this->location.isChargingStation())
                     ? 0
                     : 1; // 0 for finished, 1 for dead, 2 for working.
+            return;
+        }
+        if (this->getBatterySensor().getBatteryState() <= 0 &&
+            !this->location.isChargingStation()) {
+            this->exit_cond = 1;
             return;
         }
         this->step(next_step);
@@ -105,10 +111,26 @@ void Robot::logStep(const Step step) {
 void Robot::dumpStepsInfo(const std::string &output_file) const {
     std::ofstream output;
     output.open(output_file);
+    std::string in_dock =
+        (this->location.isChargingStation()) ? "TRUE" : "FALSE";
+    size_t score;
+    size_t dirt_left = this->config->getAmountToClean();
+    if (this->exit_cond == 1) { // If we are dead.
+        score = this->config->getMaxSteps() + (dirt_left * 300) + 2000;
+    } else if (finished &&
+               !this->location
+                    .isChargingStation()) { // If reported finished and robot is
+                                            // NOT in dock.
+        score = this->config->getMaxSteps() + (dirt_left * 300) + 3000;
+    } else { // Otherwise
+        score = this->curr_steps + (dirt_left * 300) +
+                (this->location.isChargingStation() ? 0 : 1000);
+    }
 
     output << "NumSteps = " << this->curr_steps << "\n";
-    output << "DirtLeft = " << this->config->getAmountToClean() << "\n";
+    output << "DirtLeft = " << dirt_left << "\n";
     output << "Status = " << getStatus(this->exit_cond) << "\n";
+    output << "InDock = " << in_dock << "\n";
     output << "Steps: \n";
 
     for (auto &step : this->steps_info) {

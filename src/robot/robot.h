@@ -19,6 +19,7 @@ class Robot {
     RelativePoint location;
     size_t curr_steps = 0;
     size_t exit_cond;
+    bool finished = false;
 
     void clean();
     bool canContinue();
