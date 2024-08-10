@@ -34,6 +34,7 @@ class Robot {
           location({0, 0}) {}
 
     Robot(const Robot &other) = delete;
+    ~Robot();
 
     void move(const Direction direction);
     void step(const Step next_step);

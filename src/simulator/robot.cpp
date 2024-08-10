@@ -56,7 +56,7 @@ void Robot::clean() {
 
 void Robot::start(AbstractAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
-    while (this->curr_steps < this->config->getMaxSteps()) {
+    while (this->curr_steps <= this->config->getMaxSteps()) {
         Step next_step = algorithm.nextStep();
         if (next_step == Step::Finish) {
             LOG(INFO) << "Algorithm returned step finished, exiting..."
@@ -146,3 +146,5 @@ void Robot::serializeAndDumpSteps(const std::string &output_file) const {
     output << serializeVecSteps(this->steps_info);
     output.close();
 }
+
+Robot::~Robot() {}

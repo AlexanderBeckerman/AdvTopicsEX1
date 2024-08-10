@@ -1,12 +1,11 @@
 cmake_minimum_required(VERSION 3.25)
 
 # # Add subdirectories for utils and sensors
-# add_subdirectory(utils)
-# add_subdirectory(sensors)
+add_subdirectory(utils)
+add_subdirectory(sensors)
 
 # Collect all source files from utils and sensors
 set(COMMON_SOURCES 
-    sensors/sensors.cpp
     utils/utils.cpp
 )
 
