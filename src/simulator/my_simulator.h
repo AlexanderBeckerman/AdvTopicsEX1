@@ -1,7 +1,7 @@
-#include "config.h"
+#include "../common/abstract_algorithm.h"
+#include "../common/utils/utils.h"
+#include "config/config.h"
 #include "robot.h"
-#include "smart_algorithm.h"
-#include "utils.h"
 
 class MySimulator {
   private:

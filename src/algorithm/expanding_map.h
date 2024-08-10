@@ -1,7 +1,7 @@
 #pragma once
-#include "relative_point.h"
-#include "tile.h"
-#include "utils.h"
+#include "../common/utils/relative_point.h"
+#include "../common/utils/tile.h"
+#include "../common/utils/utils.h"
 #include <optional>
 #include <unordered_map>
 

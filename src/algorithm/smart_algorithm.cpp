@@ -1,6 +1,6 @@
 #include "smart_algorithm.h"
+#include "../common/utils/utils.h"
 #include "AlgorithmRegistration.h"
-#include "utils.h"
 #include <queue>
 
 REGISTER_ALGORITHM(SmartAlgorithm);

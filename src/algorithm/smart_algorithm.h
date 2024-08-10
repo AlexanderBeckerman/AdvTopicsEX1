@@ -1,9 +1,9 @@
 #pragma once
-#include "abstract_algorithm.h"
+#include "../common/abstract_algorithm.h"
+#include "../common/sensors/sensors.h"
+#include "../common/utils/relative_point.h"
+#include "../common/utils/utils.h"
 #include "expanding_map.h"
-#include "relative_point.h"
-#include "sensors.h"
-#include "utils.h"
 #include <optional>
 #include <stack>
 #include <unordered_set>

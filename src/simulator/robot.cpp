@@ -1,5 +1,5 @@
 #include "robot.h"
-#include "config.h"
+#include "config/config.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -131,6 +131,7 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     output << "DirtLeft = " << dirt_left << "\n";
     output << "Status = " << getStatus(this->exit_cond) << "\n";
     output << "InDock = " << in_dock << "\n";
+    output << "Score = " << score << "\n";
     output << "Steps: \n";
 
     for (auto &step : this->steps_info) {

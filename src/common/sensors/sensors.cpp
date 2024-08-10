@@ -1,5 +1,4 @@
 #include "sensors.h"
-#include "tile.h"
 
 // This function will check if the current tile is dirty.
 bool ConcreteDirtSensor::isDirty() const {

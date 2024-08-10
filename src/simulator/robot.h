@@ -1,10 +1,10 @@
 #pragma once
-#include "config.h"
-#include "relative_point.h"
-#include "sensors.h"
-#include "smart_algorithm.h"
+#include "../common/abstract_algorithm.h"
+#include "../common/sensors/sensors.h"
+#include "../common/utils/relative_point.h"
+#include "../common/utils/utils.h"
+#include "../config/config.h"
 #include "step_info.h"
-#include "utils.h"
 
 class StupidAlgorithm;
 

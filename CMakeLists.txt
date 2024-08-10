@@ -4,9 +4,7 @@ if(POLICY CMP0079 )
 endif()
 cmake_policy(SET CMP0135 NEW)
 
-# Project name
-project(MyProject)
-
+project(robot)
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -15,10 +13,5 @@ add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic)
 
 # Add subdirectories
 add_subdirectory(src/algorithm)
-add_subdirectory(src/smart_map)
-add_subdirectory(src/robot)
-add_subdirectory(src/sensors)
-add_subdirectory(src/tests)
-add_subdirectory(src/config)
-add_subdirectory(src/utils)
-add_subdirectory(src/main)
+add_subdirectory(src/simulator)
+

@@ -1,5 +1,10 @@
-#include "../common/AlgorithmRegistrar.h"
+#ifndef ALGO_REGISTRATION__
+#define ALGO_REGISTRATION__
+
 #include <string>
+#include <utility>
+
+#include "../common/AlgorithmRegistrar.h"
 
 struct AlgorithmRegistration {
     AlgorithmRegistration(const std::string &name,
@@ -10,5 +15,7 @@ struct AlgorithmRegistration {
 };
 
 #define REGISTER_ALGORITHM(ALGO)                                               \
-    AlgorithmRegistration ALGO##_obj(#ALGO,                                    \
-                                     [] { return std::make_unique<ALGO>(); })
+    AlgorithmRegistration _##ALGO(#ALGO,                                       \
+                                  [] { return std::make_unique<ALGO>(); })
+
+#endif // ALGO_REGISTRATION__

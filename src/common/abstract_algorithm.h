@@ -1,6 +1,6 @@
 #pragma once
-#include "sensors.h"
-#include "utils.h"
+#include "sensors/sensors.h"
+#include "utils/utils.h"
 
 class AbstractAlgorithm {
   public:

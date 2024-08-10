@@ -1,10 +1,11 @@
 #pragma once
 
-#include "config.h"
-#include "tile.h"
-#include "utils.h"
+#include "../utils/layout_point.h"
+#include "../utils/tile.h"
+#include "../utils/utils.h"
 
 class Robot;
+typedef std::vector<std::vector<Tile>> TileLayout;
 
 class WallsSensor {
   public:

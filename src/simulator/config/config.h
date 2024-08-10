@@ -1,7 +1,7 @@
 #pragma once
-#include "layout_point.h"
-#include "tile.h"
-#include "utils.h"
+#include "../../common/utils/layout_point.h"
+#include "../../common/utils/tile.h"
+#include "../../common/utils/utils.h"
 
 class Robot;
 
