@@ -1,7 +1,7 @@
 #include "SDFS.h"
 #include "../common/AlgorithmRegistration.h"
-#include "../common/utils/utils.h"
 #include "../common/pathing.h"
+#include "../common/utils/utils.h"
 #include <queue>
 
 REGISTER_ALGORITHM(SDFS);
@@ -22,19 +22,19 @@ Step SDFS::nextStep() {
         if (battery_sensor->getBatteryState() < this->max_battery) {
             steps_left--;
             return Step::Stay;
-        } else {
-            // Battery is full, we can start exploring.
-            if (last_return_point.has_value()) {
-                auto path_to_last_return = shortestPath(
-                    visited, robot_location, *this->last_return_point);
-                if (path_to_last_return.size() < steps_left / 2) {
-                    predetermined_path =
-                        std::make_optional(path_to_last_return);
-                } else {
-                    this->direction_stack = std::stack<Direction>();
-                }
-                last_return_point = std::nullopt;
+        }
+
+        // If no dirty spots around, go to an interest point
+        bool clean_surroundings =
+            std::none_of(allDirections.begin(),
+                         allDirections.end(), [&](const auto &dir) {return isValidMove(dir);});
+        if (clean_surroundings) {
+            if (points_of_interest.empty()) {
+                return Step::Finish;
             }
+            auto &dest = points_of_interest.front();
+            auto path_to_dest = shortestPath(visited, robot_location, dest);
+            predetermined_path = std::make_optional(path_to_dest);
         }
     }
 
