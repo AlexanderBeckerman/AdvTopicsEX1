@@ -13,5 +13,6 @@ add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic)
 
 # Add subdirectories
 add_subdirectory(src/algorithm)
+add_subdirectory(src/smarter_algorithm)
 add_subdirectory(src/simulator)
 add_subdirectory(src/tests)

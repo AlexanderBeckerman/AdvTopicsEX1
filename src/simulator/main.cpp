@@ -6,9 +6,15 @@
 #include <iostream>
 
 int main(int argc, char **argv) {
-    void *library_handle =
+    void *smart_alrogithm_lib =
         dlopen("../../../build/src/algorithm/libalgorithm.so", RTLD_LAZY);
-    if (!library_handle) {
+    if (!smart_alrogithm_lib) {
+        std::cerr << "Cannot load library: " << dlerror() << '\n';
+        return 1;
+    }
+    void *sdfs_lib =
+        dlopen("../../../build/src/smarter_algorithm/libSDFS.so", RTLD_LAZY);
+    if (!sdfs_lib) {
         std::cerr << "Cannot load library: " << dlerror() << '\n';
         return 1;
     }
@@ -35,6 +41,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     for (auto algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
+        std::cout << "Running algorithm: " << std::endl;
         auto algorithm = algo.create();
         simulator.setAlgorithm(*algorithm);
         simulator.run();
