@@ -29,7 +29,7 @@ set(SIMULATOR_HEADERS
 )
 
 # Create the executable from the simulator source files
-add_executable(myrobot ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS})
+add_executable(simulator_main ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS})
 
 add_library(simulator STATIC ${SIMULATOR_SOURCES} ${SIMULATOR_HEADERS})
 
@@ -40,5 +40,5 @@ target_link_libraries(simulator PRIVATE common)
 #Add any required flags for dlopen (optional, depending on platform)
 target_link_libraries(simulator PRIVATE dl)
 
-target_link_options(myrobot PRIVATE -rdynamic)
+target_link_options(simulator_main PRIVATE -rdynamic)
 target_link_options(simulator PRIVATE -rdynamic)

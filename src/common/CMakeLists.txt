@@ -17,6 +17,8 @@ set(COMMON_HEADERS
     utils/relative_point.h
     utils/layout_point.h
     abstract_algorithm.h
+    pathing.h
+    AlgorithmRegistration.h
     AlgorithmRegistrar.h)
 
 # Create a static library from all collected sources

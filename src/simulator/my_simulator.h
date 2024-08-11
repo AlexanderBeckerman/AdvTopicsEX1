@@ -25,6 +25,10 @@ class MySimulator {
     }
     void run() { robot->start(*algorithm); }
 
+    void reset() {
+        robot =  std::make_unique<Robot>(config);
+    }
+
     // Output the assignment required  info to the output file.
     void dumpStepsInfo(const std::string &output_file) const {
         robot->dumpStepsInfo(output_file);

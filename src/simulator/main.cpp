@@ -83,9 +83,16 @@ void processFilesInDirectory(const fs::path &dirPath,
 }
 
 int main(int argc, char **argv) {
-    void *library_handle =
-        dlopen("../../../build/lib/libalgorithm.so", RTLD_LAZY);
-    if (!library_handle) {
+
+    void *smart_alrogithm_lib =
+        dlopen("../../../build/src/algorithm/libalgorithm.so", RTLD_LAZY);
+    if (!smart_alrogithm_lib) {
+        std::cerr << "Cannot load library: " << dlerror() << '\n';
+        return 1;
+    }
+    void *sdfs_lib =
+        dlopen("../../../build/src/smarter_algorithm/libSDFS.so", RTLD_LAZY);
+    if (!sdfs_lib) {
         std::cerr << "Cannot load library: " << dlerror() << '\n';
         return 1;
     }
@@ -112,22 +119,30 @@ int main(int argc, char **argv) {
     // std::string outputPath = "../../../output/" + outputFile;
 
     // Run.
-    // Logger::getInstance().setLogFile("../../../output/logs/");
-    // MySimulator simulator = MySimulator();
-    // try {
-    //     simulator.readHouseFile(inputPath); // In case of invalid input file,
-    //                                         // this might throw an exception.
-    // } catch (const std::exception &e) {
-    //     std::cerr << e.what() << '\n' << std::endl;
-    //     return 1;
-    // }
-    // for (auto algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
-    //     auto algorithm = algo.create();
-    //     simulator.setAlgorithm(*algorithm);
-    //     simulator.run();
-    //     // Output the assignment required  info to the output file.
-    //     simulator.dumpStepsInfo(outputPath);
-    //     // Output the steps to the visualizer script.
-    //     simulator.serializeAndDumpSteps("../../../output/moves.txt");
-    // }
+
+
+    MySimulator simulator = MySimulator();
+    for (auto algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
+        try {
+            simulator.readHouseFile(
+                inputPath); // In case of invalid input file,
+                            // this might throw an exception.
+        } catch (const std::exception &e) {
+            std::cerr << e.what() << '\n' << std::endl;
+            return 1;
+        }
+        Logger::getInstance().setLogFile("../../../output/logs/");
+        std::cout << "Running algorithm: " << algo.getName() << std::endl;
+        auto algorithm = algo.create();
+        simulator.setAlgorithm(*algorithm);
+        simulator.run();
+        // Output the assignment required  info to the output file.
+        simulator.dumpStepsInfo(outputPath);
+        // Output the steps to the visualizer script.
+        auto output_path = "../../../output/" + algo.getName() + "moves.txt";
+        simulator.serializeAndDumpSteps(output_path);
+        simulator.reset();
+        Logger::getInstance().closeLogFile();
+    }
+
 }
