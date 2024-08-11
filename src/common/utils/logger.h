@@ -40,6 +40,15 @@ class Logger {
         }
     }
 
+    void closeLogFile() {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (fileStream_.is_open()) {
+            fileStream_.close();
+        }
+        buffer_.str("");
+        buffer_.clear();
+    }
+
     // Set the log level and context for the current message
     Logger &set(Level level, const char *file, int line) {
         std::lock_guard<std::mutex> lock(mutex_);

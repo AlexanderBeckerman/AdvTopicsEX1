@@ -18,6 +18,8 @@ class AlgorithmRegistrar {
         std::unique_ptr<AbstractAlgorithm> create() const {
             return algorithmFactory_();
         }
+
+        std::string getName() const { return name_; }
     };
     std::vector<AlgorithmFactoryPair> algorithms;
     static AlgorithmRegistrar registrar;

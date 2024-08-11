@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     std::string outputPath = "../../../output/" + outputFile;
 
     // Run.
-    Logger::getInstance().setLogFile("../../../output/logs/");
+
     MySimulator simulator = MySimulator();
     try {
         simulator.readHouseFile(inputPath); // In case of invalid input file,
@@ -41,13 +41,17 @@ int main(int argc, char **argv) {
         return 1;
     }
     for (auto algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
-        std::cout << "Running algorithm: " << std::endl;
+        Logger::getInstance().setLogFile("../../../output/logs/");
+        std::cout << "Running algorithm: " << algo.getName() << std::endl;
         auto algorithm = algo.create();
         simulator.setAlgorithm(*algorithm);
         simulator.run();
         // Output the assignment required  info to the output file.
         simulator.dumpStepsInfo(outputPath);
         // Output the steps to the visualizer script.
-        simulator.serializeAndDumpSteps("../../../output/moves.txt");
+        auto output_path = "../../../output/" + algo.getName() + "moves.txt" ;
+        simulator.serializeAndDumpSteps(output_path);
+        simulator.reset();
+        Logger::getInstance().closeLogFile();
     }
 }
