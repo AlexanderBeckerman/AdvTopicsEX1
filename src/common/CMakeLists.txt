@@ -17,6 +17,7 @@ set(COMMON_HEADERS
     utils/relative_point.h
     utils/layout_point.h
     abstract_algorithm.h
+    pathing.h
     AlgorithmRegistration.h
     AlgorithmRegistrar.h)
 

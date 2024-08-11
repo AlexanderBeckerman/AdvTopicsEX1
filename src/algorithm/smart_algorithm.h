@@ -10,6 +10,7 @@
 
 class SmartAlgorithm : public AbstractAlgorithm {
     // Configuration.
+  protected:
     const DirtSensor *dirt_sensor;
     const WallsSensor *wall_sensor;
     const BatteryMeter *battery_sensor;
