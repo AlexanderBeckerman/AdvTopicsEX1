@@ -15,7 +15,6 @@ set(ALGORITHM_SOURCES
 
 # Collect all header files for the algorithm (optional, useful for IDEs)
 set(ALGORITHM_HEADERS
-    AlgorithmRegistration.h
     expanding_map.h
     smart_algorithm.h
 )
