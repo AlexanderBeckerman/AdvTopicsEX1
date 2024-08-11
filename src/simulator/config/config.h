@@ -21,7 +21,15 @@ class ConfigInfo {
   public:
     ConfigInfo(std::string input_path);
     ConfigInfo(ConfigInfo &&other) noexcept;
-    ConfigInfo(ConfigInfo &other) = default;
+    ConfigInfo(ConfigInfo &other) {
+        topograhpy_data = std::make_shared<TileLayout>(*other.topograhpy_data);
+        charging_station = other.charging_station;
+        max_battery_steps = other.max_battery_steps;
+        max_steps = other.max_steps;
+        amount_to_clean = other.amount_to_clean;
+        rows = other.rows;
+        cols = other.cols;
+    }
     std::string input_path;
     std::string output_path;
     void draw() const; // Will write a parsed version of the map to a file for

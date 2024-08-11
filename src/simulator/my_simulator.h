@@ -5,6 +5,7 @@
 
 class MySimulator {
   private:
+    std::unique_ptr<ConfigInfo> start_config;
     std::shared_ptr<ConfigInfo> config;
     AbstractAlgorithm *algorithm;
 
@@ -13,7 +14,8 @@ class MySimulator {
 
   public:
     void readHouseFile(std::string input_path) {
-        config = std::make_shared<ConfigInfo>(input_path);
+        start_config = std::make_unique<ConfigInfo>(input_path);
+        config = std::make_shared<ConfigInfo>(*start_config);
         robot = std::make_unique<Robot>(config);
     }
     void setAlgorithm(AbstractAlgorithm &algorithm) {
@@ -26,7 +28,8 @@ class MySimulator {
     void run() { robot->start(*algorithm); }
 
     void reset() {
-        robot =  std::make_unique<Robot>(config);
+        config = std::make_shared<ConfigInfo>(*start_config);
+        robot = std::make_unique<Robot>(config);
     }
 
     // Output the assignment required  info to the output file.
