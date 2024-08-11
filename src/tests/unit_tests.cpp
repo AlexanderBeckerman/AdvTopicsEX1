@@ -1,6 +1,3 @@
-
-#include "config.h"
-#include "robot.h"
 #include <gtest/gtest.h>
 #include <iostream>
 

@@ -1,6 +1,8 @@
-#include "config.h"
-#include "my_simulator.h"
-#include "robot.h"
+#include "../algorithm/smart_algorithm.h"
+#include "../common/sensors/sensors.h"
+#include "../simulator/config/config.h"
+#include "../simulator/my_simulator.h"
+#include "../simulator/robot.h"
 #include <gtest/gtest.h>
 
 class RobotTest : public ::testing::Test {

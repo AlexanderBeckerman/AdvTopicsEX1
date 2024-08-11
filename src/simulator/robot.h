@@ -3,7 +3,7 @@
 #include "../common/sensors/sensors.h"
 #include "../common/utils/relative_point.h"
 #include "../common/utils/utils.h"
-#include "../config/config.h"
+#include "config/config.h"
 #include "step_info.h"
 
 class StupidAlgorithm;
