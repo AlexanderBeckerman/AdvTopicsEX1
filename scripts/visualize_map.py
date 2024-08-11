@@ -141,15 +141,11 @@ def animate_robot(moves, matrix):
     plt.title('Robot Movement Animation')
     plt.show()
 
-def main():
-    args = sys.argv
-    if len(args) < 2:
-        print('Please provide the input file path as argument')
-        return
+def animate_algorithm(algorithm_name):
     map_file_path = '../output/cleaned_input.txt' # Adjust this path to your parsed map file location
-    moves_file_path = '../output/moves.txt' # Adjust this path to your moves file location
+    moves_file_path = '../output/' + algorithm_name + 'moves.txt'
     if not os.path.exists(map_file_path) or not os.path.exists(moves_file_path):
-        print('Error reading input files: File not found')
+        print('Error reading input files: moves File not found')
         return
     if (os.path.getsize(map_file_path) == 0) or (os.path.getsize(moves_file_path) == 0):
         print('Error reading input files: Empty file')
@@ -157,6 +153,10 @@ def main():
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
     animate_robot(moves, matrix)
-    
+
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) != 2:
+        print('Usage: python visualize_map.py <algorithm_name>')
+        sys.exit(1)
+    algorithm_name = sys.argv[1]
+    animate_algorithm(algorithm_name)

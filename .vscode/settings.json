@@ -1,6 +1,6 @@
 {   "cmake.debugConfig": {
         "args": [
-            "input_a.txt"
+            "test_input_c.txt"
         ]
     },
     "files.associations": {

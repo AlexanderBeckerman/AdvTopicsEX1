@@ -60,6 +60,7 @@ Step SDFS::nextStep() {
     return_path_size += dirt_sensor->dirtLevel() > 0 ? 0 : 1;
     if (battery_sensor->getBatteryState() <= return_path_size ||
         steps_left <= return_path_size) {
+        points_of_interest.push(robot_location);
         startReturn();
         auto &dir = predetermined_path->top();
         predetermined_path->pop();
