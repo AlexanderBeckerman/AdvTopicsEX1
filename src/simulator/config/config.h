@@ -2,6 +2,7 @@
 #include "../../common/utils/layout_point.h"
 #include "../../common/utils/tile.h"
 #include "../../common/utils/utils.h"
+#include <filesystem>
 
 class Robot;
 
@@ -32,8 +33,9 @@ class ConfigInfo {
     }
     std::string input_path;
     std::string output_path;
-    void draw() const; // Will write a parsed version of the map to a file for
-                       // the visualization.
+    void
+    draw(const std::string path) const; // Will write a parsed version of the
+                                        // map to a file for the visualization.
     void setValueAt(LayoutPoint position, int value);
     int getValueAt(LayoutPoint position) const;
     Tile getTileAt(LayoutPoint position) const;

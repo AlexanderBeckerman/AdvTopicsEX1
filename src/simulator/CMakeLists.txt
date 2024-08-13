@@ -26,6 +26,7 @@ set(SIMULATOR_HEADERS
     my_simulator.h
     robot.h
     step_info.h
+    main_utils.h
 )
 
 # Create the executable from the simulator source files
