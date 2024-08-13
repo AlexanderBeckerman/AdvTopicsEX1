@@ -19,6 +19,12 @@ struct AlgoInfo {
     std::string name;
 };
 
+struct SummaryInfo {
+    std::string house_file_name;
+    std::string algo_name;
+    std::size_t score;
+};
+
 namespace fs = std::filesystem;
 
 void processHouseFile(const fs::path &houseFile,
@@ -86,23 +92,39 @@ void processFilesInDirectory(const fs::path &dirPath,
     }
 }
 
-int main(int argc, char **argv) {
+void generateCSV(const std::vector<SummaryInfo> &summary,
+                 const std::vector<SimInfo> &simulators,
+                 const std::vector<AlgoInfo> &algorithms) {
+    std::ofstream csvFile("../../../output/summary.csv");
+    csvFile << "Algorithm";
+    for (const auto &sim : simulators) {
+        csvFile << "," << sim.house_file_name;
+    }
+    csvFile << "\n";
+    for (const auto &algo : algorithms) {
+        csvFile << algo.name;
+        for (const auto &sim : simulators) {
+            auto it = std::find_if(summary.begin(), summary.end(),
+                                   [&algo, &sim](const SummaryInfo &info) {
+                                       return info.house_file_name ==
+                                                  sim.house_file_name &&
+                                              info.algo_name == algo.name;
+                                   });
+            if (it != summary.end()) {
+                csvFile << "," << it->score;
+            } else {
+                csvFile << ",-1";
+            }
+        }
+        csvFile << "\n";
+    }
+}
 
-    // void *smart_alrogithm_lib =
-    //     dlopen("../../../build/src/algorithm/libalgorithm.so", RTLD_LAZY);
-    // if (!smart_alrogithm_lib) {
-    //     std::cerr << "Cannot load library: " << dlerror() << '\n';
-    //     return 1;
-    // }
-    // void *sdfs_lib =
-    //     dlopen("../../../build/src/smarter_algorithm/libSDFS.so", RTLD_LAZY);
-    // if (!sdfs_lib) {
-    //     std::cerr << "Cannot load library: " << dlerror() << '\n';
-    //     return 1;
-    // }
+int main(int argc, char **argv) {
 
     std::string housePath = "";
     std::string algoPath = "";
+    bool summary_only = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -110,6 +132,8 @@ int main(int argc, char **argv) {
             housePath = arg.substr(12);
         } else if (arg.find("-algo_path=") == 0) {
             algoPath = arg.substr(11);
+        } else if (arg.find("-summary_only") == 0) {
+            summary_only = true;
         }
     }
 
@@ -127,49 +151,28 @@ int main(int argc, char **argv) {
         processFilesInDirectory(fs::current_path(), simulators, algorithms);
     }
 
-    for (auto &sim : simulators) {
-        for (auto &algo : algorithms) {
+    std::vector<SummaryInfo> summary;
+    summary.reserve(simulators.size() * algorithms.size());
+
+    for (auto &algo : algorithms) {
+        for (auto &sim : simulators) {
             sim.simulator.setAlgorithm(*algo.algorithm);
             sim.simulator.run();
-            sim.simulator.dumpStepsInfo(sim.house_output_path + "_" +
-                                        algo.name + ".txt");
-            auto output_path = "../../../output/" + sim.house_file_name + "_" +
-                               algo.name + ".moves.txt";
-            sim.simulator.serializeAndDumpSteps(output_path);
+            summary.push_back(
+                {sim.house_file_name, algo.name, sim.simulator.score()});
+
+            if (!summary_only) {
+                sim.simulator.dumpStepsInfo(sim.house_output_path + "_" +
+                                            algo.name + ".txt");
+                auto output_path = "../../../output/" + sim.house_file_name +
+                                   "_" + algo.name + ".moves.txt";
+                sim.simulator.serializeAndDumpSteps(output_path);
+            }
             sim.simulator.reset();
         }
     }
 
+    generateCSV(summary, simulators, algorithms);
+
     std::cout << "done" << std::endl;
-    // Extract input and output file paths from command line arguments
-    // std::string inputFile = argv[1];
-    // std::string outputFile = addPrefixToFileName(inputFile);
-    // std::string inputPath = "../../../input/" + inputFile;
-    // std::string outputPath = "../../../output/" + outputFile;
-
-    // Run.
-
-    // MySimulator simulator = MySimulator();
-    // for (auto algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
-    //     try {
-    //         simulator.readHouseFile(
-    //             inputPath); // In case of invalid input file,
-    //                         // this might throw an exception.
-    //     } catch (const std::exception &e) {
-    //         std::cerr << e.what() << '\n' << std::endl;
-    //         return 1;
-    //     }
-    //     Logger::getInstance().setLogFile("../../../output/logs/");
-    //     std::cout << "Running algorithm: " << algo.getName() << std::endl;
-    //     auto algorithm = algo.create();
-    //     simulator.setAlgorithm(*algorithm);
-    //     simulator.run();
-    //     // Output the assignment required  info to the output file.
-    //     simulator.dumpStepsInfo(outputPath);
-    //     // Output the steps to the visualizer script.
-    //     auto output_path = "../../../output/" + algo.getName() + "moves.txt";
-    //     simulator.serializeAndDumpSteps(output_path);
-    //     simulator.reset();
-    //     Logger::getInstance().closeLogFile();
-    // }
 }

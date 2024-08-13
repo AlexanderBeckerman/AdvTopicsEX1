@@ -40,6 +40,7 @@ class MySimulator {
         robot->serializeAndDumpSteps(output_file);
     }
 
+    size_t score() const { return robot->getScore(); }
     size_t dirtLeft() const { return config->getAmountToClean(); }
     RelativePoint location() const { return robot->getLocation(); }
 

@@ -67,17 +67,20 @@ void Robot::start(AbstractAlgorithm &algorithm) {
                 (this->location.isChargingStation())
                     ? 0
                     : 1; // 0 for finished, 1 for dead, 2 for working.
+            calcScore();
             return;
         }
         if (this->getBatterySensor().getBatteryState() <= 0 &&
             !this->location.isChargingStation()) {
             this->exit_cond = 1;
+            calcScore();
             return;
         }
         this->step(next_step);
     }
     this->exit_cond = 2; // If we reached here it means we reached max steps and
                          // algorithm didnt return finish.
+    calcScore();
     LOG(INFO) << "Robot finished job" << std::endl;
 }
 
@@ -101,6 +104,22 @@ bool Robot::canContinue() {
     return still_have_steps && !cleaned_all && !stuck;
 }
 
+void Robot::calcScore() {
+
+    size_t dirt_left = this->config->getAmountToClean();
+    if (this->exit_cond == 1) { // If we are dead.
+        this->score = this->config->getMaxSteps() + (dirt_left * 300) + 2000;
+    } else if (finished &&
+               !this->location
+                    .isChargingStation()) { // If reported finished and robot is
+                                            // NOT in dock.
+        this->score = this->config->getMaxSteps() + (dirt_left * 300) + 3000;
+    } else { // Otherwise
+        this->score = this->curr_steps + (dirt_left * 300) +
+                      (this->location.isChargingStation() ? 0 : 1000);
+    }
+}
+
 void Robot::logStep(const Step step) {
     auto point = this->wall_sensor.location;
     StepInfo s = {point, this->battery_sensor.getBatteryState(), step,
@@ -113,25 +132,13 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     output.open(output_file);
     std::string in_dock =
         (this->location.isChargingStation()) ? "TRUE" : "FALSE";
-    size_t score;
     size_t dirt_left = this->config->getAmountToClean();
-    if (this->exit_cond == 1) { // If we are dead.
-        score = this->config->getMaxSteps() + (dirt_left * 300) + 2000;
-    } else if (finished &&
-               !this->location
-                    .isChargingStation()) { // If reported finished and robot is
-                                            // NOT in dock.
-        score = this->config->getMaxSteps() + (dirt_left * 300) + 3000;
-    } else { // Otherwise
-        score = this->curr_steps + (dirt_left * 300) +
-                (this->location.isChargingStation() ? 0 : 1000);
-    }
 
     output << "NumSteps = " << this->curr_steps << "\n";
     output << "DirtLeft = " << dirt_left << "\n";
     output << "Status = " << getStatus(this->exit_cond) << "\n";
     output << "InDock = " << in_dock << "\n";
-    output << "Score = " << score << "\n";
+    output << "Score = " << this->score << "\n";
     output << "Steps: \n";
 
     for (auto &step : this->steps_info) {

@@ -19,11 +19,13 @@ class Robot {
     RelativePoint location;
     size_t curr_steps = 0;
     size_t exit_cond;
+    size_t score = -1; // Default value.
     bool finished = false;
 
     void clean();
     bool canContinue();
     void logStep(const Step step);
+    void calcScore();
 
   public:
     Robot(std::shared_ptr<ConfigInfo> cfg) noexcept
@@ -36,6 +38,7 @@ class Robot {
     Robot(const Robot &other) = delete;
     ~Robot();
 
+    size_t getScore() const { return score; }
     void move(const Direction direction);
     void step(const Step next_step);
     void start(AbstractAlgorithm &algorithm);
