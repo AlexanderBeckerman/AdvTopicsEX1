@@ -53,6 +53,6 @@ int main(int argc, char **argv) {
     }
 
     generateCSV(summary, simulators, algorithms);
-
+    closeAlgos(algorithms);
     std::cout << "done" << std::endl;
 }

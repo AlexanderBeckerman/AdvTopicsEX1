@@ -9,7 +9,7 @@ project(robot)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic)
+add_compile_options(-std=c++20 -Wall -Wextra -Werror -pedantic -fsanitize=leak)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Add subdirectories

@@ -120,3 +120,11 @@ void generateCSV(const std::vector<SummaryInfo> &summary,
         csvFile << "\n";
     }
 }
+
+void closeAlgos(std::vector<AlgoInfo> &algorithms) {
+    AlgorithmRegistrar::getAlgorithmRegistrar().clear();
+    for (auto &algo : algorithms) {
+        algo.algorithm.reset();
+        dlclose(algo.handle);
+    }
+}
