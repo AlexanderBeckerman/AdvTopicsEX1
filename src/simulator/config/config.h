@@ -1,7 +1,8 @@
 #pragma once
-#include "layout_point.h"
-#include "tile.h"
-#include "utils.h"
+#include "../../common/utils/layout_point.h"
+#include "../../common/utils/tile.h"
+#include "../../common/utils/utils.h"
+#include <filesystem>
 
 class Robot;
 
@@ -21,11 +22,20 @@ class ConfigInfo {
   public:
     ConfigInfo(std::string input_path);
     ConfigInfo(ConfigInfo &&other) noexcept;
-    ConfigInfo(ConfigInfo &other) = default;
+    ConfigInfo(ConfigInfo &other) {
+        topograhpy_data = std::make_shared<TileLayout>(*other.topograhpy_data);
+        charging_station = other.charging_station;
+        max_battery_steps = other.max_battery_steps;
+        max_steps = other.max_steps;
+        amount_to_clean = other.amount_to_clean;
+        rows = other.rows;
+        cols = other.cols;
+    }
     std::string input_path;
     std::string output_path;
-    void draw() const; // Will write a parsed version of the map to a file for
-                       // the visualization.
+    void
+    draw(const std::string path) const; // Will write a parsed version of the
+                                        // map to a file for the visualization.
     void setValueAt(LayoutPoint position, int value);
     int getValueAt(LayoutPoint position) const;
     Tile getTileAt(LayoutPoint position) const;

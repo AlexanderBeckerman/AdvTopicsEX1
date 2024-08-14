@@ -1,6 +1,7 @@
 {   "cmake.debugConfig": {
         "args": [
-            "input_a.txt"
+            "-house_path=../../../input",
+            "-algo_path=../../lib"
         ]
     },
     "files.associations": {

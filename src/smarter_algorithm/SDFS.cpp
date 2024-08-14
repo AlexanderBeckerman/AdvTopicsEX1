@@ -1,12 +1,12 @@
-#include "smart_algorithm.h"
-#include "../common/utils/utils.h"
+#include "SDFS.h"
 #include "../common/AlgorithmRegistration.h"
 #include "../common/pathing.h"
+#include "../common/utils/utils.h"
 #include <queue>
 
-REGISTER_ALGORITHM(SmartAlgorithm);
+REGISTER_ALGORITHM(SDFS);
 
-Step SmartAlgorithm::nextStep() {
+Step SDFS::nextStep() {
     if (steps_left == 0) {
         return Step::Finish;
     }
@@ -22,19 +22,19 @@ Step SmartAlgorithm::nextStep() {
         if (battery_sensor->getBatteryState() < this->max_battery) {
             steps_left--;
             return Step::Stay;
-        } else {
-            // Battery is full, we can start exploring.
-            if (last_return_point.has_value()) {
-                auto path_to_last_return = shortestPath(
-                    visited, robot_location, *this->last_return_point);
-                if (path_to_last_return.size() < steps_left / 2) {
-                    predetermined_path =
-                        std::make_optional(path_to_last_return);
-                } else {
-                    this->direction_stack = std::stack<Direction>();
-                }
-                last_return_point = std::nullopt;
+        }
+
+        // If no dirty spots around, go to an interest point
+        bool clean_surroundings =
+            std::none_of(allDirections.begin(),
+                         allDirections.end(), [&](const auto &dir) {return isValidMove(dir);});
+        if (clean_surroundings) {
+            if (points_of_interest.empty()) {
+                return Step::Finish;
             }
+            auto &dest = points_of_interest.front();
+            auto path_to_dest = shortestPath(visited, robot_location, dest);
+            predetermined_path = std::make_optional(path_to_dest);
         }
     }
 
@@ -60,6 +60,7 @@ Step SmartAlgorithm::nextStep() {
     return_path_size += dirt_sensor->dirtLevel() > 0 ? 0 : 1;
     if (battery_sensor->getBatteryState() <= return_path_size ||
         steps_left <= return_path_size) {
+        points_of_interest.push(robot_location);
         startReturn();
         auto &dir = predetermined_path->top();
         predetermined_path->pop();
@@ -103,17 +104,4 @@ Step SmartAlgorithm::nextStep() {
     auto dir = oppositeDirection(direction_stack.top());
     direction_stack.pop();
     return this->moveDirection(dir);
-}
-
-void SmartAlgorithm::startReturn() {
-    last_return_point = std::make_optional<RelativePoint>(robot_location);
-    LOG(INFO) << "Starting return to charging station." << std::endl;
-    predetermined_path =
-        std::make_optional(shortestPathToOrigin(cleaned, robot_location));
-}
-
-Step SmartAlgorithm::moveDirection(const Direction &dir) {
-    robot_location = robot_location + dir;
-    steps_left--;
-    return directionToStep(dir);
 }

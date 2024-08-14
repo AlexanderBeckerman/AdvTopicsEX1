@@ -1,10 +1,11 @@
 #pragma once
 
-#include "config.h"
-#include "tile.h"
-#include "utils.h"
+#include "../utils/layout_point.h"
+#include "../utils/tile.h"
+#include "../utils/utils.h"
 
 class Robot;
+typedef std::vector<std::vector<Tile>> TileLayout;
 
 class WallsSensor {
   public:
@@ -46,8 +47,11 @@ class LayoutReader {
 class ConcreteDirtSensor : public LayoutReader, public DirtSensor {
   public:
     using LayoutReader::LayoutReader;
-    bool isDirty() const;
-    int dirtLevel() const override;
+    virtual ~ConcreteDirtSensor() {}
+    bool isDirty() const { return this->getCurrentTile().getDirtLevel() > 0; }
+    int dirtLevel() const override {
+        return this->getCurrentTile().getDirtLevel();
+    }
     Tile &getDirtyTile() {
         Tile &tile = (*layout)[location.row][location.col];
         return tile;
@@ -58,7 +62,38 @@ class ConcreteDirtSensor : public LayoutReader, public DirtSensor {
 class ConcreteWallSensor : public LayoutReader, public WallsSensor {
   public:
     using LayoutReader::LayoutReader;
-    bool isWall(Direction d) const override;
+    bool isWall(const Direction direction) const override {
+        size_t row = location.row;
+        size_t col = location.col;
+        switch (direction) {
+        case Direction::North:
+            if (row == 0) {
+                return true;
+            }
+            break;
+        case Direction::South:
+            if (row == layout->size() - 1) {
+                return true;
+            }
+            break;
+        case Direction::West:
+            if (col == 0) {
+                return true;
+            }
+            break;
+        case Direction::East:
+            if (col == (*layout)[row].size() - 1) {
+                return true;
+            }
+            break;
+        default:
+            return false;
+        };
+        auto layout_point = location + direction;
+        return (*layout)[layout_point.row][layout_point.col].getType() ==
+               TileType::WALL;
+    }
+    virtual ~ConcreteWallSensor() {}
 };
 
 class ConcreteBatteryMeter : public BatteryMeter {
@@ -67,6 +102,7 @@ class ConcreteBatteryMeter : public BatteryMeter {
     size_t steps_at_charging = 0;
 
   public:
+    virtual ~ConcreteBatteryMeter() {}
     ConcreteBatteryMeter(int capacity, int charge = 0)
         : capacity(capacity), charge(charge) {}
 

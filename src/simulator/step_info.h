@@ -1,5 +1,5 @@
 #pragma once
-#include "layout_point.h"
+#include "../common/utils/layout_point.h"
 
 struct StepInfo {
     LayoutPoint point;

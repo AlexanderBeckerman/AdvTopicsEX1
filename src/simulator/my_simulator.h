@@ -1,10 +1,12 @@
-#include "config.h"
+#pragma once
+#include "../common/abstract_algorithm.h"
+#include "../common/utils/utils.h"
+#include "config/config.h"
 #include "robot.h"
-#include "smart_algorithm.h"
-#include "utils.h"
 
 class MySimulator {
   private:
+    std::unique_ptr<ConfigInfo> start_config;
     std::shared_ptr<ConfigInfo> config;
     AbstractAlgorithm *algorithm;
 
@@ -13,7 +15,8 @@ class MySimulator {
 
   public:
     void readHouseFile(std::string input_path) {
-        config = std::make_shared<ConfigInfo>(input_path);
+        start_config = std::make_unique<ConfigInfo>(input_path);
+        config = std::make_shared<ConfigInfo>(*start_config);
         robot = std::make_unique<Robot>(config);
     }
     void setAlgorithm(AbstractAlgorithm &algorithm) {
@@ -25,6 +28,11 @@ class MySimulator {
     }
     void run() { robot->start(*algorithm); }
 
+    void reset() {
+        config = std::make_shared<ConfigInfo>(*start_config);
+        robot = std::make_unique<Robot>(config);
+    }
+
     // Output the assignment required  info to the output file.
     void dumpStepsInfo(const std::string &output_file) const {
         robot->dumpStepsInfo(output_file);
@@ -33,6 +41,7 @@ class MySimulator {
         robot->serializeAndDumpSteps(output_file);
     }
 
+    size_t score() const { return robot->getScore(); }
     size_t dirtLeft() const { return config->getAmountToClean(); }
     RelativePoint location() const { return robot->getLocation(); }
 

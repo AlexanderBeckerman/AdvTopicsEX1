@@ -1,5 +1,5 @@
 #include "robot.h"
-#include "config.h"
+#include "config/config.h"
 #include <algorithm>
 #include <cmath>
 #include <iostream>
@@ -56,22 +56,31 @@ void Robot::clean() {
 
 void Robot::start(AbstractAlgorithm &algorithm) {
     // This function will start the robot and make it clean the map
-    while (this->curr_steps < this->config->getMaxSteps()) {
+    while (this->curr_steps <= this->config->getMaxSteps()) {
         Step next_step = algorithm.nextStep();
         if (next_step == Step::Finish) {
             LOG(INFO) << "Algorithm returned step finished, exiting..."
                       << std::endl;
             logStep(next_step);
+            finished = true;
             this->exit_cond =
                 (this->location.isChargingStation())
                     ? 0
                     : 1; // 0 for finished, 1 for dead, 2 for working.
+            calcScore();
+            return;
+        }
+        if (this->getBatterySensor().getBatteryState() <= 0 &&
+            !this->location.isChargingStation()) {
+            this->exit_cond = 1;
+            calcScore();
             return;
         }
         this->step(next_step);
     }
     this->exit_cond = 2; // If we reached here it means we reached max steps and
                          // algorithm didnt return finish.
+    calcScore();
     LOG(INFO) << "Robot finished job" << std::endl;
 }
 
@@ -95,6 +104,22 @@ bool Robot::canContinue() {
     return still_have_steps && !cleaned_all && !stuck;
 }
 
+void Robot::calcScore() {
+
+    size_t dirt_left = this->config->getAmountToClean();
+    if (this->exit_cond == 1) { // If we are dead.
+        this->score = this->config->getMaxSteps() + (dirt_left * 300) + 2000;
+    } else if (finished &&
+               !this->location
+                    .isChargingStation()) { // If reported finished and robot is
+                                            // NOT in dock.
+        this->score = this->config->getMaxSteps() + (dirt_left * 300) + 3000;
+    } else { // Otherwise
+        this->score = this->curr_steps + (dirt_left * 300) +
+                      (this->location.isChargingStation() ? 0 : 1000);
+    }
+}
+
 void Robot::logStep(const Step step) {
     auto point = this->wall_sensor.location;
     StepInfo s = {point, this->battery_sensor.getBatteryState(), step,
@@ -105,10 +130,15 @@ void Robot::logStep(const Step step) {
 void Robot::dumpStepsInfo(const std::string &output_file) const {
     std::ofstream output;
     output.open(output_file);
+    std::string in_dock =
+        (this->location.isChargingStation()) ? "TRUE" : "FALSE";
+    size_t dirt_left = this->config->getAmountToClean();
 
     output << "NumSteps = " << this->curr_steps << "\n";
-    output << "DirtLeft = " << this->config->getAmountToClean() << "\n";
+    output << "DirtLeft = " << dirt_left << "\n";
     output << "Status = " << getStatus(this->exit_cond) << "\n";
+    output << "InDock = " << in_dock << "\n";
+    output << "Score = " << this->score << "\n";
     output << "Steps: \n";
 
     for (auto &step : this->steps_info) {
@@ -123,3 +153,5 @@ void Robot::serializeAndDumpSteps(const std::string &output_file) const {
     output << serializeVecSteps(this->steps_info);
     output.close();
 }
+
+Robot::~Robot() {}

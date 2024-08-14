@@ -1,5 +1,4 @@
 #include "config.h"
-#include "robot.h"
 
 /*Each robot will have a map instance. To initialize his map, he will pass the
 given input.txt path with a reference to himself. The map constructor will
@@ -54,7 +53,7 @@ ConfigInfo::ConfigInfo(const std::string path) {
 
     file.close();
     this->topograhpy_data = std::make_shared<TileLayout>(layout);
-    this->draw();
+    this->draw(path);
 }
 
 ConfigInfo::ConfigInfo(ConfigInfo &&other) noexcept {
@@ -190,8 +189,11 @@ bool ConfigInfo::checkInRange(LayoutPoint p) const {
     return true;
 }
 
-void ConfigInfo::draw() const {
-    std::ofstream outFile("../../../output/cleaned_input.txt");
+void ConfigInfo::draw(std::string path) const {
+
+    std::filesystem::path pathObj(path);
+    std::string filename = pathObj.stem().string();
+    std::ofstream outFile("../../../output/" + filename + "_cleaned_input.txt");
     if (!outFile) {
         std::cerr << "Failed to open file for writing." << std::endl;
         return;

@@ -1,16 +1,16 @@
 #pragma once
-#include "abstract_algorithm.h"
-#include "config.h"
+#include "../common/abstract_algorithm.h"
+#include "../common/sensors/sensors.h"
+#include "../common/utils/relative_point.h"
+#include "../common/utils/utils.h"
 #include "expanding_map.h"
-#include "relative_point.h"
-#include "sensors.h"
-#include "utils.h"
 #include <optional>
 #include <stack>
 #include <unordered_set>
 
 class SmartAlgorithm : public AbstractAlgorithm {
     // Configuration.
+  protected:
     const DirtSensor *dirt_sensor;
     const WallsSensor *wall_sensor;
     const BatteryMeter *battery_sensor;
