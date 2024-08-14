@@ -2,34 +2,39 @@
 
 int main(int argc, char **argv) {
 
-    std::string housePath = "";
-    std::string algoPath = "";
+    std::string houseArg = "";
+    std::string algoArg = "";
+    fs::path housePath;
+    fs::path algoPath;
     bool summary_only = false;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
         if (arg.find("-house_path=") == 0) {
-            housePath = arg.substr(12);
+            houseArg = arg.substr(12);
         } else if (arg.find("-algo_path=") == 0) {
-            algoPath = arg.substr(11);
+            algoArg = arg.substr(11);
         } else if (arg.find("-summary_only") == 0) {
             summary_only = true;
         }
     }
 
-    std::vector<SimInfo> simulators;
-    std::vector<AlgoInfo> algorithms;
-
-    if (!housePath.empty()) {
-        processFilesInDirectory(housePath, simulators, algorithms);
+    if (houseArg.empty()) {
+        housePath = fs::current_path();
     } else {
-        processFilesInDirectory(fs::current_path(), simulators, algorithms);
+        housePath = houseArg;
     }
-    if (!algoPath.empty()) {
-        processFilesInDirectory(algoPath, simulators, algorithms);
+    if (algoArg.empty()) {
+        algoPath = fs::current_path();
     } else {
-        processFilesInDirectory(fs::current_path(), simulators, algorithms);
+        algoPath = algoArg;
     }
+    std::vector<SimInfo> simulators =
+        createVectorFromIterator(fs::directory_iterator(housePath),
+                                 fs::directory_iterator(), processHouses);
+    std::vector<AlgoInfo> algorithms =
+        createVectorFromIterator(fs::directory_iterator(algoPath),
+                                 fs::directory_iterator(), processAlgorithms);
 
     std::vector<SummaryInfo> summary;
     summary.reserve(simulators.size() * algorithms.size());
@@ -42,11 +47,10 @@ int main(int argc, char **argv) {
                 {sim.house_file_name, algo.name, sim.simulator.score()});
 
             if (!summary_only) {
-                sim.simulator.dumpStepsInfo(sim.house_output_path + "_" +
-                                            algo.name + ".txt");
-                auto output_path = "../../../output/" + sim.house_file_name +
-                                   "_" + algo.name + ".moves.txt";
-                sim.simulator.serializeAndDumpSteps(output_path);
+                sim.simulator.dumpStepsInfo(
+                    generateOutputPath(sim.house_file_name, algo.name, false));
+                sim.simulator.serializeAndDumpSteps(
+                    generateOutputPath(sim.house_file_name, algo.name, true));
             }
             sim.simulator.reset();
         }

@@ -4,7 +4,7 @@ if(POLICY CMP0079 )
 endif()
 cmake_policy(SET CMP0135 NEW)
 
-project(robot)
+project(RobotProj)
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)

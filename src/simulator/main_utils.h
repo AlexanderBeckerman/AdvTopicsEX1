@@ -15,7 +15,6 @@ struct SimInfo {
 
 struct AlgoInfo {
     std::unique_ptr<AbstractAlgorithm> algorithm;
-    std::string algo_file_path;
     void *handle; // Save the handle so we can dlclose it later.
     std::string name;
 };
@@ -28,9 +27,13 @@ struct SummaryInfo {
 
 namespace fs = std::filesystem;
 
-void processHouseFile(const fs::path &houseFile,
-                      std::vector<SimInfo> &simulators) {
+std::optional<SimInfo>
+processHouses(const std::filesystem::directory_entry &entry) {
 
+    if (entry.path().extension() != ".house") {
+        return std::nullopt;
+    }
+    auto houseFile = entry.path();
     std::ifstream file(houseFile);
     fs::path errorFilePath =
         fs::current_path() / (houseFile.stem().string() + ".error");
@@ -46,19 +49,25 @@ void processHouseFile(const fs::path &houseFile,
         simInfo.house_file_name = houseFile.stem().string();
         std::string outputFile = addPrefixToFileName(houseFile.stem().string());
         simInfo.house_output_path = "../../../output/" + outputFile;
-        simulators.push_back(std::move(simInfo));
+        return simInfo;
 
     } catch (const std::exception &e) {
         std::ofstream errorFile(errorFilePath);
         errorFile << "Error: " << e.what() << std::endl;
+        return std::nullopt;
     }
 }
 
-void processAlgorithmFile(const fs::path &algoFile,
-                          std::vector<AlgoInfo> &algorithms) {
+std::optional<AlgoInfo>
+processAlgorithms(const std::filesystem::directory_entry &entry) {
+
+    if (entry.path().extension() != ".so") {
+        return std::nullopt;
+    }
 
     std::size_t curr_count =
         AlgorithmRegistrar::getAlgorithmRegistrar().count();
+    auto algoFile = entry.path();
     void *handle = dlopen(algoFile.c_str(), RTLD_LAZY);
     if ((curr_count !=
          AlgorithmRegistrar::getAlgorithmRegistrar().count() - 1) ||
@@ -69,28 +78,16 @@ void processAlgorithmFile(const fs::path &algoFile,
         errorFile << "Error: Could not load algorithm file: " << algoFile
                   << "\n"
                   << dlerror() << std::endl;
-        return;
+        return std::nullopt;
     }
 
     AlgoInfo algoInfo;
     algoInfo.algorithm = std::move(
         (*(AlgorithmRegistrar::getAlgorithmRegistrar().end() - 1)).create());
     algoInfo.handle = handle;
-    algoInfo.algo_file_path = algoFile.string();
     algoInfo.name =
         (*(AlgorithmRegistrar::getAlgorithmRegistrar().end() - 1)).name();
-    algorithms.push_back(std::move(algoInfo));
-}
-void processFilesInDirectory(const fs::path &dirPath,
-                             std::vector<SimInfo> &simulators,
-                             std::vector<AlgoInfo> &algorithms) {
-    for (const auto &entry : fs::directory_iterator(dirPath)) {
-        if (entry.path().extension() == ".house") {
-            processHouseFile(entry.path(), simulators);
-        } else if (entry.path().extension() == ".so") {
-            processAlgorithmFile(entry.path(), algorithms);
-        }
-    }
+    return algoInfo;
 }
 
 void generateCSV(const std::vector<SummaryInfo> &summary,
@@ -127,4 +124,27 @@ void closeAlgos(std::vector<AlgoInfo> &algorithms) {
         algo.algorithm.reset();
         dlclose(algo.handle);
     }
+}
+
+template <typename Iterator, typename Func>
+auto createVectorFromIterator(Iterator begin, Iterator end, Func mapFunc) {
+    using ValueType = typename std::invoke_result_t<
+        Func, typename std::iterator_traits<Iterator>::value_type>::value_type;
+    std::vector<ValueType> result;
+
+    for (Iterator it = begin; it != end; ++it) {
+        auto value = mapFunc(*it);
+        if (value) {
+            result.push_back(std::move(*value));
+        }
+    }
+    return result;
+}
+
+std::string generateOutputPath(const std::string &house_file_name,
+                               const std::string &algo_name, bool moves) {
+    return moves ? "../../../output/" + house_file_name + "_" + algo_name +
+                       "moves.txt"
+                 : "../../../output/" + house_file_name + "_" + algo_name +
+                       ".txt";
 }
