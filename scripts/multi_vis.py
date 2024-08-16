@@ -1,20 +1,54 @@
+import os
 import subprocess
+import re
+import sys
 
-# Paths to your Python files
-python_file_1 = "visualize_map.py"
+def find_algorithm_files(house_filename, output_dir):
+    # Create a regex pattern to match the desired file format
+    pattern = re.compile(rf'^output_{house_filename}_(.+)\.txt$')
+    
+    # List all files in the output directory
+    files = os.listdir(output_dir)
+    
+    # Filter files that match the pattern and extract the algorithm name
+    algorithms = []
+    for file in files:
+        match = pattern.match(file)
+        if match:
+            algorithms.append(match.group(1))  # Extract algorithm name
+    
+    return algorithms
 
-# Command line arguments for each file
-args_for_file_1 = ["SDFS"]  # Replace with your actual arguments
-args_for_file_2 = ["SmartAlgorithm"]  # Replace with your actual arguments
+def run_visualize_map(algorithm_name, house_filename):
+    # Construct the command to run visualize_map.py
+    command = ['python3', 'visualize_map.py', algorithm_name, house_filename]
+    
+    # Start the process using Popen and return the process object
+    process = subprocess.Popen(command)
+    return process
 
-# Run the first Python file with arguments in a new shell
-process_1 = subprocess.Popen(['python', python_file_1] + args_for_file_1, shell=True)
+def main(house_filename, output_dir='output'):
+    # Find all algorithm names for the given house filename
+    algorithms = find_algorithm_files(house_filename, output_dir)
+    
+    # List to store all process objects
+    processes = []
+    
+    # Start visualize_map.py for each algorithm found
+    for algorithm in algorithms:
+        print(f"Running visualize_map.py for algorithm: {algorithm}")
+        process = run_visualize_map(algorithm, house_filename)
+        processes.append(process)
+    
+    # Wait for all processes to complete
+    for process in processes:
+        process.wait()
 
-# Run the second Python file with arguments in a new shell
-process_2 = subprocess.Popen(['python', python_file_1] + args_for_file_2, shell=True)
-
-# Wait for both processes to complete
-process_1.wait()
-process_2.wait()
-
-print("Both Python scripts have completed.")
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python script_name.py <house_filename>")
+        sys.exit(1)
+    
+    house_filename = sys.argv[1]
+    output_dir = '../output'  # You can change this to the desired output directory
+    main(house_filename, output_dir)

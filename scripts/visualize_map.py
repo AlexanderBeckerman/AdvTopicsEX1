@@ -91,7 +91,7 @@ def draw_map(ax, matrix):
 
     return patches, texts
 
-def animate_robot(moves, matrix):
+def animate_robot(moves, matrix, house_name, algorithm_name):
     fig, ax = plt.subplots()
     patches, texts = draw_map(ax, matrix)
     # Create the robot as a red circle
@@ -124,8 +124,8 @@ def animate_robot(moves, matrix):
         steps_text.set_text(f'Steps Left: {steps_left}')
         return circle,
     
-    battery_text = ax.text(1, len(matrix) + 0.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
-    steps_text = ax.text(1, len(matrix) + 0.5, f'Steps Left:{moves[0][3]}', ha='right', va='top')
+    battery_text = ax.text(1, len(matrix) + 2.5, f'Battery:{moves[0][2]}', ha='right', va='bottom')
+    steps_text = ax.text(1, len(matrix) + 2.5, f'Steps Left:{moves[0][3]}', ha='right', va='top')
     ax.set_ylim(0, len(matrix) + 1)  # Adjust as necessary to ensure visibility
     ani = animation.FuncAnimation(fig, update, frames=range(len(moves)), init_func=init, blit=False, repeat=False, interval=100)
 
@@ -138,12 +138,12 @@ def animate_robot(moves, matrix):
     ax.set_xticks([])
     ax.set_yticks([])
 
-    plt.title('Robot Movement Animation')
+    plt.title(f'Robot Movement Animation for {house_name} using {algorithm_name}')
     plt.show()
 
 def animate_algorithm(algorithm_name, house_name):
     map_file_path = f'../output/{house_name}_cleaned_input.txt' # Adjust this path to your parsed map file location
-    moves_file_path = f'../output/{house_name}_{algorithm_name}.moves.txt'
+    moves_file_path = f'../output/{house_name}_{algorithm_name}_moves.txt'
     if not os.path.exists(map_file_path) or not os.path.exists(moves_file_path):
         print('Error reading input files: moves File not found')
         return
@@ -152,11 +152,12 @@ def animate_algorithm(algorithm_name, house_name):
         return
     matrix = read_input_file(map_file_path)
     moves = read_moves_file(moves_file_path)
-    animate_robot(moves, matrix)
+    animate_robot(moves, matrix, house_name, algorithm_name)
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print('Usage: python visualize_map.py <algorithm_name> <house_name>')
         sys.exit(1)
     algorithm_name = sys.argv[1]
-    animate_algorithm(algorithm_name)
+    house_name = sys.argv[2]
+    animate_algorithm(algorithm_name, house_name)
