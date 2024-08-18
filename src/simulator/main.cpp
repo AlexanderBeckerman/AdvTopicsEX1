@@ -1,6 +1,51 @@
 #include "main_utils.h"
+#include <algorithm>
+#include <chrono>
+#include <future>
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <vector>
+
+std::mutex summaryMutex; // Mutex to protect access to the summaries vector
+
+void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
+                   const std::string &name, bool summary_only,
+                   std::vector<SummaryInfo> &summaries, int timeout) {
+    std::cout << name << " House: " << sim.house_file_name << std::endl;
+    sim.simulator.setAlgorithm(*algo);
+    std::optional<std::size_t> score;
+
+    auto future = std::async(std::launch::async, [&]() {
+        sim.simulator.run();
+        return sim.simulator.score();
+    });
+
+    if (future.wait_for(std::chrono::milliseconds(timeout)) ==
+        std::future_status::timeout) {
+        //  TODO(Sasha): add penalty here
+        score = 999999;
+        future.get(); // Retrieve the result but ignore it
+    } else {
+        score = future.get(); // Get the actual score if completed in time
+    }
+
+    {
+        // Protect access to the summaries vector
+        std::lock_guard<std::mutex> guard(summaryMutex);
+        summaries.push_back({sim.house_file_name, name, score.value()});
+    }
+
+    if (!summary_only) {
+        sim.simulator.dumpStepsInfo(
+            generateOutputPath(sim.house_file_name, name, false));
+        sim.simulator.serializeAndDumpSteps(
+            generateOutputPath(sim.house_file_name, name, true));
+    }
+}
 
 int main(int argc, char **argv) {
+    // CLI.
     std::string houseArg = "";
     std::string algoArg = "";
     fs::path housePath;
@@ -29,6 +74,11 @@ int main(int argc, char **argv) {
         algoPath = algoArg;
     }
 
+    // TODO: Add support for these in the CLI.
+    long unsigned int numThreads = 10;
+    int timeout = 1000;
+
+    // Load.
     std::vector<Handle> algorithm_handles =
         createVectorFromIterator(fs::directory_iterator(algoPath),
                                  fs::directory_iterator(), LoadAlgorithm);
@@ -36,31 +86,39 @@ int main(int argc, char **argv) {
         createVectorFromIterator(fs::directory_iterator(housePath),
                                  fs::directory_iterator(), processHouses);
 
+    // Run.
+    std::vector<std::thread> threads;
     std::vector<SummaryInfo> summaries;
     summaries.reserve(simulators.size() * algorithm_handles.size());
 
-    
-    for (auto &sim : simulators) {
+    for (const auto &sim : simulators) {
         for (const auto &algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
-            std::cout << algo.getName() << "House: " << sim.house_file_name
-                      << std::endl;
-            auto algorithm = algo.create();
-            sim.simulator.setAlgorithm(*algorithm);
-            sim.simulator.run();
-            summaries.push_back(
-                {sim.house_file_name, algo.getName(), sim.simulator.score()});
-
-            if (!summary_only) {
-                sim.simulator.dumpStepsInfo(generateOutputPath(
-                    sim.house_file_name, algo.getName(), false));
-                sim.simulator.serializeAndDumpSteps(generateOutputPath(
-                    sim.house_file_name, algo.getName(), true));
+            if (threads.size() >= numThreads) {
+                // Wait for some threads to finish before starting new ones
+                for (auto &t : threads) {
+                    t.join();
+                }
+                threads.clear();
             }
-            sim.simulator.reset();
+
+            // Create a new algorithm & simulator instances.
+            SimInfo sim_cpy = {MySimulator(sim.simulator), sim.house_file_name,
+                               sim.house_output_path};
+            auto algorithm = algo.create();
+            auto &algorithm_name = algo.name();
+            threads.emplace_back(runSimulation, std::move(sim_cpy),
+                                 std::move(algorithm),
+                                 std::cref(algorithm_name), summary_only,
+                                 std::ref(summaries), timeout);
         }
     }
 
+    // Join any remaining threads
+    for (auto &t : threads) {
+        t.join();
+    }
+
+    std::cout << "Done! summarizing..." << std::endl;
     generateCSV(summaries);
     closeAlgos(algorithm_handles);
-    std::cout << "done" << std::endl;
 }
