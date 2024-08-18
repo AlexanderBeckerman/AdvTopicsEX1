@@ -29,28 +29,31 @@ int main(int argc, char **argv) {
     } else {
         algoPath = algoArg;
     }
-    std::vector<SimInfo> simulators =
-        createVectorFromIterator(fs::directory_iterator(housePath),
-                                 fs::directory_iterator(), processHouses);
+
     std::vector<AlgoInfo> algorithms =
         createVectorFromIterator(fs::directory_iterator(algoPath),
                                  fs::directory_iterator(), processAlgorithms);
+    std::vector<SimInfo> simulators =
+        createVectorFromIterator(fs::directory_iterator(housePath),
+                                 fs::directory_iterator(), processHouses);
 
     std::vector<SummaryInfo> summary;
     summary.reserve(simulators.size() * algorithms.size());
 
-    for (auto &algo : algorithms) {
-        for (auto &sim : simulators) {
-            sim.simulator.setAlgorithm(*algo.algorithm);
+    for (auto &sim : simulators) {
+        for (const auto &algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
+            auto algorithm = algo.create();
+            std::cout << algorithm << std::endl;
+            sim.simulator.setAlgorithm(*algorithm);
             sim.simulator.run();
             summary.push_back(
-                {sim.house_file_name, algo.name, sim.simulator.score()});
+                {sim.house_file_name, algo.getName(), sim.simulator.score()});
 
             if (!summary_only) {
-                sim.simulator.dumpStepsInfo(
-                    generateOutputPath(sim.house_file_name, algo.name, false));
-                sim.simulator.serializeAndDumpSteps(
-                    generateOutputPath(sim.house_file_name, algo.name, true));
+                sim.simulator.dumpStepsInfo(generateOutputPath(
+                    sim.house_file_name, algo.getName(), false));
+                sim.simulator.serializeAndDumpSteps(generateOutputPath(
+                    sim.house_file_name, algo.getName(), true));
             }
             sim.simulator.reset();
         }
