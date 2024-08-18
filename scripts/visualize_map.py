@@ -123,7 +123,6 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names, sco
     
     # Make a separate copy of the matrix for each grid
     matrix_copies = [np.copy(matrix) for _ in range(num_grids)]
-    animations = []
     
     circles = []
     battery_texts = []
@@ -158,8 +157,8 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names, sco
         ax.set_yticks([])
         ax.set_title(f'{house_name} - {algorithm_name}')
 
-    # Determine the subplot with the highest score
-    max_score_index = np.argmax(scores)
+    # Determine the subplot with the smallest score
+    min_score_index = np.argmin(scores)
 
     # Function to update all animations simultaneously
     def update_all(frame):
@@ -189,17 +188,22 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names, sco
                 if frame == len(moves) - 1:
                     score_text.set_text(f'Score: {scores[i]}')
 
-            # After the last frame, draw a green rectangle around the best-performing algorithm
+            # After the last frame, draw a green rectangle around the algorithm with the lowest score
             if frame == max(len(moves) for moves in moves_lists) - 1:
-                if i == max_score_index:
-                    rect = plt.Rectangle((0, 0), 1, 1, linewidth=3, edgecolor='green', facecolor='none',
-                                         transform=ax.transAxes, clip_on=False)
-                    ax.add_patch(rect)
+                if i == min_score_index:
+                    # Draw rectangle using absolute figure coordinates
+                    bbox = axes[i].get_position()
+                    rect = plt.Rectangle(
+                        (bbox.x0, bbox.y0), bbox.width, bbox.height,
+                        linewidth=3, edgecolor='green', facecolor='none',
+                        transform=fig.transFigure, clip_on=False
+                    )
+                    fig.patches.append(rect)  # Add to the figure's patches instead of the axes
         
         return circles
 
     ani = animation.FuncAnimation(
-        fig, update_all, frames=max(len(moves) for moves in moves_lists), blit=False, repeat=False, interval=150
+        fig, update_all, frames=max(len(moves) for moves in moves_lists), blit=False, repeat=False, interval=100
     )
 
     plt.show()
