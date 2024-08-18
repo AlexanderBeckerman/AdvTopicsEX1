@@ -1,7 +1,6 @@
 #include "main_utils.h"
 
 int main(int argc, char **argv) {
-
     std::string houseArg = "";
     std::string algoArg = "";
     fs::path housePath;
@@ -30,23 +29,25 @@ int main(int argc, char **argv) {
         algoPath = algoArg;
     }
 
-    std::vector<AlgoInfo> algorithms =
+    std::vector<Handle> algorithm_handles =
         createVectorFromIterator(fs::directory_iterator(algoPath),
-                                 fs::directory_iterator(), processAlgorithms);
+                                 fs::directory_iterator(), LoadAlgorithm);
     std::vector<SimInfo> simulators =
         createVectorFromIterator(fs::directory_iterator(housePath),
                                  fs::directory_iterator(), processHouses);
 
-    std::vector<SummaryInfo> summary;
-    summary.reserve(simulators.size() * algorithms.size());
+    std::vector<SummaryInfo> summaries;
+    summaries.reserve(simulators.size() * algorithm_handles.size());
 
+    
     for (auto &sim : simulators) {
         for (const auto &algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
+            std::cout << algo.getName() << "House: " << sim.house_file_name
+                      << std::endl;
             auto algorithm = algo.create();
-            std::cout << algorithm << std::endl;
             sim.simulator.setAlgorithm(*algorithm);
             sim.simulator.run();
-            summary.push_back(
+            summaries.push_back(
                 {sim.house_file_name, algo.getName(), sim.simulator.score()});
 
             if (!summary_only) {
@@ -59,7 +60,7 @@ int main(int argc, char **argv) {
         }
     }
 
-    generateCSV(summary, simulators, algorithms);
-    closeAlgos(algorithms);
+    generateCSV(summaries);
+    closeAlgos(algorithm_handles);
     std::cout << "done" << std::endl;
 }

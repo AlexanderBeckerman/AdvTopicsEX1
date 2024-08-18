@@ -6,6 +6,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <set>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 struct SimInfo {
     MySimulator simulator;
@@ -13,10 +17,8 @@ struct SimInfo {
     std::string house_output_path;
 };
 
-struct AlgoInfo {
-    std::unique_ptr<AbstractAlgorithm> algorithm;
+struct Handle {
     void *handle; // Save the handle so we can dlclose it later.
-    std::string name;
 };
 
 struct SummaryInfo {
@@ -58,8 +60,8 @@ processHouses(const std::filesystem::directory_entry &entry) {
     }
 }
 
-std::optional<AlgoInfo>
-processAlgorithms(const std::filesystem::directory_entry &entry) {
+std::optional<Handle>
+LoadAlgorithm(const std::filesystem::directory_entry &entry) {
 
     if (entry.path().extension() != ".so") {
         return std::nullopt;
@@ -81,47 +83,55 @@ processAlgorithms(const std::filesystem::directory_entry &entry) {
         return std::nullopt;
     }
 
-    AlgoInfo algoInfo;
-    algoInfo.algorithm = std::move(
-        (*(AlgorithmRegistrar::getAlgorithmRegistrar().end() - 1)).create());
-    algoInfo.handle = handle;
-    algoInfo.name =
-        (*(AlgorithmRegistrar::getAlgorithmRegistrar().end() - 1)).name();
-    return algoInfo;
+    return Handle{handle};
 }
 
-void generateCSV(const std::vector<SummaryInfo> &summary,
-                 const std::vector<SimInfo> &simulators,
-                 const std::vector<AlgoInfo> &algorithms) {
-    std::ofstream csvFile("../../../output/summary.csv");
-    csvFile << "Algorithm";
-    for (const auto &sim : simulators) {
-        csvFile << "," << sim.house_file_name;
+void generateCSV(const std::vector<SummaryInfo> &summaries) {
+    // Collect unique house names
+    std::set<std::string> houseNames;
+    for (const auto &summary : summaries) {
+        houseNames.insert(summary.house_file_name);
     }
-    csvFile << "\n";
-    for (const auto &algo : algorithms) {
-        csvFile << algo.name;
-        for (const auto &sim : simulators) {
-            auto it = std::find_if(summary.begin(), summary.end(),
-                                   [&algo, &sim](const SummaryInfo &info) {
-                                       return info.house_file_name ==
-                                                  sim.house_file_name &&
-                                              info.algo_name == algo.name;
-                                   });
-            if (it != summary.end()) {
-                csvFile << "," << it->score;
+
+    // Organize summaries by algorithm name
+    std::unordered_map<std::string,
+                       std::unordered_map<std::string, std::size_t>>
+        organizedData;
+    for (const auto &summary : summaries) {
+        organizedData[summary.algo_name][summary.house_file_name] =
+            summary.score;
+    }
+
+    // Write to summary.csv
+    std::ofstream summaryFile("../../../output/summary.csv");
+
+    // Write the header row
+    summaryFile << "Algorithm";
+    for (const auto &house : houseNames) {
+        summaryFile << "," << house;
+    }
+    summaryFile << "\n";
+
+    // Write each algorithm's scores
+    for (const auto &[algoName, houseScores] : organizedData) {
+        summaryFile << algoName;
+        for (const auto &house : houseNames) {
+            auto it = houseScores.find(house);
+            if (it != houseScores.end()) {
+                summaryFile << "," << it->second;
             } else {
-                csvFile << ",-1";
+                summaryFile << ",N/A"; // Should never happen.
             }
         }
-        csvFile << "\n";
+        summaryFile << "\n";
     }
+
+    summaryFile.close();
 }
 
-void closeAlgos(std::vector<AlgoInfo> &algorithms) {
+void closeAlgos(std::vector<Handle> &algorithms) {
     AlgorithmRegistrar::getAlgorithmRegistrar().clear();
     for (auto &algo : algorithms) {
-        algo.algorithm.reset();
         dlclose(algo.handle);
     }
 }
