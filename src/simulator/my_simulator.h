@@ -8,6 +8,8 @@ class MySimulator {
   private:
     std::shared_ptr<ConfigInfo> config;
     AbstractAlgorithm *algorithm;
+    size_t init_dirt;
+    size_t max_steps;
 
   protected:
     std::unique_ptr<Robot> robot;
@@ -17,12 +19,16 @@ class MySimulator {
         this->config = std::make_shared<ConfigInfo>(*other.config);
         this->robot = std::make_unique<Robot>(this->config);
         this->algorithm = nullptr;
+        this->init_dirt = other.init_dirt;
+        this->max_steps = other.max_steps;
     };
 
     MySimulator() : config(nullptr), algorithm(nullptr) {}
     void readHouseFile(std::string input_path) {
         config = std::make_unique<ConfigInfo>(input_path);
         robot = std::make_unique<Robot>(config);
+        init_dirt = config->getAmountToClean();
+        max_steps = config->getMaxSteps();
     }
     void setAlgorithm(AbstractAlgorithm &algorithm) {
         this->algorithm = &algorithm;
@@ -44,6 +50,8 @@ class MySimulator {
     size_t score() const { return robot->getScore(); }
     size_t dirtLeft() const { return config->getAmountToClean(); }
     RelativePoint location() const { return robot->getLocation(); }
+    size_t getMaxSteps() const { return max_steps; }
+    size_t getInitDirt() const { return init_dirt; }
 
     friend class RobotTest;
     friend class SensorTest;
