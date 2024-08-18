@@ -43,8 +43,9 @@ class MySimulator {
     void dumpStepsInfo(const std::string &output_file) const {
         robot->dumpStepsInfo(output_file);
     }
-    void serializeAndDumpSteps(const std::string &output_file) const {
-        robot->serializeAndDumpSteps(output_file);
+    void serializeAndDumpSteps(const std::string &output_file,
+                               const size_t score) const {
+        robot->serializeAndDumpSteps(output_file, score);
     }
 
     size_t score() const { return robot->getScore(); }

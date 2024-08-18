@@ -42,7 +42,7 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
         sim.simulator.dumpStepsInfo(
             generateOutputPath(sim.house_file_name, name, false));
         sim.simulator.serializeAndDumpSteps(
-            generateOutputPath(sim.house_file_name, name, true));
+            generateOutputPath(sim.house_file_name, name, true), score.value());
     }
 }
 

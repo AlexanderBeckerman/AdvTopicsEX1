@@ -22,6 +22,7 @@ def find_algorithm_files(house_filename, output_dir):
     return algorithms
 
 charging_station = []
+scores = []
 def read_input_file(file_path):
     matrix = []
     max_cols = 0
@@ -64,8 +65,13 @@ def wrap_matrix_with_layer(matrix):
 
 def read_moves_file(moves_file_path):
     moves = charging_station.copy()
+    counter = 0
     with open(moves_file_path, 'r') as file:
         for line in file:
+            if counter == 0:
+                scores.append(int(line.strip()))
+                counter += 1
+                continue
             row, col, battery_level, steps_left = map(int, line.strip().split())
             moves.append((row+1, col+1, battery_level, steps_left))
     return moves
@@ -108,7 +114,7 @@ def draw_map(ax, matrix):
 
     return patches, texts
 
-def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names):
+def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names, scores):
     num_grids = len(moves_lists)
     fig, axes = plt.subplots(1, num_grids, figsize=(5 * num_grids, 5))
     
@@ -122,6 +128,7 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names):
     circles = []
     battery_texts = []
     steps_texts = []
+    score_texts = []
     patch_lists = []
     text_lists = []
 
@@ -140,6 +147,10 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names):
         battery_texts.append(battery_text)
         steps_texts.append(steps_text)
 
+        # Initialize score text but leave it empty initially
+        score_text = ax.text(1, len(matrix_copy) + 1.8, '', ha='right', va='top')
+        score_texts.append(score_text)
+
         ax.set_xlim(0, len(matrix_copy[0]))
         ax.set_ylim(0, len(matrix_copy))
         ax.set_aspect('equal')
@@ -147,10 +158,13 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names):
         ax.set_yticks([])
         ax.set_title(f'{house_name} - {algorithm_name}')
 
+    # Determine the subplot with the highest score
+    max_score_index = np.argmax(scores)
+
     # Function to update all animations simultaneously
     def update_all(frame):
-        for i, (moves, circle, battery_text, steps_text, matrix_copy, patches, texts) in enumerate(
-                zip(moves_lists, circles, battery_texts, steps_texts, matrix_copies, patch_lists, text_lists)):
+        for i, (moves, circle, battery_text, steps_text, score_text, matrix_copy, patches, texts) in enumerate(
+                zip(moves_lists, circles, battery_texts, steps_texts, score_texts, matrix_copies, patch_lists, text_lists)):
             if frame < len(moves):
                 row, col, battery_lvl, steps_left = moves[frame]
                 stayed = False
@@ -170,11 +184,22 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names):
 
                 battery_text.set_text(f'Battery: {battery_lvl}')
                 steps_text.set_text(f'Steps Left: {steps_left}')
+                
+                # Show the score at the end of the animation
+                if frame == len(moves) - 1:
+                    score_text.set_text(f'Score: {scores[i]}')
+
+            # After the last frame, draw a green rectangle around the best-performing algorithm
+            if frame == max(len(moves) for moves in moves_lists) - 1:
+                if i == max_score_index:
+                    rect = plt.Rectangle((0, 0), 1, 1, linewidth=3, edgecolor='green', facecolor='none',
+                                         transform=ax.transAxes, clip_on=False)
+                    ax.add_patch(rect)
         
         return circles
 
     ani = animation.FuncAnimation(
-        fig, update_all, frames=max(len(moves) for moves in moves_lists), blit=False, repeat=False, interval=200
+        fig, update_all, frames=max(len(moves) for moves in moves_lists), blit=False, repeat=False, interval=150
     )
 
     plt.show()
@@ -198,7 +223,7 @@ def animate_algorithm(algorithm_names, house_name):
         all_moves.append(read_moves_file(moves_file_path))
         
     
-    animate_robot_multiple(all_moves, matrix, house_name, algorithm_names)
+    animate_robot_multiple(all_moves, matrix, house_name, algorithm_names, scores)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
