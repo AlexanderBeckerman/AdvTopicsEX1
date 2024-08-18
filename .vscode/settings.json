@@ -2,7 +2,8 @@
     "cmake.debugConfig": {
         "args": [
             "-house_path=../../../input",
-            "-algo_path=../../lib"
+            "-algo_path=../../lib",
+            "-num_threads=1"
         ]
     },
     "files.associations": {

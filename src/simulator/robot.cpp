@@ -147,9 +147,11 @@ void Robot::dumpStepsInfo(const std::string &output_file) const {
     output.close();
 }
 
-void Robot::serializeAndDumpSteps(const std::string &output_file) const {
+void Robot::serializeAndDumpSteps(const std::string &output_file,
+                                  const size_t score) const {
     std::ofstream output;
     output.open(output_file);
+    output << score << "\n";
     output << serializeVecSteps(this->steps_info);
     output.close();
 }

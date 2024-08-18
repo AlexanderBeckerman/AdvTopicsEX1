@@ -24,7 +24,10 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
     if (future.wait_for(std::chrono::milliseconds(timeout)) ==
         std::future_status::timeout) {
         //  TODO(Sasha): add penalty here
-        score = 999999;
+        score = sim.simulator.getMaxSteps() * 2 +
+                sim.simulator.getInitDirt() * 300 + 2000;
+        std::cout << "Timeout! penalty: " << score.value() << std::endl;
+
         future.get(); // Retrieve the result but ignore it
     } else {
         score = future.get(); // Get the actual score if completed in time
@@ -40,7 +43,8 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
         sim.simulator.dumpStepsInfo(
             generateOutputPath(sim.house_file_name, name, false));
         sim.simulator.serializeAndDumpSteps(
-            generateOutputPath(sim.house_file_name, name, true));
+            generateOutputPath(sim.house_file_name, name, true), score.value());
+
     }
 }
 
@@ -51,6 +55,7 @@ int main(int argc, char **argv) {
     fs::path housePath;
     fs::path algoPath;
     bool summary_only = false;
+    long unsigned int numThreads = 10;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -60,6 +65,8 @@ int main(int argc, char **argv) {
             algoArg = arg.substr(11);
         } else if (arg.find("-summary_only") == 0) {
             summary_only = true;
+        } else if (arg.find("-num_threads=") == 0) {
+            numThreads = std::stoul(arg.substr(13));
         }
     }
 
@@ -74,8 +81,7 @@ int main(int argc, char **argv) {
         algoPath = algoArg;
     }
 
-    // TODO: Add support for these in the CLI.
-    long unsigned int numThreads = 10;
+
     int timeout = 1000;
 
     // Load.
@@ -104,6 +110,8 @@ int main(int argc, char **argv) {
             // Create a new algorithm & simulator instances.
             SimInfo sim_cpy = {MySimulator(sim.simulator), sim.house_file_name,
                                sim.house_output_path};
+            timeout = sim_cpy.simulator.getMaxSteps() * 1;
+
             auto algorithm = algo.create();
             auto &algorithm_name = algo.name();
             threads.emplace_back(runSimulation, std::move(sim_cpy),
@@ -115,6 +123,8 @@ int main(int argc, char **argv) {
 
     // Join any remaining threads
     for (auto &t : threads) {
+        std::cout << "Joining thread" << std::endl;
+
         t.join();
     }
 
