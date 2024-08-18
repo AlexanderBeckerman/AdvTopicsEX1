@@ -27,6 +27,7 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
         score = sim.simulator.getMaxSteps() * 2 +
                 sim.simulator.getInitDirt() * 300 + 2000;
         std::cout << "Timeout! penalty: " << score.value() << std::endl;
+
         future.get(); // Retrieve the result but ignore it
     } else {
         score = future.get(); // Get the actual score if completed in time
@@ -43,6 +44,7 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
             generateOutputPath(sim.house_file_name, name, false));
         sim.simulator.serializeAndDumpSteps(
             generateOutputPath(sim.house_file_name, name, true), score.value());
+
     }
 }
 
@@ -79,6 +81,7 @@ int main(int argc, char **argv) {
         algoPath = algoArg;
     }
 
+
     int timeout = 1000;
 
     // Load.
@@ -108,6 +111,7 @@ int main(int argc, char **argv) {
             SimInfo sim_cpy = {MySimulator(sim.simulator), sim.house_file_name,
                                sim.house_output_path};
             timeout = sim_cpy.simulator.getMaxSteps() * 1;
+
             auto algorithm = algo.create();
             auto &algorithm_name = algo.name();
             threads.emplace_back(runSimulation, std::move(sim_cpy),
@@ -120,6 +124,7 @@ int main(int argc, char **argv) {
     // Join any remaining threads
     for (auto &t : threads) {
         std::cout << "Joining thread" << std::endl;
+
         t.join();
     }
 

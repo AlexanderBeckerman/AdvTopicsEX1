@@ -35,6 +35,7 @@ Step SDFS::nextStep() {
             auto &dest = points_of_interest.front();
             auto path_to_dest = shortestPath(visited, robot_location, dest);
             predetermined_path = std::make_optional(path_to_dest);
+            this->direction_stack = std::stack<Direction>();
         }
     }
 

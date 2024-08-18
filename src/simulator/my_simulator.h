@@ -21,6 +21,7 @@ class MySimulator {
         this->algorithm = nullptr;
         this->init_dirt = other.init_dirt;
         this->max_steps = other.max_steps;
+
     };
 
     MySimulator() : config(nullptr), algorithm(nullptr) {}
