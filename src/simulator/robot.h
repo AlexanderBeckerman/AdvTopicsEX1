@@ -53,7 +53,8 @@ class Robot {
     const ConcreteDirtSensor &getDirtSensor() const { return dirt_sensor; }
     const ConcreteBatteryMeter &getBatterySensor() { return battery_sensor; }
     void dumpStepsInfo(const std::string &output_file) const;
-    void serializeAndDumpSteps(const std::string &output_file) const;
+    void serializeAndDumpSteps(const std::string &output_file,
+                               const size_t score) const;
     friend ConcreteWallSensor;
     friend ConcreteDirtSensor;
     friend ConcreteBatteryMeter;
