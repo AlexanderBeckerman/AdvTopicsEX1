@@ -62,7 +62,6 @@ processHouses(const std::filesystem::directory_entry &entry) {
 
 std::optional<Handle>
 LoadAlgorithm(const std::filesystem::directory_entry &entry) {
-
     if (entry.path().extension() != ".so") {
         return std::nullopt;
     }

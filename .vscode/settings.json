@@ -1,4 +1,5 @@
-{   "cmake.debugConfig": {
+{
+    "cmake.debugConfig": {
         "args": [
             "-house_path=../../../input",
             "-algo_path=../../lib"
@@ -97,6 +98,7 @@
         "semaphore": "cpp",
         "text_encoding": "cpp",
         "cinttypes": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "future": "cpp"
     }
 }
