@@ -8,22 +8,35 @@
 #include <vector>
 
 std::mutex summaryMutex; // Mutex to protect access to the summaries vector
+std::mutex errorMutex;   // Mutex to protect access to the error files
 
 void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
                    const std::string &name, bool summary_only,
                    std::vector<SummaryInfo> &summaries, int timeout) {
-    std::cout << name << " House: " << sim.house_file_name << std::endl;
+    std::string house_name = sim.house_file_name;
+    std::cout << name << " House: " << house_name << std::endl;
     sim.simulator.setAlgorithm(*algo);
     std::optional<std::size_t> score;
 
     auto future = std::async(std::launch::async, [&]() {
-        sim.simulator.run();
+        try {
+            sim.simulator.run();
+        } catch (const std::exception &e) {
+            // If we got an exception while running the algorithm:
+            {
+                std::string error = "Error running algorithm " + name +
+                                    " on house " + house_name + ": " + e.what();
+                std::lock_guard<std::mutex> guard(errorMutex);
+                logErrorToFile(fs::current_path() / (name + ".error"), error);
+            }
+            return sim.simulator.getMaxSteps() * 2 +
+                   sim.simulator.getInitDirt() * 300 + 2000;
+        }
         return sim.simulator.score();
     });
 
     if (future.wait_for(std::chrono::milliseconds(timeout)) ==
         std::future_status::timeout) {
-        //  TODO(Sasha): add penalty here
         score = sim.simulator.getMaxSteps() * 2 +
                 sim.simulator.getInitDirt() * 300 + 2000;
         std::cout << "Timeout! penalty: " << score.value() << std::endl;
@@ -44,7 +57,6 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
             generateOutputPath(sim.house_file_name, name, false));
         sim.simulator.serializeAndDumpSteps(
             generateOutputPath(sim.house_file_name, name, true), score.value());
-
     }
 }
 
@@ -80,7 +92,6 @@ int main(int argc, char **argv) {
     } else {
         algoPath = algoArg;
     }
-
 
     int timeout = 1000;
 
