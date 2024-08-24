@@ -15,7 +15,9 @@ The error files will be generated inside the current directory (build/src/simula
 
 HOW TO RUN THE PROGRAM:
 
-The input files will be given to the program as arguments as written in the assignment. To use the shell script to run the program, use 
+The arguments to the program are as written in the assignment. Building the program will generate the executable inside build/src/simulator and the .so algorithm files will be generated inside build/lib. 
+
+To use the shell script to run the program, use 
 ~~~~~~~~~~~~~
     $ ./scripts/run.sh <-house_path=houses path> <-algo_path=algos path> <num_threads=number of threads>
 ~~~~~~~~~~~~~
@@ -28,6 +30,12 @@ $ make
 $ cd src/simulator
 $ ./myrobot <-house_path=houses path> <-algo_path=algos path> <summary_only> <num_threads= number of threads>
 ~~~~~~~~~~~~~
+
+Example of valid input:
+~~~
+./scripts/run.sh -house_path=../../../input -algo_path=../../lib
+~~~
+
 -- BONUS -- 
 How our visualization bonus looks like:
 
