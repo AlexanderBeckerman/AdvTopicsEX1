@@ -1,12 +1,12 @@
 #include "smart_algorithm.h"
-#include "../common/utils/utils.h"
 #include "../common/AlgorithmRegistration.h"
 #include "../common/pathing.h"
+#include "../common/utils/utils.h"
 #include <queue>
 
-REGISTER_ALGORITHM(SmartAlgorithm);
+REGISTER_ALGORITHM(A_209639780_207011180);
 
-Step SmartAlgorithm::nextStep() {
+Step A_209639780_207011180 ::nextStep() {
     if (steps_left == 0) {
         return Step::Finish;
     }
@@ -101,13 +101,13 @@ Step SmartAlgorithm::nextStep() {
     return this->moveDirection(dir);
 }
 
-void SmartAlgorithm::startReturn() {
+void A_209639780_207011180 ::startReturn() {
     last_return_point = std::make_optional<RelativePoint>(robot_location);
     predetermined_path =
         std::make_optional(shortestPathToOrigin(cleaned, robot_location));
 }
 
-Step SmartAlgorithm::moveDirection(const Direction &dir) {
+Step A_209639780_207011180 ::moveDirection(const Direction &dir) {
     robot_location = robot_location + dir;
     steps_left--;
     return directionToStep(dir);

@@ -8,7 +8,7 @@
 #include <stack>
 #include <unordered_set>
 
-class SmartAlgorithm : public AbstractAlgorithm {
+class A_209639780_207011180 : public AbstractAlgorithm {
     // Configuration.
   protected:
     const DirtSensor *dirt_sensor;
@@ -41,10 +41,10 @@ class SmartAlgorithm : public AbstractAlgorithm {
     Step moveDirection(const Direction &dir);
 
   public:
-    ~SmartAlgorithm() override = default;
-    SmartAlgorithm(SmartAlgorithm &) = delete;
+    ~A_209639780_207011180() override = default;
+    A_209639780_207011180(A_209639780_207011180 &) = delete;
 
-    SmartAlgorithm() {
+    A_209639780_207011180() {
         max_steps = 0;
         steps_left = 0;
         robot_location = {0, 0};

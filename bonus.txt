@@ -1,14 +1,19 @@
-In this assignment, we added these following bonus features:
+In this assignment, we added and updated these following bonus features:
 
 A. Animating all algorithms paths on a specific house - 
 We upgraded our visualization to show the run of all algorithms on a single house, in parallel. This animation shows the house dirtiness and how each algorithm decided to clean it.
 At the end, the visualization shows the end score and marks the winner algo with the minimum score.
 
-To run the animation, first run the program. Then after getting the output files, run "python3 visualize_map.py <house_file_name>" inside the scripts folder.
+To run the animation, first run the program (WITHOUT summary only flag). Then after getting the output files, run "python3 visualize_map.py <house_file_name>" inside the scripts folder.
 To see the animation, make sure you have the matplotlib python package installed. (if not, install using 'pip install matplotlib').
 If you get an error "UserWarning: Matplotlib is currently using agg...", install tk-inter package using 'sudo apt-get install python3-tk'.
 
 B. Unit tests using GTest - 
-We adjusted the tests to work with the new folder structure, added a new CMake and also added testing for the second algorithm.
 
+We adjusted the tests to work with the new folder structure with a new CMake file.
 To run the tests, after building the program, cd into build/src/tests and run $ ./unit_tests
+
+C. Logging - 
+
+Updated the logging feature to log main-thread-level of critical operations such as thread management and error handling. The logs are generated into the output/logs folder.
+For this to work we assume there exists an output/logs folder in the project structure (included in the submission).

@@ -26,7 +26,7 @@ class AlgorithmTest : public ::testing::Test {
 
 TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
     Robot r = Robot(getConfig(*sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     sim->setAlgorithm(algo);
     size_t battery_before_step = r.getBatterySensor().getCapacity();
 
@@ -43,7 +43,7 @@ TEST_F(AlgorithmTest, didntChargeFullBatteryTest) {
 
 TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
     Robot r = Robot(getConfig(*sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     algo.setDirtSensor(r.getDirtSensor());
     algo.setBatteryMeter(r.getBatterySensor());
     algo.setWallsSensor(r.getWallSensor());
@@ -69,7 +69,7 @@ TEST_F(AlgorithmTest, didntStayOnCleanTileTest) {
 TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
     auto cfg = getConfig(*sim);
     Robot r = Robot(cfg);
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     algo.setWallsSensor(r.getWallSensor());
     algo.setDirtSensor(r.getDirtSensor());
     algo.setBatteryMeter(r.getBatterySensor());
@@ -87,7 +87,7 @@ TEST_F(AlgorithmTest, didntMoveIntoWallTest) {
 
 TEST_F(AlgorithmTest, didntGetStuckTest) {
     Robot r = Robot(getConfig(*sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     algo.setWallsSensor(r.getWallSensor());
     algo.setDirtSensor(r.getDirtSensor());
     algo.setBatteryMeter(r.getBatterySensor());
@@ -104,7 +104,7 @@ TEST_F(AlgorithmTest, didntGetStuckTest) {
 }
 
 TEST_F(AlgorithmTest, testInputSuccess) {
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     sim->setAlgorithm(algo);
     sim->run();
 
@@ -112,7 +112,7 @@ TEST_F(AlgorithmTest, testInputSuccess) {
 }
 
 TEST_F(AlgorithmTest, impossibleCleanFinishedAtDock) {
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     MySimulator sim;
     sim.readHouseFile("../../../input/test_input_b.txt");
     sim.setAlgorithm(algo);
