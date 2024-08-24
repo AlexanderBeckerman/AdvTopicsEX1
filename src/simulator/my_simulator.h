@@ -3,6 +3,7 @@
 #include "../common/utils/utils.h"
 #include "config/config.h"
 #include "robot.h"
+#include <filesystem>
 
 class MySimulator {
   private:
@@ -21,7 +22,6 @@ class MySimulator {
         this->algorithm = nullptr;
         this->init_dirt = other.init_dirt;
         this->max_steps = other.max_steps;
-
     };
 
     MySimulator() : config(nullptr), algorithm(nullptr) {}
@@ -42,11 +42,23 @@ class MySimulator {
 
     // Output the assignment required  info to the output file.
     void dumpStepsInfo(const std::string &output_file) const {
-        robot->dumpStepsInfo(output_file);
+        std::filesystem::path filePath(output_file);
+        // Safety check to make sure the output folder exists, if not write to
+        // current directory.
+        if (!std::filesystem::exists(filePath.parent_path())) {
+            filePath = filePath.filename();
+        }
+        robot->dumpStepsInfo(filePath.string());
     }
     void serializeAndDumpSteps(const std::string &output_file,
                                const size_t score) const {
-        robot->serializeAndDumpSteps(output_file, score);
+        std::filesystem::path filePath(output_file);
+        // Safety check to make sure the output folder exists, if not write to
+        // current directory.
+        if (!std::filesystem::exists(filePath.parent_path())) {
+            filePath = filePath.filename();
+        }
+        robot->serializeAndDumpSteps(filePath.string(), score);
     }
 
     size_t score() const { return robot->getScore(); }

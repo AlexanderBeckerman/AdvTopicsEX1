@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Set the project name
-project(SDFS)
+project(B_209639780_207011180)
 
 
 # Add the common library as a dependency
@@ -18,14 +18,13 @@ set(SDFS_HEADERS
 )
 
 # Create the shared library from the source files
-add_library(SDFS SHARED ${SDFS_SOURCES} ${SDFS_HEADERS})
+add_library(B_209639780_207011180 SHARED ${SDFS_SOURCES} ${SDFS_HEADERS})
 
 # Include directories (if you have any dependencies or include paths needed)
-target_include_directories(SDFS PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/../common)
+target_include_directories(B_209639780_207011180 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/../common)
 
 # Optionally link against other libraries if needed
 # target_link_libraries(algorithm PRIVATE some_other_library)
 
 # Link the common library to the algorithm library
-target_link_libraries(SDFS PRIVATE algorithm)
-target_link_libraries(SDFS PRIVATE common)
+target_link_libraries(B_209639780_207011180 PRIVATE common)

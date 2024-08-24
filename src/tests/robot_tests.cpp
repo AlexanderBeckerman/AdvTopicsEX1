@@ -11,7 +11,7 @@ class RobotTest : public ::testing::Test {
 
     void SetUp() override {
         sim = new MySimulator();
-        sim->readHouseFile("../../../input/input_a.txt");
+        sim->readHouseFile("../../../input/test_input_a.txt");
     }
 
     void TearDown() override { delete sim; }
@@ -28,14 +28,14 @@ class RobotTest : public ::testing::Test {
         return sim->config;
     }
 
-    SmartAlgorithm &getAlgorithm(MySimulator &sim) {
-        return dynamic_cast<SmartAlgorithm &>(*sim.algorithm);
+    A_209639780_207011180 &getAlgorithm(MySimulator &sim) {
+        return dynamic_cast<A_209639780_207011180 &>(*sim.algorithm);
     }
 };
 
 TEST_F(RobotTest, usedBatteryTest) {
     Robot r = Robot(getConfig(sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     sim->setAlgorithm(algo);
     int battery_before_step;
     int battery_after_step;
@@ -53,7 +53,7 @@ TEST_F(RobotTest, usedBatteryTest) {
 
 TEST_F(RobotTest, didntPassMaxStepsTest) {
     Robot r = Robot(getConfig(sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     sim->setAlgorithm(algo);
     size_t steps = 0;
     while (canContinue(r)) {
@@ -66,7 +66,7 @@ TEST_F(RobotTest, didntPassMaxStepsTest) {
 
 TEST_F(RobotTest, cleanedAllTest) {
     Robot r = Robot(getConfig(sim));
-    SmartAlgorithm algo;
+    A_209639780_207011180 algo;
     sim->setAlgorithm(algo);
     while (canContinue(r)) {
         Step next_step = algo.nextStep();

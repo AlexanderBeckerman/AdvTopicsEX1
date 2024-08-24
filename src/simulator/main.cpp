@@ -31,8 +31,8 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
                 std::lock_guard<std::mutex> guard(errorMutex);
                 logErrorToFile(fs::current_path() / (name + ".error"), error);
             }
-            return sim.simulator.getMaxSteps() * 2 +
-                   sim.simulator.getInitDirt() * 300 + 2000;
+            return (sim.simulator.getMaxSteps() * 2) +
+                   (sim.simulator.getInitDirt() * 300) + 2000;
         }
         return sim.simulator.score();
     });
@@ -74,7 +74,7 @@ int main(int argc, char **argv) {
     fs::path housePath;
     fs::path algoPath;
     bool summary_only = false;
-    long unsigned int numThreads = 2;
+    long unsigned int numThreads = 10;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];

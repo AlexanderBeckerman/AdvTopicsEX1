@@ -10,7 +10,7 @@ class SensorTest : public ::testing::Test {
     MySimulator *sim;
     void SetUp() override {
         sim = new MySimulator();
-        sim->readHouseFile("../../../input/input_a.txt");
+        sim->readHouseFile("../../../input/test_input_a.txt");
     }
 
     void TearDown() override { delete sim; }

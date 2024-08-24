@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 # Set the project name
-project(algorithm)
+project(A_209639780_207011180)
 
 
 # Add the common library as a dependency
@@ -20,13 +20,13 @@ set(ALGORITHM_HEADERS
 )
 
 # Create the shared library from the source files
-add_library(algorithm SHARED ${ALGORITHM_SOURCES} ${ALGORITHM_HEADERS})
+add_library(A_209639780_207011180 SHARED ${ALGORITHM_SOURCES} ${ALGORITHM_HEADERS})
 
 # Include directories (if you have any dependencies or include paths needed)
-target_include_directories(algorithm PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/../common)
+target_include_directories(A_209639780_207011180 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/../common)
 
 # Optionally link against other libraries if needed
 # target_link_libraries(algorithm PRIVATE some_other_library)
 
 # Link the common library to the algorithm library
-target_link_libraries(algorithm PRIVATE common)
+target_link_libraries(A_209639780_207011180 PRIVATE common)

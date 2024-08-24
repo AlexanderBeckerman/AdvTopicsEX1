@@ -4,9 +4,9 @@
 #include "../common/utils/utils.h"
 #include <queue>
 
-REGISTER_ALGORITHM(SDFS);
+REGISTER_ALGORITHM(B_209639780_207011180);
 
-Step SDFS::nextStep() {
+Step B_209639780_207011180::nextStep() {
     if (steps_left == 0) {
         return Step::Finish;
     }
@@ -26,8 +26,8 @@ Step SDFS::nextStep() {
 
         // If no dirty spots around, go to an interest point
         bool clean_surroundings =
-            std::none_of(allDirections.begin(),
-                         allDirections.end(), [&](const auto &dir) {return isValidMove(dir);});
+            std::none_of(allDirections.begin(), allDirections.end(),
+                         [&](const auto &dir) { return isValidMove(dir); });
         if (clean_surroundings) {
             if (points_of_interest.empty()) {
                 return Step::Finish;
@@ -101,4 +101,16 @@ Step SDFS::nextStep() {
     auto dir = oppositeDirection(direction_stack.top());
     direction_stack.pop();
     return this->moveDirection(dir);
+}
+
+void B_209639780_207011180::startReturn() {
+    last_return_point = std::make_optional<RelativePoint>(robot_location);
+    predetermined_path =
+        std::make_optional(shortestPathToOrigin(cleaned, robot_location));
+}
+
+Step B_209639780_207011180::moveDirection(const Direction &dir) {
+    robot_location = robot_location + dir;
+    steps_left--;
+    return directionToStep(dir);
 }

@@ -3,7 +3,7 @@
         "args": [
             "-house_path=../../../input",
             "-algo_path=../../lib",
-            "-num_threads=2"
+            "-num_threads=10"
         ]
     },
     "files.associations": {
