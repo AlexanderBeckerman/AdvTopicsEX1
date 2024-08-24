@@ -12,7 +12,7 @@ The relevant output files ACCORDING TO THE ASSIGNMENT REQUIREMENTS will be gener
 
 The error files will be generated inside the current directory (build/src/simulator).
 ~~~~~~~~~~~~~
-
+~~~~~~~~~~~~~
 HOW TO RUN THE PROGRAM:
 
 The input files will be given to the program as arguments as written in the assignment. To use the shell script to run the program, use 
@@ -25,4 +25,8 @@ $ cmake ..
 $ make
 $ cd src/simulator
 $ ./myrobot <-house_path=houses path> <-algo_path=algos path> <summary_only> <num_threads= number of threads>
+~~~~~~~~~~~~~
+-- BONUS --
+How our visualization bonus looks like:
 
+![Alt text](visualize_map.jpg?raw=true "Visualization of 4 algos on one house")
