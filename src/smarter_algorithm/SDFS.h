@@ -6,5 +6,6 @@ class SDFS : public SmartAlgorithm {
   private:
     std::queue<RelativePoint> points_of_interest;
 
+  public:
     Step nextStep() override;
 };
