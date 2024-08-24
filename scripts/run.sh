@@ -9,8 +9,8 @@ make
 
 # Step 2: Run the compiled C++ program to generate the moves file
 echo "Running the C++ program..."
-cd src/main
-./main $1
+cd src/simulator
+./myrobot $1 $2 $3
 
 # Return to starting folder
 cd ../../../
