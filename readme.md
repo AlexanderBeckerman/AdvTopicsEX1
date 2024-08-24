@@ -1,6 +1,6 @@
 Contributors: Ohad Agadi 209639780, Alexander Beckerman 207011180 
 
-~~~~~~~~~~~~~
+
 
 In this assignment, we followed the assignment guidelines and API. We create a MySimulator class to represent the simulator tasked with running the program. We used the future standard library to manage our threads, for counting timeout and retrieving the result. As required, for each house and algorithm we create a house-algorithm combination and call the runSimulation function with a new thread and a maximum of "numThreads" threads, to run the program within the given timeout.
 
@@ -11,14 +11,16 @@ The second algorithm also uses DFS to explore and clean the house and remembers 
 The relevant output files ACCORDING TO THE ASSIGNMENT REQUIREMENTS will be generated inside the output/ folder, named output_<house file name>_<algo file name>.txt . NOTE - The program will also generate additional output files needed for the visualization script, and are not the part of the assignment required output. 
 
 The error files will be generated inside the current directory (build/src/simulator).
-~~~~~~~~~~~~~
-~~~~~~~~~~~~~
+
+
 HOW TO RUN THE PROGRAM:
 
 The input files will be given to the program as arguments as written in the assignment. To use the shell script to run the program, use 
+~~~~~~~~~~~~~
     $ ./scripts/run.sh <-house_path=houses path> <-algo_path=algos path> <num_threads=number of threads>
-    
+~~~~~~~~~~~~~
 This will build the project and run the main program. If you want to run the program yourself, run the following commands from the exercise directory:
+~~~~~~~~~~~~~
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -26,7 +28,7 @@ $ make
 $ cd src/simulator
 $ ./myrobot <-house_path=houses path> <-algo_path=algos path> <summary_only> <num_threads= number of threads>
 ~~~~~~~~~~~~~
--- BONUS --
+-- BONUS -- 
 How our visualization bonus looks like:
 
-![Alt text](visualize_map.jpg?raw=true "Visualization of 4 algos on one house")
+![Alt text](visualize_map.JPG "Visualization of 4 algos on one house")
