@@ -209,7 +209,7 @@ def animate_robot_multiple(moves_lists, matrix, house_name, algorithm_names, sco
     plt.show()
 
 def animate_algorithm(algorithm_names, house_name):
-    map_file_path = f'../output/{house_name}_cleaned_input.txt' # Adjust this path to your parsed map file location
+    map_file_path = f'../output/visualization/{house_name}_cleaned_input.txt' # Adjust this path to your parsed map file location
     all_moves = []
     
     if not os.path.exists(map_file_path) or os.path.getsize(map_file_path) == 0:
@@ -217,7 +217,7 @@ def animate_algorithm(algorithm_names, house_name):
         return
     matrix = read_input_file(map_file_path)
     for algorithm_name in algorithm_names:
-        moves_file_path = f'../output/{house_name}_{algorithm_name}_moves.txt'
+        moves_file_path = f'../output/visualization/{house_name}_{algorithm_name}_moves.txt'
         if not os.path.exists(moves_file_path):
             print('Error reading input files: moves File not found')
             return

@@ -13,6 +13,10 @@ void Robot::move(const Direction direction) {
     this->wall_sensor.step(direction);
     this->dirt_sensor.step(direction);
     this->battery_sensor.decreaseCharge();
+    if (!isValidMove()) { // Check if algorithm tried to move into
+                          // a wall.
+        throw std::runtime_error("Algorithm tried to move into a wall.");
+    }
 }
 
 void Robot::step(const Step next_step) {
@@ -35,7 +39,6 @@ void Robot::clean() {
     Tile &t = this->dirt_sensor.getDirtyTile();
     t.Clean();
     this->config->setAmountToClean(this->config->getAmountToClean() - 1);
-    // TODO(Ohad): log + output. printing for now
     this->battery_sensor.decreaseCharge();
 }
 
@@ -53,8 +56,10 @@ void Robot::start(AbstractAlgorithm &algorithm) {
             calcScore();
             return;
         }
+
         if (this->getBatterySensor().getBatteryState() <= 0 &&
-            !this->location.isChargingStation()) {
+            !this->location
+                 .isChargingStation()) { // Tried moving with no battery.
             this->exit_cond = 1;
             calcScore();
             return;
@@ -132,6 +137,16 @@ void Robot::serializeAndDumpSteps(const std::string &output_file,
     output << score << "\n";
     output << serializeVecSteps(this->steps_info);
     output.close();
+}
+
+bool Robot::isValidMove() const {
+
+    auto tile = this->dirt_sensor.getCurrentTile();
+    if (tile.getType() == TileType::WALL) {
+        return false;
+    }
+
+    return true;
 }
 
 Robot::~Robot() {}

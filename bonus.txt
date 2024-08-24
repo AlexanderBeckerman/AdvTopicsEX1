@@ -5,6 +5,7 @@ We upgraded our visualization to show the run of all algorithms on a single hous
 At the end, the visualization shows the end score and marks the winner algo with the minimum score.
 
 To run the animation, first run the program (WITHOUT summary only flag). Then after getting the output files, run "python3 visualize_map.py <house_file_name>" inside the scripts folder.
+To adjust the animation speed, change the value of the interval argument in line 206 in the script. 
 To see the animation, make sure you have the matplotlib python package installed. (if not, install using 'pip install matplotlib').
 If you get an error "UserWarning: Matplotlib is currently using agg...", install tk-inter package using 'sudo apt-get install python3-tk'.
 

@@ -191,7 +191,8 @@ void ConfigInfo::draw(std::string path) const {
 
     std::filesystem::path pathObj(path);
     std::string filename = pathObj.stem().string();
-    std::ofstream outFile("../../../output/" + filename + "_cleaned_input.txt");
+    std::ofstream outFile("../../../output/visualization/" + filename +
+                          "_cleaned_input.txt");
     if (!outFile) {
         std::cerr << "Failed to open file for writing." << std::endl;
         return;

@@ -26,6 +26,7 @@ class Robot {
     bool canContinue();
     void logStep(const Step step);
     void calcScore();
+    bool isValidMove() const;
 
   public:
     Robot(std::shared_ptr<ConfigInfo> cfg) noexcept

@@ -156,8 +156,8 @@ auto createVectorFromIterator(Iterator begin, Iterator end, Func mapFunc) {
 
 std::string generateOutputPath(const std::string &house_file_name,
                                const std::string &algo_name, bool moves) {
-    return moves ? "../../../output/" + house_file_name + "_" + algo_name +
-                       "_moves.txt"
+    return moves ? "../../../output/visualization/" + house_file_name + "_" +
+                       algo_name + "_moves.txt"
                  : "../../../output/output_" + house_file_name + "_" +
                        algo_name + ".txt";
 }

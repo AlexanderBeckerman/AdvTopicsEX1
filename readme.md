@@ -8,7 +8,7 @@ For our first algorithm, we implemented an algorithm that uses DFS to explore an
 
 The second algorithm also uses DFS to explore and clean the house and remembers a DFS state. The difference between them is the way they decide on which tile to return to clean after staying in the docking station. This algorithm, instead of going back to the place we stopped, returns to the closest tile which it's surrounding tiles were not cleaned yet.
 
-The relevant output files ACCORDING TO THE ASSIGNMENT REQUIREMENTS will be generated inside the output/ folder, named output_"house file name"_"algo file name".txt . NOTE - The program will also generate additional output files needed for the visualization script, and are not the part of the assignment required output. 
+The relevant output files ACCORDING TO THE ASSIGNMENT REQUIREMENTS will be generated inside the output/ folder, named output_"house file name"_"algo file name".txt . NOTE - The program will also generate additional output files inside output/visualization needed for the visualization script, and logs inside output/logs, who are not the part of the assignment required output. 
 
 The error files will be generated inside the current directory (build/src/simulator).
 
