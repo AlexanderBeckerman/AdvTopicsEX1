@@ -12,9 +12,11 @@ std::mutex errorMutex;   // Mutex to protect access to the error files
 
 void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
                    const std::string &name, bool summary_only,
-                   std::vector<SummaryInfo> &summaries, int timeout) {
+                   std::vector<SummaryInfo> &summaries, int timeout,
+                   std::promise<void> promise) {
     std::string house_name = sim.house_file_name;
-    std::cout << name << " House: " << house_name << std::endl;
+    LOG(INFO) << "Running simulation for algorithm: " << name
+              << " House: " << house_name << std::endl;
     sim.simulator.setAlgorithm(*algo);
     std::optional<std::size_t> score;
 
@@ -37,13 +39,16 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
 
     if (future.wait_for(std::chrono::milliseconds(timeout)) ==
         std::future_status::timeout) {
+        // Timeout! Calculate the penalty score.
         score = sim.simulator.getMaxSteps() * 2 +
                 sim.simulator.getInitDirt() * 300 + 2000;
-        std::cout << "Timeout! penalty: " << score.value() << std::endl;
-
-        future.get(); // Retrieve the result but ignore it
+        LOG(INFO) << "Algorithm: " << name << "House: " << sim.house_file_name
+                  << "Timeout! score: " << score.value() << std::endl;
     } else {
-        score = future.get(); // Get the actual score if completed in time
+        // Get the actual score if completed in time
+        score = future.get();
+        LOG(INFO) << "Algorithm: " << name << "House: " << sim.house_file_name
+                  << "score: " << score.value() << std::endl;
     }
 
     {
@@ -58,6 +63,8 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
         sim.simulator.serializeAndDumpSteps(
             generateOutputPath(sim.house_file_name, name, true), score.value());
     }
+
+    promise.set_value();
 }
 
 int main(int argc, char **argv) {
@@ -67,7 +74,7 @@ int main(int argc, char **argv) {
     fs::path housePath;
     fs::path algoPath;
     bool summary_only = false;
-    long unsigned int numThreads = 10;
+    long unsigned int numThreads = 2;
 
     for (int i = 1; i < argc; ++i) {
         std::string arg = argv[i];
@@ -104,18 +111,17 @@ int main(int argc, char **argv) {
                                  fs::directory_iterator(), processHouses);
 
     // Run.
+    Logger::getInstance().setLogFile("../../../output/logs/");
     std::vector<std::thread> threads;
+    std::vector<std::future<void>> futures;
     std::vector<SummaryInfo> summaries;
     summaries.reserve(simulators.size() * algorithm_handles.size());
 
     for (const auto &sim : simulators) {
         for (const auto &algo : AlgorithmRegistrar::getAlgorithmRegistrar()) {
-            if (threads.size() >= numThreads) {
+            while (threads.size() >= numThreads) {
                 // Wait for some threads to finish before starting new ones
-                for (auto &t : threads) {
-                    t.join();
-                }
-                threads.clear();
+                joinFinishedThreads(threads, futures);
             }
 
             // Create a new algorithm & simulator instances.
@@ -123,23 +129,24 @@ int main(int argc, char **argv) {
                                sim.house_output_path};
             timeout = sim_cpy.simulator.getMaxSteps() * 1;
 
+            std::promise<void> promise;
             auto algorithm = algo.create();
             auto &algorithm_name = algo.name();
-            threads.emplace_back(runSimulation, std::move(sim_cpy),
-                                 std::move(algorithm),
-                                 std::cref(algorithm_name), summary_only,
-                                 std::ref(summaries), timeout);
+            futures.push_back(promise.get_future());
+            threads.emplace_back(
+                runSimulation, std::move(sim_cpy), std::move(algorithm),
+                std::cref(algorithm_name), summary_only, std::ref(summaries),
+                timeout, std::move(promise));
         }
     }
 
     // Join any remaining threads
     for (auto &t : threads) {
-        std::cout << "Joining thread" << std::endl;
-
+        LOG(INFO) << ("Joining thread") << std::endl;
         t.join();
     }
 
-    std::cout << "Done! summarizing..." << std::endl;
+    LOG(INFO) << ("Done, summarizing!") << std::endl;
     generateCSV(summaries);
     closeAlgos(algorithm_handles);
 }

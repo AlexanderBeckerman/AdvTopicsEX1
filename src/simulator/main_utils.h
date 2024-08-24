@@ -5,9 +5,11 @@
 #include <dlfcn.h>
 #include <filesystem>
 #include <fstream>
+#include <future>
 #include <iostream>
 #include <set>
 #include <string>
+#include <thread>
 #include <unordered_map>
 #include <vector>
 
@@ -158,4 +160,27 @@ std::string generateOutputPath(const std::string &house_file_name,
                        "_moves.txt"
                  : "../../../output/output_" + house_file_name + "_" +
                        algo_name + ".txt";
+}
+
+// Function to join finished threads
+void joinFinishedThreads(std::vector<std::thread> &threads,
+                         std::vector<std::future<void>> &futures) {
+    // Iterate over futures to check if the corresponding task is finished
+    for (size_t i = 0; i < futures.size();) {
+        if (futures[i].wait_for(std::chrono::seconds(0)) ==
+            std::future_status::ready) {
+            // Thread's work is done, so we join the thread
+            if (threads[i].joinable()) {
+                threads[i].join();
+            }
+            // Remove the finished thread and its future
+            threads.erase(threads.begin() + i);
+            futures.erase(futures.begin() + i);
+            LOG(INFO) << "Thread " << i << " joined and removed." << std::endl;
+            LOG(INFO) << "Number of threads: " << threads.size() << std::endl;
+        } else {
+            // Move to the next thread if it's not ready
+            ++i;
+        }
+    }
 }

@@ -42,7 +42,6 @@ Step SmartAlgorithm::nextStep() {
     if (this->predetermined_path.has_value() &&
         !this->predetermined_path->empty() &&
         predetermined_path->size() < steps_left) {
-        LOG(INFO) << "Following predetermined path." << std::endl;
         // This should never happen.
         if (predetermined_path->empty()) {
             LOG(ERROR) << "predetermined path path is empty." << std::endl;
@@ -63,7 +62,6 @@ Step SmartAlgorithm::nextStep() {
         startReturn();
         auto &dir = predetermined_path->top();
         predetermined_path->pop();
-        LOG(INFO) << "Returning to charging station." << dir << std::endl;
         return this->moveDirection(dir);
     }
 
@@ -88,8 +86,6 @@ Step SmartAlgorithm::nextStep() {
 
     if (direction_stack.empty()) {
         if (robot_location != RelativePoint{0, 0}) {
-            LOG(INFO) << "No valid moves, and not at charging station."
-                      << std::endl;
             startReturn();
             steps_left = predetermined_path->size();
             auto &dir = predetermined_path->top();
@@ -107,7 +103,6 @@ Step SmartAlgorithm::nextStep() {
 
 void SmartAlgorithm::startReturn() {
     last_return_point = std::make_optional<RelativePoint>(robot_location);
-    LOG(INFO) << "Starting return to charging station." << std::endl;
     predetermined_path =
         std::make_optional(shortestPathToOrigin(cleaned, robot_location));
 }

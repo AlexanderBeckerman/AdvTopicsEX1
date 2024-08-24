@@ -153,12 +153,10 @@ void ConfigInfo::setValueAt(LayoutPoint loc, int value) {
 }
 
 void ConfigInfo::clean(LayoutPoint p) {
-    LOG(INFO) << "Cleaning tile at" << p.row << "," << p.col << "" << std::endl;
     Tile &tile = (*topograhpy_data)[p.row][p.col];
     try {
         tile.Clean();
     } catch (std::underflow_error &e) {
-        LOG(ERROR) << "Tile at: " << p << " is already clean" << std::endl;
         return;
     }
 
