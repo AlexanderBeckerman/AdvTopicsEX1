@@ -176,7 +176,8 @@ void joinFinishedThreads(std::vector<std::thread> &threads,
             // Remove the finished thread and its future
             threads.erase(threads.begin() + i);
             futures.erase(futures.begin() + i);
-            std::cout << "Thread " << i << " joined and removed." << std::endl;
+            LOG(INFO) << "Thread " << i << " joined and removed." << std::endl;
+            LOG(INFO) << "Number of threads: " << threads.size() << std::endl;
         } else {
             // Move to the next thread if it's not ready
             ++i;

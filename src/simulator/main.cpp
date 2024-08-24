@@ -15,7 +15,8 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
                    std::vector<SummaryInfo> &summaries, int timeout,
                    std::promise<void> promise) {
     std::string house_name = sim.house_file_name;
-    std::cout << name << " House: " << house_name << std::endl;
+    LOG(INFO) << "Running simulation for algorithm: " << name
+              << " House: " << house_name << std::endl;
     sim.simulator.setAlgorithm(*algo);
     std::optional<std::size_t> score;
 
@@ -41,10 +42,13 @@ void runSimulation(SimInfo sim, std::unique_ptr<AbstractAlgorithm> algo,
         // Timeout! Calculate the penalty score.
         score = sim.simulator.getMaxSteps() * 2 +
                 sim.simulator.getInitDirt() * 300 + 2000;
-        std::cout << "Timeout! penalty: " << score.value() << std::endl;
+        LOG(INFO) << "Algorithm: " << name << "House: " << sim.house_file_name
+                  << "Timeout! score: " << score.value() << std::endl;
     } else {
         // Get the actual score if completed in time
         score = future.get();
+        LOG(INFO) << "Algorithm: " << name << "House: " << sim.house_file_name
+                  << "score: " << score.value() << std::endl;
     }
 
     {
@@ -107,6 +111,7 @@ int main(int argc, char **argv) {
                                  fs::directory_iterator(), processHouses);
 
     // Run.
+    Logger::getInstance().setLogFile("../../../output/logs/");
     std::vector<std::thread> threads;
     std::vector<std::future<void>> futures;
     std::vector<SummaryInfo> summaries;
@@ -137,10 +142,11 @@ int main(int argc, char **argv) {
 
     // Join any remaining threads
     for (auto &t : threads) {
+        LOG(INFO) << ("Joining thread") << std::endl;
         t.join();
     }
 
-    std::cout << "Done! summarizing..." << std::endl;
+    LOG(INFO) << ("Done, summarizing!") << std::endl;
     generateCSV(summaries);
     closeAlgos(algorithm_handles);
 }
