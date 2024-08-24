@@ -29,6 +29,12 @@ struct SummaryInfo {
 
 namespace fs = std::filesystem;
 
+void logErrorToFile(const fs::path &errorFilePath, const std::string &error) {
+    std::ofstream errorFile(errorFilePath, std::ios::app);
+    errorFile << error << std::endl;
+    errorFile.close();
+}
+
 std::optional<SimInfo>
 processHouses(const std::filesystem::directory_entry &entry) {
 
@@ -41,9 +47,9 @@ processHouses(const std::filesystem::directory_entry &entry) {
         fs::current_path() / (houseFile.stem().string() + ".error");
 
     if (!file.is_open()) {
-        std::ofstream errorFile(errorFilePath);
-        errorFile << "Error: Could not open house file: " << houseFile
-                  << std::endl;
+        logErrorToFile(errorFilePath,
+                       "Could not open house file: " + houseFile.string());
+        return std::nullopt;
     }
     try {
         SimInfo simInfo;
@@ -54,8 +60,7 @@ processHouses(const std::filesystem::directory_entry &entry) {
         return simInfo;
 
     } catch (const std::exception &e) {
-        std::ofstream errorFile(errorFilePath);
-        errorFile << "Error: " << e.what() << std::endl;
+        logErrorToFile(errorFilePath, e.what());
         return std::nullopt;
     }
 }
@@ -75,10 +80,7 @@ LoadAlgorithm(const std::filesystem::directory_entry &entry) {
         !handle) {
         fs::path errorFilePath =
             fs::current_path() / (algoFile.stem().string() + ".error");
-        std::ofstream errorFile(errorFilePath);
-        errorFile << "Error: Could not load algorithm file: " << algoFile
-                  << "\n"
-                  << dlerror() << std::endl;
+        logErrorToFile(errorFilePath, "Failed loading algorithm file");
         return std::nullopt;
     }
 
